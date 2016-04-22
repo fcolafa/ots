@@ -7,8 +7,32 @@ $baseUrl = Yii::app()->theme->baseUrl;
 $variable = Yii::app()->user->A1();
 ?>
 
+<?php 
+    Yii::app()->clientScript->registerScript('recepcionDocPendientes', 
+    "
+        $.ajax({
+            type: 'POST',
+            url: '../RecepcionDocumentos/consultarEstados',
+            beforeSend: function (xhr) {
+                if (xhr && xhr.overrideMimeType) {
+                    xhr.overrideMimeType('application/json;charset=utf-8');
+                }
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data!=''){
+                    $('#msg_warnning').html(data);
+                    $('#msg_warnning').css('display','block');
+                }
+            }
+        });
+    ", CClientScript::POS_LOAD); 
+?>
 
 <div class="row-fluid" >
+    <div id="msg_warnning" class="alert alert-warning" style="display: none">
+        
+    </div>
     <div class="container-fluid" valign="center"  style="padding-top:0%;">
         <div >
             <!-- Div de Personal -->
@@ -34,7 +58,6 @@ $variable = Yii::app()->user->A1();
 
             <!-- Div de Aprobacion de Documentos-->
             <div align="center" valign="top" class="messageButtonb blue">
-                
                 <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/appicon.png" alt="Aprobación de Documentos"  width="15%" />', array('ordenTrabajo/admin'));?>
                 <div  class="dashIconText"><?php echo CHtml::link('<h4>Aprobación de Documentos</h4>',array('ordenTrabajo/admin')); ?></div>
             </div>

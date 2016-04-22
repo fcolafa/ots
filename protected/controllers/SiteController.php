@@ -48,6 +48,7 @@ class SiteController extends Controller
 		// $pres = $this->obtainPto();
 		// $cc = $this->obtainCC();
 		// $dolar = $this->obtainDolar();
+            
 		$this->render('index');
 	}
 
@@ -111,6 +112,9 @@ class SiteController extends Controller
 				//$this->redirect(Yii::app()->user->returnUrl);
 				$this->redirect(array('site/index/'));
 		}
+                if(!Yii::app()->user->isGuest){
+                    $this->redirect(array('site/index/'));
+                }
 		// display the login form
 		$this->render('login',array('model'=>$model));
 	}

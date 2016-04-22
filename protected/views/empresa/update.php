@@ -7,7 +7,11 @@ $this->breadcrumbs=array(
 	$model->ID_EMPRESA=>array('view','id'=>$model->ID_EMPRESA),
 	'Modificar',
 );
-
+$this->menu=array(
+	//array('label'=>'Ver Documentos Contratista', 'url'=>array('index')),
+	array('label'=>'Administrar Empresas', 'url'=>array('admin')),
+	array('label'=>'Crear Empresas', 'url'=>array('create')),
+);
 
 
 ?>

@@ -19,6 +19,29 @@
 			$("#tb_valor_moneda").attr("readonly","readonly"); 
   		}
 
+  		$('#OrdenTrabajo_ID_CONTRATISTA').change(function(){
+  			var id = $(this).val();
+  			$.ajax({
+	            type: 'POST',
+	            url: '../RecepcionDocumentos/consultarEstadoDocumentos',
+	            data: {'id_cont':id},
+	            beforeSend: function (xhr) {
+	                if (xhr && xhr.overrideMimeType) {
+	                    xhr.overrideMimeType('application/json;charset=utf-8');
+	                }
+	            },
+	            dataType: 'json',
+	            success: function (data) {
+	                if(data!=''){
+	                    $('#msg_warnning').html(data);
+	                    $('#msg_warnning').css('display','block');
+	                }else{
+	                	$('#msg_warnning').css('display','none');
+	                }
+	            }
+	        });
+  		});
+
 	  	$('#cb_tipo_moneda').change(function(){
 	  		if ( $('#cb_tipo_moneda').val() == 1 ) {
 	  			$('#tb_valor_moneda').val("1");
@@ -42,11 +65,12 @@
 	        	$('#motivo_rechazo').show("fast");
 	        }
 	    });
-
-	  	 
-	  	
 	});
 </script>
+
+<div id="msg_warnning" class="alert alert-warning" style="display: none">
+    
+</div>
 
 <div class="form" style="min-width:800px; max-width:1000px;">
 
@@ -61,23 +85,24 @@
 	)); ?>
 
 		<div class="row">
-			<div class="span3">Campos con <span class="required">*</span> son obligatorios.</div>
-			<div style="background-color:blue; color:white;" class="span2"><strong>
+			<div class="row">Campos con <span class="required">*</span> son obligatorios.</div>
+			<br>
+			<div class="span5 alert-success" style="padding: 5px 10px;"><strong>
 				<?php if ($model->isNewRecord):
-								$usuario = Personal::model()->findByAttributes(array('RUT_PERSONA'=>Yii::app()->user->id));
-								echo 'Usuario Creador: '.@$usuario->NOMBRE_PERSONA." ".@$usuario->APELLIDO_PERSONA;
-							else:
-								$usuario = Personal::model()->findByAttributes(array('NOMBRE_PERSONA'=>$model->SOLICITANTE));
-								if (count($usuario) > 0):
-									$userName = $usuario->NOMBRE_PERSONA;
-									$userSecondName = $usuario->APELLIDO_PERSONA;
-									echo 'Creado por el usuario: '.$userName." ".$userSecondName;
-								endif;
-							endif;
+						$usuario = Personal::model()->findByAttributes(array('ID_PERSONA'=>Yii::app()->user->getState('identificador')));
+						echo 'Usuario Creador: '.@$usuario->NOMBRE_PERSONA." ".@$usuario->APELLIDO_PERSONA;
+					else:
+						$usuario = Personal::model()->findByAttributes(array('ID_PERSONA'=>$model->USUARIO_CREADOR));
+						if (count($usuario) > 0):
+							$userName = $usuario->NOMBRE_PERSONA;
+							$userSecondName = $usuario->APELLIDO_PERSONA;
+							echo 'Creado por el usuario: '.$userName." ".$userSecondName;
+						endif;
+					endif;
 				?></strong>
-				</div>
-				<div class="span1 ofset1">
-					<label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjuntar:</label>
+			</div>
+				<div class="span1">
+					<label> Adjuntar:</label>
 				</div>
 				<div class="span4">
 					<?php echo CHtml::activeFileField($model,'ARCHIVO_ADJUNTO',array('class'=>'span12')); ?>
@@ -91,61 +116,58 @@
 					                'itemCssClass'=>'item-test',
 					                'encodeLabel'=>false,
 					                'items' => array(
-					                        array('label' => '<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/attach.png" title="Ver Archivo" width="25" /> Ver Archivo', 'url' => "http://".$_SERVER["SERVER_NAME"].Yii::app()->request->baseUrl."/archivos/pdf/".$model->ARCHIVO_ADJUNTO),
+					                    array('label' => '<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/attach.png" title="Ver Archivo" width="25" /> Ver Archivo', 'url' => "http://".$_SERVER["SERVER_NAME"].Yii::app()->request->baseUrl."/archivos/pdf/".$model->ARCHIVO_ADJUNTO),
 					                ),
 					            ));
 						}
 					?>
 				</div>				
 		</div>
-
-		<br><br>
-
 		<hr>
-			<div class="row">
-				<div class="span3">
-					<?php echo $form->labelEx($model,'APLICA_IVA'); ?>
-					<?php echo $form->dropDownList($model,'APLICA_IVA', OrdenTrabajo::getTax()); ?>
-					<?php echo $form->error($model,'APLICA_IVA'); ?>
-				</div>
-				<div class="span3">
-					<?php echo $form->labelEx($model,'ID_TIPO_MONEDA'); ?>
-					<?php echo $form->dropDownList($model,'ID_TIPO_MONEDA', TipoMoneda::getTiposMoneda(), array('id'=>'cb_tipo_moneda')); ?>
-					<?php echo $form->error($model,'ID_TIPO_MONEDA'); ?>
-				</div>
-				<div class="span3">
-					<?php echo $form->labelEx($model,'VALOR_MONEDA'); ?>
-					<?php echo $form->textField($model,'VALOR_MONEDA',array('maxlength'=>13, 'class'=>'span12','id'=>'tb_valor_moneda')); ?>
-					<?php echo $form->error($model,'VALOR_MONEDA'); ?>
-				</div>
-				<div class="span2">
-					<?php echo $form->labelEx($model,'ID_TIPO_OT'); ?>
-					<?php echo $form->dropDownList($model,'ID_TIPO_OT', array(''=>'Tipo de OT')+CHtml::listData(TipoDeOT::model()->findAll(array('order'=>'NOMBRE_TIPO_OT DESC')),'ID_TIPO_OT', 'NOMBRE_TIPO_OT'), array( 'class'=>'span12')); ?>
-					<?php echo $form->error($model,'ID_TIPO_OT'); ?>
-				</div>
-			</div>
-		<hr>	
 		<div class="row">
 			<div class="span3">
-				<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
-				<?php echo $form->dropDownList($model,'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('empty'=> 'Indicar Empresa','id'=>'cb_empresaPres', 'class'=>'span12' )); ?>
-				<?php echo $form->error($model,'ID_EMPRESA'); ?>
+				<?php echo $form->labelEx($model,'APLICA_IVA'); ?>
+				<?php echo $form->dropDownList($model,'APLICA_IVA', OrdenTrabajo::getTax()); ?>
+				<?php echo $form->error($model,'APLICA_IVA'); ?>
 			</div>
 			<div class="span3">
+				<?php echo $form->labelEx($model,'ID_TIPO_MONEDA'); ?>
+				<?php echo $form->dropDownList($model,'ID_TIPO_MONEDA', TipoMoneda::getTiposMoneda(), array('id'=>'cb_tipo_moneda')); ?>
+				<?php echo $form->error($model,'ID_TIPO_MONEDA'); ?>
+			</div>
+			<div class="span3">
+				<?php echo $form->labelEx($model,'VALOR_MONEDA'); ?>
+				<?php echo $form->textField($model,'VALOR_MONEDA',array('maxlength'=>13, 'class'=>'span12','id'=>'tb_valor_moneda')); ?>
+				<?php echo $form->error($model,'VALOR_MONEDA'); ?>
+			</div>
+			<div class="span2">
+				<?php echo $form->labelEx($model,'ID_TIPO_OT'); ?>
+				<?php echo $form->dropDownList($model,'ID_TIPO_OT', array(''=>'Tipo de OT')+CHtml::listData(TipoDeOT::model()->findAll(array('order'=>'NOMBRE_TIPO_OT DESC')),'ID_TIPO_OT', 'NOMBRE_TIPO_OT'), array( 'class'=>'span12')); ?>
+				<?php echo $form->error($model,'ID_TIPO_OT'); ?>
+			</div>
+		</div>
+		<hr>	
+		<div class="row">
+<!--			<div class="span3">
+				<?php  // echo $form->labelEx($model,'ID_EMPRESA'); ?>
+				<?php //echo $form->dropDownList($model,'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('empty'=> 'Indicar Empresa','id'=>'cb_empresaPres', 'class'=>'span12' )); ?>
+				<?php // echo $form->error($model,'ID_EMPRESA'); ?>
+			</div>-->
+			<div class="span3">
 				<?php echo $form->labelEx($model,'ID_CONTRATISTA'); ?>
-				<?php echo $form->dropDownList($model,'ID_CONTRATISTA', array(''=>'Indicar Detalle')+CHtml::listData(Contratista::model()->findAll(), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA'), array('class'=>'span12' )); ?>
+				<?php echo $form->dropDownList($model,'ID_CONTRATISTA', array(''=>'Indicar Contratista')+CHtml::listData(Contratista::model()->findAll(), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA'), array('class'=>'span12' )); ?>
 				<?php echo $form->error($model,'ID_CONTRATISTA'); ?>
 			</div>
 			<div class="span3">
 				<?php echo $form->labelEx($model,'SUPERVISOR'); ?>
-				<?php echo $form->dropDownList($model,'SUPERVISOR', CHtml::listData(Personal::model()->findAll("ES_SUPERVISOR=1"), 'ID_PERSONA', 'NOMBRE_PERSONA'), array('empty'=>'Indicar Supervisor','class'=>'span12' )); ?>
+				<?php echo $form->dropDownList($model,'SUPERVISOR',$this->getSupervisor(), array('empty'=>'Indicar Supervisor','class'=>'span12' )); ?>
 				<?php echo $form->error($model,'SUPERVISOR'); ?>
 			</div>
 			
 		</div>
 
 		<div class="row">
-			<div class="span4">
+			<div class="span3">
 				<?php echo $form->labelEx($model,'SOLICITANTE'); ?>
 				<?php echo $form->dropDownList($model, 'SOLICITANTE', 
 							Personal::getPersonal(),
@@ -162,7 +184,14 @@
 			</div>
 			<div class="span3">
 				<?php echo $form->labelEx($model,'ID_DEPARTAMENTO'); ?>
-				<?php echo $form->dropDownList($model,'ID_DEPARTAMENTO', array()); ?>
+				<?php 
+					$lista_dep = array();
+					if(isset($model->ID_DEPARTAMENTO)){
+						$id_dep = intval($model->ID_DEPARTAMENTO); 
+		                $lista_dep = CHtml::listData(Departamentos::model()->findAllByAttributes(array('ID_DEPARTAMENTO'=>$id_dep)),'ID_DEPARTAMENTO','NOMBRE_DEPARTAMENTO');
+		            } 
+					echo $form->dropDownList($model,'ID_DEPARTAMENTO', $lista_dep); 
+				?>
 				<?php echo $form->error($model,'ID_DEPARTAMENTO'); ?>
 			</div>
 			<div class="span2">
@@ -262,7 +291,7 @@
 		<?php }?>
 		<div class="row">
 			<div class="span3" style="margin-top: 25px;">
-				<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Guardar', array('class'=>'offset1 btn btn-primary', 'name' => 'submit_ot')); ?>		
+				<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Guardar', array('class'=>'offset1 btn btn-success', 'name' => 'submit_ot')); ?>		
 			</div>	
 		</div>
 

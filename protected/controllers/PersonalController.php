@@ -35,7 +35,11 @@ class PersonalController extends Controller
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update','admin','delete','index','view','viewPersonal','updatePersonal'),
-				'expression'=>'$user->A1() || $user->JDP()',
+				'expression'=>'$user->A1()',
+			),
+			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+				'actions'=>array('viewPersonal','updatePersonal'),
+				'expression'=>'$user->ADM() || $user->JDP()||$user->GG()||$user->GOP()',
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -86,6 +90,7 @@ class PersonalController extends Controller
 			if( $valid )
 			{	
 				$model->save();
+				Auditoria::model()->registrarAccion('', null ,"Nueva persona: ".$model->RUT_PERSONA.", Es usuario: ".$model->ES_USUARIO.", Aprueba Docs: ".$model->APRUEBA_DOCS);
 				if ($model->ES_USUARIO==1) {
 					$usuario->ID_PERSONA = $model->ID_PERSONA;
 					$usuario->CONTRASENA = md5($usuario->CONTRASENA);
@@ -115,11 +120,23 @@ class PersonalController extends Controller
              $model= $this->loadModel($id);
              if(Yii::app()->user->id!=$id)
                        throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
+             $filename=$model->ID_PERSONA. ".jpg";
+             $model->URL_FIRMA = $filename;
             if(isset($_POST['Personal'])){
                 $model->attributes=$_POST['Personal'];
-                if($model->save())
+                $model->_firma=CUploadedFile::getInstance($model,'_firma');
+                $filename=$id. ".jpg";
+                if($model->save()){
+                    if(!empty($model->_firma)){
+                        try{
+                           $model->URL_FIRMA = $filename;
+                           $model->_firma->saveAs(Yii::app()->basePath.'/../archivos/personal/'.$filename);
+                   }catch(Exception $e){
+                        echo "No se ha logrado actualizar la cuenta ";
+                   }
+				}   
                     $this->redirect(array('viewPersonal','id'=>$model->ID_PERSONA));
-                    
+                }
             }
             $this->render('updatePersonal',array(
 			'model'=>$model,
@@ -158,6 +175,7 @@ class PersonalController extends Controller
 			if( $valid )
 			{	
 				$model->save();
+				Auditoria::model()->registrarAccion('', null ,"Nueva persona: ".$model->RUT_PERSONA.", Es usuario: ".$model->ES_USUARIO.", Aprueba Docs: ".$model->APRUEBA_DOCS);
 				if ($model->ES_USUARIO==1) {
 					$pwd = $usuario->CONTRASENA;
 					if(isset($usuario->CONTRASENA) && ($usuario->CONTRASENA != '')){
@@ -214,9 +232,33 @@ class PersonalController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$model=$this->loadModel($id);
-		Auditoria::model()->registrarAccion('', $model->ID_PERSONA , $model->NOMBRE_PERSONA);
-		$model->delete();
+		$user_creador = OrdenTrabajo::model()->findByAttributes(array('USUARIO_CREADOR'=>$id));
+		$solicitante = OrdenTrabajo::model()->findByAttributes(array('SOLICITANTE'=>$id));
+		$supervisor = OrdenTrabajo::model()->findByAttributes(array('SUPERVISOR'=>$id));
+
+		$msg ="No se pudo eliminar ya que está se encuentra como ";
+
+		if (count($user_creador) > 0) {
+			$msg.= "creador de una Ot ";
+		}elseif (count($solicitante) > 0) {
+			$msg.= "solicitante de una Ot ";
+		}elseif (count($supervisor) > 0) {
+			$msg.= "supervisor de una Ot";
+		}
+		
+		try{
+			$this->loadModel($id)->delete();
+			Auditoria::model()->registrarAccion('', $model->ID_PERSONA , $model->NOMBRE_PERSONA);
+			if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('success','Persona eliminada correctamente');
+		    else
+		        echo "<div class='alert alert-success'>Persona eliminada correctamente</div>";
+		}catch(CDbException $e){
+		    if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('error',$msg);
+		    else
+		        echo "<div class='alert alert-danger'>".$msg."</div>";
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

@@ -29,13 +29,12 @@ $('.search-form form').submit(function(){
 <?php 
   	Yii::app()->clientScript->registerScript('detallesOT', 
   	"
-	jQuery(document).on('hover', '.mas_icon', function() {
-    	//$('#presupuesto-grid > table > tbody > tr').hover(function () {
-    	var id = $(this).parent().parent().find('td:first').text();
-        // var id = $(this).find('td:first').text();
+	//jQuery(document).on('hover', '.mas_icon', function() {
+    	$('#presupuesto-grid > table > tbody > tr .mas_icon').hover(function () {
+    	//var id = $(this).parent().parent().find('td:first').text();
+        var id = $(this).find('td:first').text();
         // var row = $(this).find('td:first');
-
-         $.ajax({
+        $.ajax({
 		  	type: 'POST',
 		 	url: 'viewOt',
 		  	data: {'id_ot':id},
@@ -46,9 +45,9 @@ $('.search-form form').submit(function(){
 		 	},
 			dataType: 'json',
 			success: function (data) {
-				$('.mas_icon').attr('data-toggle', 'tooltip');
-				$('.mas_icon').attr('title', data);
-				$('.mas_icon').tooltip();
+				$(this).attr('data-toggle', 'tooltip');
+				$(this).attr('title', data);
+				$(this).tooltip();
 		  	}
 		});
     });
@@ -177,7 +176,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('width' =>	'10%'),
+				'htmlOptions'=>array('width' =>	'10%', 'align'=>'center'),
 			),
 			array(
 				'name'=>'VOBO_ADMIN',
@@ -185,7 +184,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('width' =>	'10%'),
+				'htmlOptions'=>array('width' =>	'10%', 'align'=>'center'),
 			),
 			
 			array(
@@ -194,7 +193,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				//'htmlOptions'=>array('width' =>	'10%'),
+				'htmlOptions'=>array('align'=>'center'),
 			),
 			array(
 				'name'=>'VOBO_GERENTE_GRAL',
@@ -202,7 +201,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				//'htmlOptions'=>array('width' =>	'10%'),
+				'htmlOptions'=>array('align'=>'center'),
 			),
 			
 		
@@ -212,15 +211,15 @@ $('.search-form form').submit(function(){
 				'htmlOptions'=>array('width' =>	'10%'),
 			),*/
 			
-                            array(
-                                   'name' => 'check',
-                                   'header'=>'Seleccionar',
-                                   'id' => 'selectedIds',
-                                   'value' => '$data->ID_OT',
-                                   'class' => 'CCheckBoxColumn',
-                                   'selectableRows' => '100',
-
-                               ),
+            array(
+                   'name' => 'check',
+                   'header'=>'Seleccionar',
+                   'id' => 'selectedIds',
+                   'value' => '$data->ID_OT',
+                   'class' => 'CCheckBoxColumn',
+                   'selectableRows' => '100',
+                   'htmlOptions'=>array('align'=>'center'),
+               ),
 			array(	'class'=>'CButtonColumn',
 					'template'=>'{more}{view}{update}{delete}',
 					'header'=>'Opciones',
@@ -264,14 +263,15 @@ $('.search-form form').submit(function(){
         "type" => "post",
         "data" => 'js:{theIds : $.fn.yiiGridView.getChecked("presupuesto-grid","selectedIds").toString()}',
         "success" => 'js:function(data){ $.fn.yiiGridView.update("guide-grid"); location.reload();  }' ),array(
-        'class' => 'btn btn-primary'
+        'class' => 'btn btn-success'
         )
         );
+    echo "  ";
     echo CHtml::ajaxLink("Marcar como Pendiente", $this->createUrl('ordenTrabajo/CambiarPendiente'), array(
         "type" => "post",
         "data" => 'js:{theIds : $.fn.yiiGridView.getChecked("presupuesto-grid","selectedIds").toString()}',
         "success" => 'js:function(data){ $.fn.yiiGridView.update("guide-grid"); location.reload();  }' ),array(
-        'class' => 'btn btn-primary'
+        'class' => 'btn btn-warning'
         )
         );
 

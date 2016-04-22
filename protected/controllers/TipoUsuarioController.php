@@ -68,7 +68,7 @@ class TipoUsuarioController extends Controller
 			if($model->save())
 			{
 				Auditoria::model()->registrarAccion('', 0 , $model->COD_TIPO_USUARIO.", nombre=".$model->NOMBRE_TIPO_USUARIO);
-				$this->redirect(array('view','id'=>$model->COD_TIPO_USUARIO));
+				$this->redirect(array('admin'));
 			}
 		}
 
@@ -82,9 +82,9 @@ class TipoUsuarioController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($ids)
 	{
-		$model=$this->loadModel($id);
+		$model=$this->loadModel($ids);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -95,7 +95,7 @@ class TipoUsuarioController extends Controller
 			if($model->save())
 			{
 				Auditoria::model()->registrarAccion('', 0 , $model->COD_TIPO_USUARIO.", nombre=".$model->NOMBRE_TIPO_USUARIO);
-				$this->redirect(array('view','id'=>$model->COD_TIPO_USUARIO));
+				$this->redirect(array('admin'));
 			}
 		}
 
@@ -109,11 +109,30 @@ class TipoUsuarioController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id)
+	public function actionDelete($ids)
 	{
-		$model=$this->loadModel($id);
-		Auditoria::model()->registrarAccion('', 0 , $model->COD_TIPO_USUARIO.", nombre=".$model->NOMBRE_TIPO_USUARIO);
-		$model->delete();
+		$usuarios = Usuarios::model()->findAllByAttributes(array('COD_TIPO_USUARIO'=>$ids));
+
+		$msg ="No se pudo eliminar ya que tiene ";
+
+		if (count($usuarios) > 0) {
+			$msg.= "personas asociados";
+		}
+		try{
+			//$model = TipoUsuario::model()->findByAttributes(array('COD_TIPO_USUARIO'=>$ids));
+			$model=$this->loadModel($ids);
+			$model->delete();
+			Auditoria::model()->registrarAccion('', 0 , $model->COD_TIPO_USUARIO.", nombre=".$model->NOMBRE_TIPO_USUARIO);
+			if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('success','Tipo Usuario eliminado correctamente');
+		    else
+		        echo "<div class='alert alert-success'>Tipo Usuario eliminado correctamente</div>";
+		}catch(CDbException $e){
+		    if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('error',$msg);
+		    else
+		        echo "<div class='alert alert-danger'>".$msg."</div>";
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

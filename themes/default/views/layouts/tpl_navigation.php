@@ -36,12 +36,11 @@
                     'encodeLabel'=>false,
                     'items'=>array(
                         array('label'=>'Inicio', 'url'=>array('/site/index'),'visible'=>!Yii::app()->user->isGuest),
-                        
                         //menú de Ingreso de Documentos
                         array('label'=>'Documentos <span class="caret"></span>', 'url'=>'#','visible'=>!Yii::app()->user->isGuest,'itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array(
-                              array('label'=>'Ordenes de Trabajo <span class="badge badge-success">'. OrdenTrabajo::model()->getNumberOTA().'</span> <span class="badge badge-warning">'.  OrdenTrabajo::model()->getNumberOTP() .'</span>', 'url'=>array('ordenTrabajo/admin')),
-                            array('label'=>'Insumos', 'url'=>array('insumosOT/admin')), //'visible'=>Yii::app()->user->A1()),
+                             array('label'=>'Ordenes de Trabajo <span class="badge badge-success">'. OrdenTrabajo::model()->getNumberOTA().'</span> <span class="badge badge-warning">'.  OrdenTrabajo::model()->getNumberOTP() .'</span>', 'url'=>array('ordenTrabajo/admin')),
+                            //array('label'=>'Insumos', 'url'=>array('insumosOT/admin')), //'visible'=>Yii::app()->user->A1()),
                         )),
 
                         array('label'=>'Contratistas <span class="caret"></span>', 'url'=>'#','visible'=>Yii::app()->user->PR(),'itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
@@ -58,6 +57,7 @@
                              //'visible'=>!Yii::app()->user->isGuest), // Yii::app()->user->A1()||Yii::app()->user->SG()||Yii::app()->user->JP()||Yii::app()->user->GE()),
                             array('label'=>'Departamentos', 'url'=>array('departamentos/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG() ),
                             array('label'=>'Documentos Contratistas' , 'url'=>array('documentosContratista/admin')),
+                            array('label'=>'Recepcion Documentos' , 'url'=>array('recepcionDocumentos/admin')),
                             array('label'=>'Empresa', 'url'=>array('empresa/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG() ),
                             array('label'=>'Personal', 'url'=>array('personal/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG()),
                             array('label'=>'Tipos de OT', 'url'=>array('tipoDeOT/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG()),

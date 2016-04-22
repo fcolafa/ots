@@ -27,7 +27,15 @@ $('.search-form form').submit(function(){
 ?>
 
 <h2 class="text-center">Administrar Departamentos</h2>
-
+<div id="statusMsg">
+	<?php if(Yii::app()->user->hasFlash('success')):?>
+	        <?php echo Yii::app()->user->getFlash('success'); ?>
+	<?php endif; ?>
+	 
+	<?php if(Yii::app()->user->hasFlash('error')){ ?>
+	        <?php echo Yii::app()->user->getFlash('error'); ?>
+	<?php } ?>
+</div>
 <!--
 <p>
 You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
@@ -54,11 +62,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 			),
 		
 		array('class'=>'CButtonColumn',
-						'template'=>'{view}{update}{delete}',
-						'buttons'=>array(
-								'update' => array('visible'=> 'Yii::app()->user->A1()'),
-								'delete' => array('visible'=> 'Yii::app()->user->A1()'),
-   							),
+			'template'=>'{view}{update}{delete}',
+			'buttons'=>array(
+					'update' => array('visible'=> 'Yii::app()->user->A1()'),
+					'delete' => array('visible'=> 'Yii::app()->user->A1()'),
+					),
+			'afterDelete'=>'function(link,success,data){ 
+				if(success){
+					$("#statusMsg").html(data);
+					$("#statusMsg .alert-danger, .alert-success").animate({opacity: 1.0}, 3000).fadeOut("slow");
+				} 
+			}',
 		),
 	),
 )); ?>

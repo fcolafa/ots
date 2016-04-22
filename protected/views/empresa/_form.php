@@ -66,13 +66,16 @@
 		<?php echo CHtml::activeFileField($model,'image'); ?>
 		<?php echo $form->error($model,'image'); ?>
 	</div>
-	<?php if($model->isNewRecord!='1'){?>
+	<div class="row">
+	<?php if($model->isNewRecord!='1'){ ?>
 		<div class="row">
-			<?php echo CHtml::image(Yii::app()->request->baseUrl."/archivos/empresas/".$model->URL_LOGO,'URL_LOGO',array("width"=>200)); }?> 
+			<?php echo CHtml::image(Yii::app()->request->baseUrl."/archivos/empresas/".$model->URL_LOGO,'URL_LOGO',array("width"=>200)); ?> 
 		</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary offset1')); ?>
+	<?php } ?>
+	</div>
+	<br>
+	<div class="row">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

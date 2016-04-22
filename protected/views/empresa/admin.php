@@ -7,6 +7,10 @@ $this->breadcrumbs=array(
 	'Administrar',
 );
 
+$this->menu=array(
+	//array('label'=>'Ver Documentos Contratista', 'url'=>array('index')),
+	array('label'=>'Crear Empresas', 'url'=>array('create')),
+);
 
 
 Yii::app()->clientScript->registerScript('search', "

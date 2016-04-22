@@ -90,4 +90,8 @@ class TipoDocumento extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public static function getDocumentos(){
+		return CHtml::listData(TipoDocumento::model()->findAll(), 'ID_TIPO_DOC', 'NOMBRE_DOC' );
+	}
 }

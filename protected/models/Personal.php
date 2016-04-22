@@ -93,6 +93,7 @@ class Personal extends CActiveRecord
 			'ESTADO_TRABAJADOR' => 'Estado Trabajador',
                         '_company'=>'Empresa',
                         'URL_FIRMA' => 'Url Firma',
+                        '_firma' => 'Firma',
 		);
 	}
 
@@ -150,6 +151,8 @@ class Personal extends CActiveRecord
 	}
 
 	public static function getPersonal(){
-		return CHtml::listData(Personal::model()->findAll(), 'ID_PERSONA', 'NOMBRE_PERSONA' );
+                $criteria=new CDbCriteria();
+                $criteria->condition="ID_EMPRESA=".Yii::app()->getSession()->get('id_empresa');
+		return CHtml::listData(Personal::model()->findAll($criteria), 'ID_PERSONA', 'NOMBRE_PERSONA' );
 	}
 }

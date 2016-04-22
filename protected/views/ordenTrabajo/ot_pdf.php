@@ -84,9 +84,9 @@
 						<tr class="table-bordered">
 							<td class="text-right"><small><?=$det->NUMERO_SUB_ITEM.". "?></small></td>
 							<td><small><?=$det->NOMBRE_SUB_ITEM ?></small></td>
-							<td class="text-right"><small><?=$det->CANTIDAD?></small></td>
+							<!--<td class="text-right"><small><?//=@$det->CANTIDAD?></small></td>-->
 							<td class="text-right"><small><?=number_format($det->COSTO_CONTRATISTA,0,',','.')?></small></td>
-							<td class="text-right"><small><?=@number_format($det->FACTURA,0,',','.')?></small></td>
+							<td class="text-right"><small><?=@number_format($det->NRO_COTIZACION,0,',','.')?></small></td>
 						</tr>
 						<?php $neto += $det->COSTO_CONTRATISTA;
 						endforeach; 
@@ -124,10 +124,11 @@
 			<br>
 			<table width="800px">
 				<tr>
-					<td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento</td><td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
+                                    <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento<br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
+                                        <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
 				</tr>
 				<tr>
-					<td width='20%' class="bordered"><br><br><br><br></td><td width='20%' class="bordered"><br><br><br><br></td><td width='20%' class="bordered"><br><br><br><br></td>
+					<td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG)?></td>
 				</tr>
 				<tr>
 					<td width='20%' class="bordered h7 text-center"> V°B° Administrador</td><td width='20%' class="bordered h7 text-center">V°B° G.OP.</td><td width='20%' class="bordered h7 text-center">V°B° G.G</td>
@@ -140,11 +141,38 @@
 
 
 <style type="text/css">
+    .firma{
+    text-align: center;
+}
+.firma img{
+    height:auto; 
+    width:90px;
+}
   .table-bordered th, .table-bordered td, .table-bordered{border:1px solid #0B0B3B !important;} .bordered{border:1px solid #0B0B3B !important;}
   table {border-spacing:0; border-collapse:collapse;}
   .text-left{text-align:left;} .text-right{text-align: right;} .text-center{text-align: center;}
 	h1{font-size:30px;} h2{font-size:24px;} h3{font-size: 18px;} h4{font-size:14px;} h5{font-size: 12px;} h6{font-size: 10px;} .h7{font-size: 8px;} 
-	h1 small, h2 small, h3 small, h4 small, h5 small, h6 small{font-weight:normal !important;} 
-	.logo {background-image:url('<?=$_SERVER["SERVER_NAME"]."/../themes/default/img/icons/logoastilleros.png"?>'); background-repeat:no-repeat;	background-position: 10px 15px; background-size: 60px 60px;}
+	h1 small, h2 small, h3 small, h4 small, h5 small, h6 small{font-weight:normal !important;}
+        div.firma{
+    text-align: center;
+}
+
+div.firma{
+    text-align: center;
+}
+div.firma img{
+    height:auto; 
+    width:900px;
+}
+/*.firma img{
+    height:auto; 
+    width:90px;
+}
+.firma p{
+    font-size:10px;
+    font-weight: bold; 
+    font-style: italic;
+}*/
+	.logo {background-image:url('<?=$_SERVER["SERVER_NAME"]."/../archivos/empresas/".Yii::app()->getSession()->get('id_empresa').'.jpg'?>'); background-repeat:no-repeat;	background-position: 10px 15px; background-size: 60px 60px;}
 
 </style>

@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 $this->menu=array(
 //	array('label'=>'Presupuesto', 'url'=>array('index')),
 	array('label'=>'Crear Orden de Trabajo', 'url'=>array('create'), 'visible'=>Yii::app()->user->JDP()||Yii::app()->user->ADM() || Yii::app()->user->A1()),
-//	array('label'=>'Ver Presupuestos', 'url'=>array('view', 'id'=>$model->ID_OT)),
+	array('label'=>'Ver OT', 'url'=>array('view', 'id'=>$model->ID_OT)),
 	array('label'=>'Administrar Orden de Trabajo', 'url'=>array('admin')),
 );
 ?>

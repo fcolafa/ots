@@ -51,7 +51,7 @@ return array(
          
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-                        'showScriptName'=>false,
+            'showScriptName'=>false,
 			'rules'=>array(
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
@@ -64,7 +64,7 @@ return array(
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=ordenes_trabajo',
+			'connectionString' => 'mysql:host=localhost;dbname=admin_ordenes_trabajo',
 			'emulatePrepare' => true,
 			'username' => 'ast',
 			//'username' => 'root',
@@ -77,7 +77,7 @@ return array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
-		'log'=>array(
+		/*'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
 				array(
@@ -91,7 +91,7 @@ return array(
 				),
 				
 			),
-		),
+		),*/
 	),
 
 	// application-level parameters that can be accessed

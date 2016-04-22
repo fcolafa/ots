@@ -18,6 +18,7 @@ class Recepciondocumentos extends CActiveRecord
 {
 	public $contratista;
 	public $documento;
+	public $estado;
 	/**
 	 * @return string the associated database table name
 	 */

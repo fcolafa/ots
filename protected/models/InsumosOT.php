@@ -33,14 +33,14 @@ class InsumosOT extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('ID_OT, NUMERO_SUB_ITEM, NOMBRE_SUB_ITEM, COSTO_CONTRATISTA, ID_CENTRO_COSTO', 'required'),
-			array('ID_INSUMOS_OT, ID_OT, ID_CENTRO_COSTO', 'numerical', 'integerOnly'=>true),
+			array('ID_INSUMOS_OT, ID_OT, ID_CENTRO_COSTO, ID_CCC, ID_SEC, ID_SCC', 'numerical', 'integerOnly'=>true),
 			array('NUMERO_SUB_ITEM', 'length', 'max'=>6),
 			array('NOMBRE_SUB_ITEM', 'length', 'max'=>150),
 			array('COSTO_CONTRATISTA', 'length', 'max'=>10),
 			array('NRO_COTIZACION', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ID_INSUMOS_OT, ID_OT, NUMERO_SUB_ITEM, NOMBRE_SUB_ITEM, COSTO_CONTRATISTA, NRO_COTIZACION', 'safe', 'on'=>'search'),
+			array('ID_CCC, ID_SEC, ID_SCC, ID_INSUMOS_OT, ID_OT, NUMERO_SUB_ITEM, NOMBRE_SUB_ITEM, COSTO_CONTRATISTA, NRO_COTIZACION', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,6 +54,9 @@ class InsumosOT extends CActiveRecord
 		return array(
 			'iDOT' => array(self::BELONGS_TO, 'OrdenTrabajo', 'ID_OT'),
 			'centroCosto' => array(self::BELONGS_TO, 'CentroDeCostos', 'ID_CENTRO_COSTO'),
+                        'iDCCC' => array(self::BELONGS_TO, 'Ccc', 'ID_CCC'),
+			'iDSCC' => array(self::BELONGS_TO, 'Scc', 'ID_SCC'),
+			'iDSEC' => array(self::BELONGS_TO, 'Sec', 'ID_SEC'),
 		);
 	}
 
@@ -97,6 +100,9 @@ class InsumosOT extends CActiveRecord
 		$criteria->compare('NOMBRE_SUB_ITEM',$this->NOMBRE_SUB_ITEM,true);
 		$criteria->compare('COSTO_CONTRATISTA',$this->COSTO_CONTRATISTA,true);
 		$criteria->compare('NRO_COTIZACION',$this->NRO_COTIZACION,true);
+                $criteria->compare('ID_CENTRO_COSTO',$this->ID_CENTRO_COSTO);
+		
+		$criteria->compare('ID_SUB_CENTRO_COSTO',$this->ID_SUB_CENTRO_COSTO);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

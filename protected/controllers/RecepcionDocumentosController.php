@@ -29,7 +29,7 @@ class RecepciondocumentosController extends Controller
 		return array(
 			//CRUD
 			array('allow',
-				'actions'=>array('create','update','admin','delete','index','view'),
+				'actions'=>array('create','update','admin','delete','index','view','aprobarDocumentos','cambiarPendiente','consultarEstados','consultarEstadoDocumentos'),
 				'expression'=>'$user->ADM() || $user->A1()',
 			),	
 			array('deny',
@@ -37,7 +37,61 @@ class RecepciondocumentosController extends Controller
 			),
 		);
 	}
+
+	public function actionConsultarEstadoDocumentos(){
+		$id = $_POST['id_cont'];
+		$sql = "SELECT ID_RECEPCION, NOMBRE_CONTRATISTA, NOMBRE_DOCUMENTO, FECHA_RECEPCION FROM (recepcion_documentos r INNER JOIN contratista c ON r.ID_CONTRATISTA=c.ID_CONTRATISTA) INNER JOIN documentos_contratista d ON r.ID_DOCUMENTO=d.ID_DOCUMENTO WHERE r.ESTADO=0 and r.FECHA_RECEPCION < CURDATE() AND c.ID_CONTRATISTA=".$id;
+		$pendientes =  Yii::app()->db->createCommand($sql)->queryAll();
+
+		$t = '';
+		if(count($pendientes) > 0){
+			$t.='<strong>Documentos Contratistas Pendientes</strong>';
+			$t.='<ul>';
+			foreach($pendientes as $item){
+				$t.='<li>'.$item['NOMBRE_CONTRATISTA']." falta entregar ".$item['NOMBRE_DOCUMENTO'].", fecha de recepción programada: ".$item['FECHA_RECEPCION'].'</li>';
+			}
+			$t.='</ul>';
+		}
+		echo CJSON::encode($t);
+	}
+
+	public function actionConsultarEstados(){
+		$sql = "SELECT ID_RECEPCION, NOMBRE_CONTRATISTA, NOMBRE_DOCUMENTO, FECHA_RECEPCION FROM (recepcion_documentos r INNER JOIN contratista c ON r.ID_CONTRATISTA=c.ID_CONTRATISTA) INNER JOIN documentos_contratista d ON r.ID_DOCUMENTO=d.ID_DOCUMENTO WHERE r.ESTADO=0 and r.FECHA_RECEPCION < CURDATE()";
+		$pendientes =  Yii::app()->db->createCommand($sql)->queryAll();
+
+		$t = '';
+		if(count($pendientes) > 0){
+			$t.='<strong>Documentos Contratistas Pendientes</strong>';
+			$t.='<ul>';
+			foreach($pendientes as $item){
+				$t.='<li>'.$item['NOMBRE_CONTRATISTA']." falta entregar ".$item['NOMBRE_DOCUMENTO'].", fecha de recepción programada: ".$item['FECHA_RECEPCION'].'</li>';
+			}
+			$t.='</ul>';
+		}
+		echo CJSON::encode($t);
+	}
+
+	public function actionAprobarDocumentos(){
+		$orden = explode(',', $_POST['theIds']);
+        if(!empty($_POST['theIds'])){
+	        foreach($orden as $doc){
+	        	$model = Recepciondocumentos::model()->findByPk($doc);
+	        	$model->ESTADO = 1;
+	        	$model->save();
+	        }
+	    }
+	}
 	
+	public function actionCambiarPendiente(){
+		$orden = explode(',', $_POST['theIds']);
+        if(!empty($_POST['theIds'])){
+	        foreach($orden as $doc){
+	        	$model = Recepciondocumentos::model()->findByPk($doc);
+	        	$model->ESTADO = 0;
+	        	$model->save();
+	        }
+	    }
+	}
 
 	/**
 	 * Displays a particular model.
@@ -81,27 +135,22 @@ class RecepciondocumentosController extends Controller
 		{
 			$fecha=$_POST['Recepciondocumentos']['FECHA_RECEPCION'];
 			//print_r($_POST['documento']);
-			//die();
+			//die(print_r($_POST['documento']));
 			//$model->attributes=$_POST['Recepciondocumentos'];
+			$msg = "";
 			foreach ($_POST['documento'] as $value) {
 				$datos=explode(",", $value);
-
-			$model=new Recepciondocumentos;
-			$model->FECHA_RECEPCION=$fecha;
-			$model->ID_CONTRATISTA=(int)$datos[0];
-			$model->ID_DOCUMENTO=(int)$datos[1];
-			$model->ESTADO=0;
-			$model->save();
-			if($model->save())
-			{
-				Auditoria::model()->registrarAccion('', $model->ID_RECEPCION , $model->FECHA_RECEPCION.", ID contratista=".$model->ID_CONTRATISTA);
-				$this->redirect(array('admin','id'=>$model->ID_CONTRATISTA));
-				
-				//$this->redirect(array('view','id'=>$model->ID_RECEPCION));
+				$msg.=$datos[0]."-".$datos[1]."\n";
+				$model=new Recepciondocumentos;
+				$model->FECHA_RECEPCION=$fecha;
+				$model->ID_CONTRATISTA=(int)$datos[0];
+				$model->ID_DOCUMENTO=(int)$datos[1];
+				$model->ESTADO=0;
+				if($model->save()){
+					Auditoria::model()->registrarAccion('', $model->ID_RECEPCION , $model->FECHA_RECEPCION.", ID contratista=".$model->ID_CONTRATISTA);
+				}
 			}
-			}
-			
-			
+			$this->redirect(array('admin'));
 		}
 		$this->render('create',array(
 			'model'=>$model,
@@ -110,12 +159,25 @@ class RecepciondocumentosController extends Controller
 		));
 	}
 
+	public function actionUpdate($id){
+		$model=$this->loadModel($id);
+		if(isset($_POST['Recepciondocumentos']))
+		{
+			$model->attributes=$_POST['Recepciondocumentos'];
+			if($model->save())
+				$this->redirect(array('admin'));
+		}
+		$this->render('update',array(
+			'model'=>$model,
+		));
+	}
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	/*public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
 
@@ -144,20 +206,20 @@ class RecepciondocumentosController extends Controller
 			}
 				//$this->redirect(array('view','id'=>$model->ID_RECEPCION));
 			
-		}
+		}*/
 		/*if(isset($_POST['Recepciondocumentos']))
 		{
 			$model->attributes=$_POST['Recepciondocumentos'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->ID_RECEPCION));
 		}*/
-
+/*
 		$this->render('update',array(
 			'model'=>$model,
 			'model_contratista'=>$model_contratista,
 			'model_documentos'=>$model_documentos,
 		));
-	}
+	}*/
 
 	/**
 	 * Deletes a particular model.
@@ -191,8 +253,8 @@ class RecepciondocumentosController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Recepciondocumentos('search');
-		$detalle = Recepciondocumentos::model()->findAll(array('select'=>'ID_CONTRATISTA,FECHA_RECEPCION,ID_DOCUMENTO', 'order'=>'FECHA_RECEPCION DESC, ID_CONTRATISTA, ID_DOCUMENTO'));
+		$model=new RecepcionDocumentos('search');
+		$detalle = RecepcionDocumentos::model()->findAll(array('select'=>'ID_CONTRATISTA,FECHA_RECEPCION,ID_DOCUMENTO', 'order'=>'FECHA_RECEPCION DESC, ID_CONTRATISTA, ID_DOCUMENTO'));
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Recepciondocumentos']))
 			$model->attributes=$_GET['Recepciondocumentos'];

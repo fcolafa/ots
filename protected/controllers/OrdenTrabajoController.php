@@ -29,13 +29,13 @@ class OrdenTrabajoController extends Controller
 		return array(
 			//R
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','admin'),
+				'actions'=>array('index','view','admin','SelectCuentas','selectSubCentros','selectSecciones'),
 				//grupo 
 				//'expression'=>'$user->U2()',
 			),
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','viewPDF','viewOt','delete','aprobarOt','CambiarPendiente'),
+				'actions'=>array('create','update','admin','viewPDF','viewOt','delete','aprobarOt','CambiarPendiente','aprobarOtView'),
 				'expression'=>'$user->A1() || $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()',
 			),
 			array('deny',  // deny all users
@@ -43,6 +43,59 @@ class OrdenTrabajoController extends Controller
 			),
 		);
 	}
+
+	public function actionSelectCuentas(){
+		$id_cc = $_POST['InsumosOT']['ID_CENTRO_COSTO'];
+                $criteria = new CDbCriteria();
+		$criteria->condition = "ID_CENTRO_COSTO=:id_cc";
+		$criteria->params = array(':id_cc' => $id_cc);
+		$criteria->order = 'NUMERO_CUENTA ASC';
+        //$lista = SubCentroCosto::model()->findAll('ID_CENTRO_COSTO=:id_cc',array(':id_cc'=>$id_cc));
+        $lista = Ccc::model()->findAll($criteria);
+        $lista = CHtml::listData($lista,'ID_CCC','NUMERO_CUENTA');
+        
+        echo CHtml::tag('option', array('value' => ''), 'Seleccione', true);
+        
+        foreach ($lista as $valor => $descripcion){
+            echo CHtml::tag('option',array('value'=>$valor),CHtml::encode($descripcion), true );
+        }	
+	}
+
+	public function actionSelectSubCentros()
+    {
+        $id_ccc = $_POST['InsumosOT']['ID_CCC'];
+        $criteria = new CDbCriteria();
+		$criteria->condition = "ID_CCC=:id_ccc";
+		$criteria->params = array(':id_ccc' => $id_ccc);
+		$criteria->order = 'SCC_NUMERO';
+        //$lista = SubCentroCosto::model()->findAll('ID_CENTRO_COSTO=:id_cc',array(':id_cc'=>$id_cc));
+        $lista = Scc::model()->findAll($criteria);
+        $lista = CHtml::listData($lista,'ID_SCC','SCC_NUMERO');
+        
+        echo CHtml::tag('option', array('value' => ''), 'Seleccione', true);
+        
+        foreach ($lista as $valor => $descripcion){
+            echo CHtml::tag('option',array('value'=>$valor),CHtml::encode($descripcion), true );
+        }
+    }
+
+    public function actionSelectSecciones()
+    {
+        $id_sub_cc = $_POST['InsumosOT']['ID_SCC'];
+        $criteria = new CDbCriteria();
+		$criteria->condition = "ID_SCC=:id_sub_cc";
+		$criteria->params = array(':id_sub_cc' => $id_sub_cc);
+		$criteria->order = 'SEC_NUMERO';
+        //$lista = SeccionCentroCosto::model()->findAll('ID_SUB_CENTRO_COSTO=:id_sub_cc',array(':id_sub_cc'=>$id_sub_cc));
+        $lista = Sec::model()->findAll($criteria);
+        $lista = CHtml::listData($lista,'ID_SEC','SEC_NUMERO');
+        
+        echo CHtml::tag('option', array('value' => ''), 'Seleccione', true);
+        
+        foreach ($lista as $valor => $descripcion){
+            echo CHtml::tag('option',array('value'=>$valor),CHtml::encode($descripcion), true );
+        }
+    }
 
 	/**
 	 * Displays a particular model.
@@ -66,6 +119,9 @@ class OrdenTrabajoController extends Controller
 		//$this->render('ot_pdf',array('model' => $this->loadModel($id),'detalle' => $detalle));
 
 		$mpdf = new mpdf();
+                
+                //die(Yii::app()->Theme->BAs);
+                //$stylesheet = file_get_contents(Yii::app()->Theme->BaseUrl.'/css/abound.css'); // external css
 		$mpdf->WriteHTML($this->renderPartial('ot_pdf',array('model' => $this->loadModel($id),'detalle' => $detalle),true));
 		$mpdf->Output();
 	}
@@ -84,18 +140,17 @@ class OrdenTrabajoController extends Controller
 		if(isset($_POST['OrdenTrabajo']))
 		{
 			$model->attributes=$_POST['OrdenTrabajo'];
+                        $model->ID_EMPRESA=Yii::app()->getSession()->get('id_empresa');
 			$model->FECHA_OT = date('Y-m-d');
 			$model->USUARIO_CREADOR = Yii::app()->user->getState('identificador');
                         $model->APROBADO_I25=0;
 			if($model->save())
 			{
-				Auditoria::model()->registrarAccion('OT', $model->ID_OT ,"contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT);
+				Auditoria::model()->registrarAccion('OT', $model->ID_OT ,"Tipo de OT: ".$model->ID_TIPO_OT." contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT);
 				$this->redirect(array('update','id'=>$model->ID_OT));
 			}
 		}
-
 		$this->render('create',array( 'model'=>$model,));
-
 	}
 
 	/**
@@ -118,20 +173,24 @@ class OrdenTrabajoController extends Controller
 			if( $model->RECHAZAR_OT == 1 ){
 				$model->USUARIO_RECHAZA = Yii::app()->user->getState('identificador');
 			}
+			if($model->USUARIO_VOBO_GG==1){
+				$model->APROBADO_I25 = 1;
+			}
 			if($model->save())
 			{
-				Auditoria::model()->registrarAccion('OT', $model->ID_OT ,"contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT);
+				//Agrgar modificaciones en Auditoria
+				Auditoria::model()->registrarAccion('OT', $model->ID_OT , "Tipo de OT: ".$model->ID_TIPO_OT. ", Contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT.", descripcion: ".$model->DESCRIPCION_OT);
 				$this->redirect(array('view','id'=>$model->ID_OT));
 			}
 		}
-
-
 		if(isset($_POST['InsumosOT']) && isset($_POST['sub_item_ot']))
 		{
 			$new_sub_item->attributes = $_POST['InsumosOT'];
 			$new_sub_item->ID_OT = $id;
-			if($new_sub_item->save())
+			if($new_sub_item->save()){
+				Auditoria::model()->registrarAccion('OT', $new_sub_item->ID_OT , "Se agrega item: ".$new_sub_item->ID_INSUMOS_OT. ", numero subItem: ".$new_sub_item->NUMERO_SUB_ITEM);
 				$this->redirect(array('update','id'=>$model->ID_OT));
+			}
 		}
 
 
@@ -149,7 +208,6 @@ class OrdenTrabajoController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-
 		$model=$this->loadModel($id);
 		Auditoria::model()->registrarAccion('OT', $model->ID_OT ,"contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT);
 
@@ -317,38 +375,63 @@ class OrdenTrabajoController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+	public function actionAprobarOtView($id){
+		$model= OrdenTrabajo::model()->findByPk($id);
+		if($model){
+	        if(Yii::app()->user->JDP()) {
+				$model->VOBO_JEFE_DPTO = 1;
+				$model->FECHA_VOBO_JDPTO = date('Y-m-d'); 
+				$model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->ADM()&&$model->VOBO_JEFE_DPTO==1) {
+				$model->VOBO_ADMIN = 1;
+				$model->FECHA_VOBO_ADMIN = date('Y-m-d'); 
+				$model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->GOP()&&$model->VOBO_ADMIN==1) {
+				$model->VOBO_GERENTE_OP = 1;
+				$model->FECHA_VOBO_GOP = date('Y-m-d'); 
+				$model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN==1) {
+				$model->VOBO_GERENTE_GRAL = 1;
+				$model->FECHA_VOBO_GG = date('Y-m-d'); 
+				$model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
+				$model->APROBADO_I25 = 1;
+			}
+			$model->save();
+		}
+		$this->redirect(array('admin'));
+	}
         
-        public function actionAprobarOT(){
+    public function actionAprobarOT(){
         
         $orden = explode(',', $_POST['theIds']);
         if(!empty($_POST['theIds'])){
 
-        
-            foreach($orden as $ot){
-               $model= OrdenTrabajo::model()->findByPk($ot);
-               if(Yii::app()->user->JDP()) {
-			$model->VOBO_JEFE_DPTO = 1;
-			$model->FECHA_VOBO_JDPTO = date('Y-m-d'); 
-			$model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
-		}elseif (Yii::app()->user->ADM()&&$model->VOBO_JEFE_DPTO==1) {
-			$model->VOBO_ADMIN = 1;
-			$model->FECHA_VOBO_ADMIN = date('Y-m-d'); 
-			$model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
-		}elseif (Yii::app()->user->GOP()&&$model->VOBO_ADMIN==1) {
-			$model->VOBO_GERENTE_OP = 1;
-			$model->FECHA_VOBO_GOP = date('Y-m-d'); 
-			$model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
-		}elseif (Yii::app()->user->GG()&&$model->VOBO_GERENTE_OP==1) {
-			$model->VOBO_GERENTE_GRAL = 1;
-			$model->FECHA_VOBO_GG = date('Y-m-d'); 
-			$model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
-		}
- //                  Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
+        foreach($orden as $ot){
+           	$model= OrdenTrabajo::model()->findByPk($ot);
+            if(Yii::app()->user->JDP()) {
+				$model->VOBO_JEFE_DPTO = 1;
+				$model->FECHA_VOBO_JDPTO = date('Y-m-d'); 
+				$model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->ADM()&&$model->VOBO_JEFE_DPTO==1) {
+				$model->VOBO_ADMIN = 1;
+				$model->FECHA_VOBO_ADMIN = date('Y-m-d'); 
+				$model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->GOP()&&$model->VOBO_ADMIN==1) {
+				$model->VOBO_GERENTE_OP = 1;
+				$model->FECHA_VOBO_GOP = date('Y-m-d'); 
+				$model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
+			}elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN==1) {
+				$model->VOBO_GERENTE_GRAL = 1;
+				$model->FECHA_VOBO_GG = date('Y-m-d'); 
+				$model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
+				$model->APROBADO_I25 = 1;
+			}
+//                  Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
 //                    $manifest->delete();
 //                    $this->redirect(array('admin'));
-                
-               $model->save();
-            }
+           $model->save();
+        }
     }
         $this->redirect(array('admin'));
     
@@ -377,17 +460,49 @@ class OrdenTrabajoController extends Controller
 			$model->VOBO_GERENTE_GRAL = NULL;
 			$model->FECHA_VOBO_GG = NULL; 
 			$model->USUARIO_VOBO_GG = NULL;
+			$model->APROBADO_I25 = 0;
 		}
-//                    Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
+//      Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
 //                    $manifest->delete();
 //                    $this->redirect(array('admin'));   
                $model->save();
             }
     }
         $this->redirect(array('admin'));
-    
         
     }
-
-
+    public function getFirma($id){
+        $usuario=  Usuarios::model()->findByPk($id);
+        $url="<br><br><br><br>";
+        if($usuario){
+            $persona=  Personal::model()->findByPk($usuario->ID_PERSONA);
+            if(!empty($persona->URL_FIRMA))
+                $img=Yii::app()->baseUrl.'/archivos/personal/'.$persona->URL_FIRMA;
+            else
+                $img=Yii::app()->theme->baseUrl.'/img/icons/blackApprove.png';
+         
+                $url='<div class="firma"><br><img src="'.$img.'" /><br><p>'.$persona->NOMBRE_PERSONA.' '.$persona->APELLIDO_PERSONA.'</p><br></div>';
+        }
+        return $url ;
+    }
+    public function getSupervisor(){
+        $criteria=new CDbCriteria();
+        $criteria->condition="ES_SUPERVISOR=1 AND ID_PERSONA<>1 AND ID_EMPRESA =".Yii::app()->getSession()->get('id_empresa');
+        $personal=Personal::model()->findAll($criteria);
+        $supervisor=array();
+        foreach($personal as $persona){
+            $usuario=  Usuarios::model()->findByPK($persona->ID_PERSONA);
+            if(@$usuario->COD_TIPO_USUARIO !='A1')
+               $supervisor[$persona->ID_PERSONA]=$persona->NOMBRE_PERSONA.' '.$persona->APELLIDO_PERSONA;
+        } 
+        return $supervisor;
+    }
+    public function getCC(){
+        $cc=CentroDeCostos::model()->findAll();
+        $ccfinal=array(''=>'Seleccione');
+            foreach($cc as $ccosto){
+               $ccfinal[$ccosto->ID_CENTRO_COSTO]=$ccosto->NUMERO_CENTRO.' ('.$ccosto->NOMBRE_CENTRO_COSTO.')';
+            }     
+        return  $ccfinal;
+    }
 }

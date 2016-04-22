@@ -32,18 +32,20 @@
 		<?php echo $form->error($model,'NUMERO_CENTRO'); ?>
 		</div>
 
-		<div class="span3">
+		<div class="span4">
 		<?php echo $form->labelEx($model,'NOMBRE_CENTRO_COSTO'); ?>
-		<?php echo $form->textField($model,'NOMBRE_CENTRO_COSTO',array('size'=>60,'maxlength'=>250)); ?>
+		<?php echo $form->textField($model,'NOMBRE_CENTRO_COSTO',array('size'=>60,'maxlength'=>250, 'class'=>'span12')); ?>
 		<?php echo $form->error($model,'NOMBRE_CENTRO_COSTO'); ?>
 		</div>
-
-		<div class="span3">
+	</div>
+	<div class="row">
+		<div class="span10">
 		<?php echo $form->labelEx($model,'DESCRIPCION_CENTRO_COSTO'); ?>
 		<?php echo $form->textArea($model,'DESCRIPCION_CENTRO_COSTO',array('rows'=>2, 'class'=>'span12')); ?>
 		<?php echo $form->error($model,'DESCRIPCION_CENTRO_COSTO'); ?>
 		</div>
 	</div>
+	
 	<!--<div class="row">
 		<?php echo $form->labelEx($model,'ID_CLIENTE'); ?>
 		<?php echo $form->textField($model,'ID_CLIENTE'); ?>
@@ -52,7 +54,7 @@
 	-->
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary offset1')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

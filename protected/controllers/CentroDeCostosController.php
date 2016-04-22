@@ -101,10 +101,8 @@ class CentroDeCostosController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['CentroDeCostos']))
 		{
 			$model->attributes=$_POST['CentroDeCostos'];
@@ -127,9 +125,27 @@ class CentroDeCostosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$model=$this->loadModel($id);
-		Auditoria::model()->registrarAccion('', $model->ID_CENTRO_COSTO , $model->NOMBRE_CENTRO_COSTO);
-		$model->delete();
+		$ccc = Ccc::model()->findByAttributes(array('ID_CENTRO_COSTO'=>$id));
+		$msg ="No se pudo eliminar ya que tiene ";
+
+		if (count($ccc) > 0) {
+			$msg.= "Cuenta centro costo asociado";
+		}
+
+		try{
+			$this->loadModel($id)->delete();
+			Auditoria::model()->registrarAccion('', $model->ID_CENTRO_COSTO , $model->NOMBRE_CENTRO_COSTO);
+			if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('success','Centro de Costo eliminado correctamente');
+		    else
+		        echo "<div class='alert alert-success'>Centro de Costo eliminado correctamente</div>";
+		}catch(CDbException $e){
+		    if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('error',$msg);
+		    else
+		        echo "<div class='alert alert-danger'>".$msg."</div>";
+		}
+		
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

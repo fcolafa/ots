@@ -27,6 +27,15 @@ $('.search-form form').submit(function(){
 ?>
 
 <h2 class="text-center">Administrar Tipo Usuario</h2>
+<div id="statusMsg">
+	<?php if(Yii::app()->user->hasFlash('success')):?>
+	        <?php echo Yii::app()->user->getFlash('success'); ?>
+	<?php endif; ?>
+	 
+	<?php if(Yii::app()->user->hasFlash('error')){ ?>
+	        <?php echo Yii::app()->user->getFlash('error'); ?>
+	<?php } ?>
+</div>
 
 <!--
 <p>
@@ -59,12 +68,19 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 			),
 
 		array(	'class'=>'CButtonColumn',
-						'header'=>'Opciones',
-						'template'=>'{view}{update}{delete}',
-						'buttons'=>array(
-								'update' => array('visible'=> 'Yii::app()->user->A1()'),
-								'delete' => array('visible'=> 'Yii::app()->user->A1()'),
-   							),
+				//'header'=>'Opciones',
+				'template'=>'{update}{delete}',
+				'buttons'=>array(
+					'update' => array('url'=>'Yii::app()->createUrl("tipoUsuario/update",array("ids"=>$data["COD_TIPO_USUARIO"]))','visible'=> 'Yii::app()->user->A1()'),
+					'delete' => array('url'=>'Yii::app()->createUrl("tipoUsuario/delete",array("ids"=>$data["COD_TIPO_USUARIO"]))','visible'=> 'Yii::app()->user->A1()'),
+
+				),
+				'afterDelete'=>'function(link,success,data){ 
+					if(success){
+						$("#statusMsg").html(data);
+						$("#statusMsg .alert-danger, .alert-success").animate({opacity: 1.0}, 3000).fadeOut("slow");
+					} 
+				}',
 		),
 	),
 )); ?>

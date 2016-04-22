@@ -27,6 +27,7 @@
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/abound.css');
 	  $cs->registerCssFile($baseUrl.'/css/tables.css');
+      $cs->registerCssFile($baseUrl.'/css/styles.css');
     //$cs->registerCssFile($baseUrl.'/css/icons-style.css');
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
@@ -46,6 +47,26 @@
 	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.masonry.min.js');
 	  $cs->registerScriptFile($baseUrl.'/js/styleswitcher.js');
 	?>
+        
+    <script type="text/javascript">    
+        var guest="<?php echo Yii::app()->user->isGuest?'false':'true'?>";
+        var stime=5;
+        $(document).ready(function () {
+		var idleState = false;
+		var idleTimer = null;
+        $('*').bind('mousemove click mouseup mousedown keydown keypress keyup submit change mouseenter scroll resize dblclick', function () {
+            clearTimeout(idleTimer);
+            if (idleState == true && guest=='true') { 
+                 alert("Sesión expirada por Inactividad ") ; 
+                 window.location.replace("<?php echo Yii::app()->createAbsoluteUrl("Site/logout"); ?>");
+                 idleState=false;
+            }
+            idleState = false;
+            idleTimer = setTimeout(function () {idleState = true; }, stime*60000);
+        });
+    }
+    );     
+     </script>      
 
   </head>
 

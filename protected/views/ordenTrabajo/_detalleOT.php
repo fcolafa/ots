@@ -53,17 +53,20 @@
 	<br>
 
 	<div class="row">
-		<table width='100%' class='table table-condensed table-hover'>
+		<table id="tabla_items" width='100%' class='table table-condensed table-hover'>
 			<thead class='borde-azul'>
 				<tr class='primary'> 
 					<th colspan='19'>Agregar Detalle</th> 
 				</tr>
 				<tr class='primary'>
 				  	<th width='5%' class='min40 text-center'>Nro.</th>
-				  	<th width='45%' class='min300'>Nombre Sub-item</th>
+				  	<th width='25%' class='min300'>Nombre Sub-item</th>
 					<th width='15%' class='min120 text-center'>Costo Contrat.</th>
 					<th width='10%' class='min80 text-center'>Nro Cotizacion</th>
-					<th width='15%' class='min80 text-center'>Centro Costo</th>
+					<th width='10%' class='min80 text-center'>CC</th>
+					<th width='10%' class='min80 text-center'>CCC</th>
+					<th width='10%' class='min80 text-center'>SCC</th>
+					<th width='10%' class='min80 text-center'>SEC</th>
 					<th width='10%' class='min80'>Opciones</th>
 			  	</tr>
 
@@ -108,22 +111,86 @@
 							?>
 					</td>
 					<td><?php
-								echo $form->textField($new_sub_item,'NRO_COTIZACION',array('class'=>'span12 text-right'));
-								echo $form->error($new_sub_item,'NRO_COTIZACION');
-							?>
+							echo $form->textField($new_sub_item,'NRO_COTIZACION',array('class'=>'span12 text-right'));
+							echo $form->error($new_sub_item,'NRO_COTIZACION');
+						?>
+					</td>
+					<td width="10%">
+						<?php
+                            $criteria=new CDbCriteria();
+                            $criteria->condition="ID_EMPRESA=".Yii::app()->getSession()->get('id_empresa');
+                            $criteria->order='NUMERO_CENTRO';
+							echo $form->dropDownList($new_sub_item,'ID_CENTRO_COSTO',
+			                CHtml::listData(CentroDeCostos::model()->findAll($criteria),'ID_CENTRO_COSTO','NUMERO_CENTRO'),
+			                        array(
+			                            'ajax'=>array(
+			                              'type'=>'POST',
+			                              'url'=>CController::createUrl('OrdenTrabajo/SelectCuentas'),
+			                              'update'=>'#'.CHtml::activeId($new_sub_item,'ID_CCC'),
+			                              'beforeSend' => 'function(){
+				                               $("#InsumosOT_ID_CCC").find("option").remove();
+				                               $("#InsumosOT_ID_SCC").find("option").remove();
+				                               $("#InsumosOT_ID_SEC").find("option").remove();
+			                               }',
+			                            ),
+			                            'prompt'=>'Seleccione',
+			                        )
+			                    );
+							$form->error($new_sub_item,'ID_CENTRO_COSTO'); 
+						?>
 					</td>
 					<td><?php
-							echo $form->dropDownList($new_sub_item,'ID_CENTRO_COSTO', 
-								array(''=>'Seleccione')+CHtml::listData(CentroDeCostos::model()->findAll(),'ID_CENTRO_COSTO', 'NOMBRE_CENTRO_COSTO'), array( 'class'=>'span12')); 
-							echo $form->error($new_sub_item,'ID_CENTRO_COSTO');
+		                $lista_dos = array();
+		                echo $form->dropDownList($new_sub_item,'ID_CCC',$lista_dos,
+		                        array(
+		                            'ajax'=>array(
+		                              	'type'=>'POST',
+		                              	'url'=>CController::createUrl('OrdenTrabajo/SelectSubCentros'),
+		                              	'update'=>'#'.CHtml::activeId($new_sub_item,'ID_SCC'),
+		                              	'beforeSend' => 'function(){
+		                              		$("#InsumosOT_ID_SCC").find("option").remove();
+				                            $("#InsumosOT_ID_SEC").find("option").remove();
+		                               	}',      
+		                            ),
+		                            'prompt'=>'Seleccione')
+		                        );
+						echo $form->error($new_sub_item,'ID_CCC');
+						?>
+					</td>
+					<td><?php
+							/*echo $form->dropDownList($new_sub_item,'ID_SCC', 
+                            $this->getCC(), array( 'class'=>'span12')); 
+							echo $form->error($new_sub_item,'ID_SCC');*/
+
+							$lista_tres = array();
+			                echo $form->dropDownList($new_sub_item,'ID_SCC',$lista_tres,
+			                        array(
+			                            'ajax'=>array(
+			                              	'type'=>'POST',
+			                              	'url'=>CController::createUrl('OrdenTrabajo/SelectSecciones'),
+			                              	'update'=>'#'.CHtml::activeId($new_sub_item,'ID_SEC'),
+			                              	'beforeSend' => 'function(){
+					                            $("#InsumosOT_ID_SEC").find("option").remove();
+			                               	}',      
+			                            ),
+			                            'prompt'=>'Seleccione')
+			                        );
+							echo $form->error($new_sub_item,'ID_SCC');
+						?>
+					</td>
+					<td>
+						<?php 
+							echo $form->dropDownList($new_sub_item,'ID_SEC', 
+                            $this->getCC(), array( 'class'=>'span12')); 
+							echo $form->error($new_sub_item,'ID_SEC');
 						?>
 					</td>
 					<td class="min80"> 
-						<?php echo CHtml::submitButton('Guardar Detalle',array('class'=>'btn btn-primary', 'name' => 'sub_item_ot')); ?>
+						<?php echo CHtml::submitButton('Guardar',array('class'=>'btn btn-primary', 'name' => 'sub_item_ot')); ?>
 					</td>
 			  </tr>
 			</thead> <!-- fin creacion new subitem-->
-			<thead><tr></tr><td class="text-right" colspan="6">.</td></thead>
+			<thead><tr></tr><td class="text-right" colspan="9">.</td></thead>
 			<tbody> <!--  subitem creados -->
 				<?php // inicializo los acumuladores
 				$tot_contrat = 0; 
@@ -134,7 +201,10 @@
 							<td> <?=$sub->NOMBRE_SUB_ITEM?> </td>
 							<td class="text-right"> <?=number_format($sub->COSTO_CONTRATISTA,0,',','.')?> </td>
 							<td class="text-right"> <?=$sub->NRO_COTIZACION?> </td>
-							<td class="text-right"> <?=$sub->centroCosto->NOMBRE_CENTRO_COSTO?> </td>
+							<td class="text-right"> <?=@$sub->centroCosto->NUMERO_CENTRO/*' ('.$sub->centroCosto->NOMBRE_CENTRO_COSTO.')'*/?> </td>
+							<td class="text-right"> <?=@$sub->iDCCC->NUMERO_CUENTA/**' ('.$sub->iDSUBCENTROCOSTO->SUB_CC_DESCRIPCION.')'*/?> </td>
+							<td class="text-right"> <?=@$sub->iDSCC->SCC_NUMERO/**' ('.$sub->iDSUBCENTROCOSTO->SUB_CC_DESCRIPCION.')'*/?> </td>
+							<td class="text-right"> <?=@$sub->iDSEC->SEC_NUMERO /***' ('.$sub->iDCCSECCION->SECCION_CC_DESCRIPCION.')'*/?> </td>
 							<td class="text-center">
 								<?php 
 								if ($model->VOBO_JEFE_DPTO != 1):
@@ -161,7 +231,7 @@
 
 					<tr class="success">
 						<td></td>
-						<td colspan="3" class="text-right"><b>Total</b></td>
+						<td colspan="1" class="text-right"><b>Neto</b></td>
 						<td class="text-right">
 							<b><?php echo @$model->tipo_moneda->SIGNO_MONEDA?></b>
 							<?php if (@$model->tipo_moneda->ID_TIPO_MONEDA == 1) { ?>
@@ -175,7 +245,7 @@
 					<?php if ($model->APLICA_IVA == 1) { ?>
 						<tr class="success">
 							<td></td>
-							<td colspan="3" class="text-right"><b>IVA</b></td>
+							<td colspan="1" class="text-right"><b>IVA</b></td>
 							<td class="text-right">
 								<b><?php echo @$model->tipo_moneda->SIGNO_MONEDA?></b>
 								<?php if (@$model->tipo_moneda->ID_TIPO_MONEDA == 1) { ?>
@@ -188,7 +258,7 @@
 						</tr>
 						<tr class="success">
 							<td></td>
-							<td colspan="3" class="text-right"><b>IVA</b></td>
+							<td colspan="1" class="text-right"><b>Total</b></td>
 							<td class="text-right">
 								<b><?php echo @$model->tipo_moneda->SIGNO_MONEDA?></b>
 								<?php if (@$model->tipo_moneda->ID_TIPO_MONEDA == 1) { ?>

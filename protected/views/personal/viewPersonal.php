@@ -27,6 +27,8 @@ $this->menu=array(
 						<b><?=$model->iDEMPRESA->NOMBRE_EMPRESA ?></b>
 					</td>
 					<td rowspan="4"><h3 class="text-center"> Datos de Usuario</h3></td>
+                                        
+                       
 				</tr>
 				<tr>
 					<td width="20%"> RUT : 
@@ -59,6 +61,9 @@ $this->menu=array(
 						<?=@$model->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO?>
 					</td>
 				</tr>
+                                <tr>
+                                    <td rowspan="4"><?php echo (!empty($model->URL_FIRMA))?'<div style="text-align:center;"><image style="height=auto; width:200px;" src='.Yii::app()->baseUrl.'/archivos/personal/'.$model->URL_FIRMA.' /></div>':''; ?></td>
+                                </tr>
 			</thead>
 		</table>
 

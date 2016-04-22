@@ -25,7 +25,17 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+
 <h2 class="text-center">Administrar Cargos</h2>
+<div id="statusMsg">
+	<?php if(Yii::app()->user->hasFlash('success')):?>
+	        <?php echo Yii::app()->user->getFlash('success'); ?>
+	<?php endif; ?>
+	 
+	<?php if(Yii::app()->user->hasFlash('error')){ ?>
+	        <?php echo Yii::app()->user->getFlash('error'); ?>
+	<?php } ?>
+</div>
 
 <!--
 <p>
@@ -75,6 +85,12 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		array(
 			'class'=>'CButtonColumn',
 			'header'=>'Opciones',
+			'afterDelete'=>'function(link,success,data){ 
+				if(success){
+					$("#statusMsg").html(data);
+					$("#statusMsg .alert-danger, .alert-success").animate({opacity: 1.0}, 3000).fadeOut("slow");
+				} 
+			}',
 			'htmlOptions'=>array('width' =>	'7%'),
 		),
 	),

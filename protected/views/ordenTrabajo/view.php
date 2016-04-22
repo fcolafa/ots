@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	//array('label'=>'Ver Orden de Trabajo', 'url'=>array('index')),
-	array('label'=>'Exportar a PDF', 'url'=>array('viewPDF', 'id'=>$model->ID_OT)),
+	array('label'=>'Exportar a PDF', 'url'=>array('viewPDF', 'id'=>$model->ID_OT), 'visible'=>$model->APROBADO_I25==1?1:0, 'linkOptions' => array('target'=>'_blank')),
 	array('label'=>'Crear Orden de Trabajo', 'url'=>array('create')),
 	array('label'=>'Actualizar Orden de Trabajo', 'url'=>array('update', 'id'=>$model->ID_OT)),
 	array('label'=>'Borrar Orden de Trabajo', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID_OT),'confirm'=>'está usted seguro que desea eliminar del sistema este elemento?')),
@@ -180,10 +180,12 @@ $this->menu=array(
 		<br>
 		<table width="100%">
 			<tr>
-				<td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento</td><td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
+                            <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento <br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
+                            <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
+                                
 			</tr>
 			<tr>
-				<td width='20%' class="bordered"><br><br><br><br></td><td width='20%' class="bordered"><br><br><br><br></td><td width='20%' class="bordered"><br><br><br><br></td>
+				<td width='20%' class="bordered"> <?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG)?></td>
 			</tr>
 			<tr>
 				<td width='20%' class="bordered h7 text-center"> V°B° Administrador</td><td width='20%' class="bordered h7 text-center">V°B° G.OP.</td><td width='20%' class="bordered h7 text-center">V°B° G.G</td>
@@ -193,6 +195,16 @@ $this->menu=array(
 			</tr>
 		</table>
 	</div>
+	<br>
+	<?php 
+		if(Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG()){
+			echo CHtml::link('<div  class="btn btn-success">
+		    	<h4> <span class="glyphicon glyphicon-ok"></span> Aprobar Orden de Trabajo</h4>
+			</div>', 
+			array('OrdenTrabajo/aprobarOtView', 'id'=>$model->ID_OT),
+	        array('confirm' => 'Desea Aprobar Ot?'));     
+		}
+	?>
 
 <style type="text/css">
 	.table-bordered th, .table-bordered td, .table-bordered{border:1px solid #0B0B3B !important;} .bordered{border:1px solid #0B0B3B !important;}

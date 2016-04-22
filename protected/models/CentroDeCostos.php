@@ -53,6 +53,7 @@ class CentroDeCostos extends CActiveRecord
 		return array(
 			'iDEMPRESA' => array(self::BELONGS_TO, 'Empresa', 'ID_EMPRESA'),
 			'insumosOts' => array(self::HAS_MANY, 'InsumosOt', 'ID_CENTRO_COSTO'),
+                        'subCentroCostos' => array(self::HAS_MANY, 'SubCentroCosto', 'ID_CENTRO_COSTO'),
 		);
 	}
 

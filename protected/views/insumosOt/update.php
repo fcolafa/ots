@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>' InsumosOt', 'url'=>array('index')),
-	array('label'=>'Crear InsumosOt', 'url'=>array('create'), 'visible'=>Yii::app()->user->A1()||Yii::app()->user->JP()||Yii::app()->user->SG()),
+	//array('label'=>'Crear InsumosOt', 'url'=>array('create'), 'visible'=>Yii::app()->user->A1()||Yii::app()->user->JDP()||Yii::app()->user->SG()),
 	array('label'=>'Ver InsumosOt', 'url'=>array('view', 'id'=>$model->ID_INSUMOS_OT)),
 	array('label'=>'Administrar InsumosOt', 'url'=>array('admin')),
 );

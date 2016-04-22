@@ -59,7 +59,7 @@ class TipoDeOT extends CActiveRecord
 		return array(
 			'ID_TIPO_OT' => 'Id Tipo Ot',
 			'NOMBRE_TIPO_OT' => 'Nombre Tipo Ot',
-			'DESCRIPCION_TIPO_OP' => 'Descripcion Tipo Op',
+			'DESCRIPCION_TIPO_OP' => 'Descripcion Tipo Ot',
 		);
 	}
 

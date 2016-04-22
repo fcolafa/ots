@@ -110,9 +110,26 @@ class CargosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$model=$this->loadModel($id);
-		Auditoria::model()->registrarAccion('', $model->ID_CARGO , $model->NOMBRE_CARGO);
-		$model->delete();
+		$personas = Personal::model()->findByAttributes(array('ID_CARGO'=>$id));
+
+		$msg ="No se pudo eliminar ya que tiene ";
+
+		if (count($personas) > 0) {
+			$msg.= "personas asociados";
+		}
+		try{
+			$this->loadModel($id)->delete();
+			Auditoria::model()->registrarAccion('', $model->ID_CARGO , $model->NOMBRE_CARGO);	
+			if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('success','Cargo eliminado correctamente');
+		    else
+		        echo "<div class='alert alert-success'>Cargo eliminado correctamente</div>";
+		}catch(CDbException $e){
+		    if(!isset($_GET['ajax']))
+		        Yii::app()->user->setFlash('error',$msg);
+		    else
+		        echo "<div class='alert alert-danger'>".$msg."</div>";
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

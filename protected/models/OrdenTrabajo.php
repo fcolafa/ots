@@ -150,7 +150,6 @@ class OrdenTrabajo extends CActiveRecord
 			elseif (Yii::app()->user->GG()) {
 				$criteria->compare('VOBO_JEFE_DPTO',1);	
 				$criteria->compare('VOBO_ADMIN',1);
-				$criteria->compare('VOBO_GERENTE_OP',1);
 			}
 		
 
@@ -172,7 +171,7 @@ class OrdenTrabajo extends CActiveRecord
                     if(Yii::app()->user->ADM())
                        $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=0';
                     elseif(Yii::app()->user->GOP()) 
-                       $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMI=1 AND VOBO_GERENTE_OP=0";
+                       $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0";
                     elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
                            $condition.='VOBO_JEFE_DPTO=0'; 
                         elseif(Yii::app()->user->GG()) 

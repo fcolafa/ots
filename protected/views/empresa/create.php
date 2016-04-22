@@ -7,6 +7,10 @@ $this->breadcrumbs=array(
 	'Crear',
 );
 
+$this->menu=array(
+	//array('label'=>'Ver Documentos Contratista', 'url'=>array('index')),
+	array('label'=>'Administrar Empresas', 'url'=>array('admin')),
+);
 
 ?>
 

@@ -24,6 +24,8 @@
 	            $('#formUsuario').hide("fast");
 	        }else{
 	        	$('#formUsuario').show("fast");
+	        	$('#Usuarios_NOMBRE_USUARIO').val('');
+	        	$('#Usuarios_CONTRASENA').val('');
 	        }
 		});
 
@@ -148,7 +150,7 @@
 			</div>
 			<div class="span3">
 				<?php echo $form->labelEx($usuario,'CONTRASENA'); ?>
-				<?php echo $form->textField($usuario,'CONTRASENA'); ?>
+				<?php echo $form->passwordField($usuario,'CONTRASENA'); ?>
 				<?php echo $form->error($usuario,'CONTRASENA'); ?>
 			</div>
 			<div class="span3">
@@ -243,7 +245,7 @@
 	</div><br>
 	
 	<div class="row">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary', 'name'=>'modificar_personal')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success', 'name'=>'modificar_personal')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

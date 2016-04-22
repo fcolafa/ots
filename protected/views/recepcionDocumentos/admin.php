@@ -8,7 +8,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver Recepcion documentos', 'url'=>array('index')),
 	array('label'=>'Crear Recepcion documentos', 'url'=>array('create')),
 );
 
@@ -40,7 +39,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
-
+<!--
 <div class=" grid-view">
 	<table  class='table items table-hover' border="2">
 		<tr align="Center" class="titulo-grid">
@@ -50,7 +49,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 			<th>F29</th>
 			<th>Cotizacion</th>
 		</tr>
-		 <?php
+		 <?php /**
 		 	$array_datos=array();
 		 	$fila=0;
 		 	$c='';
@@ -90,27 +89,62 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
             	}
             	echo "</tr>";
             }
-
+			*/
 		 ?>
 	</table>
+</div>-->
 
-</div>
-
-<!--<?php /*$this->widget('zii.widgets.grid.CGridView', array(
+<?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'recepciondocumentos-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'ID_RECEPCION',
+		//'ID_RECEPCION',
 		'FECHA_RECEPCION',
 		array('name'=>'contratista','value'=>'$data->iDCONTRATISTAS->NOMBRE_CONTRATISTA'),
 		//'ID_CONTRATISTA',
-		array('name'=>'documento','value'=>'$data->iDDOCUMENTOS->NOMBRE_DOCUMENTO'),
+		array('name'=>'documento',
+				'value'=>'$data->iDDOCUMENTOS->NOMBRE_DOCUMENTO'),
 		//'ID_DOCUMENTO',
-		array('name'=>'documento','value'=>$data->ESTADO==0?"Pendiente":"Entregado"),
+		array('name'=>'ESTADO','value'=>'$data->ESTADO==0? "../themes/default/img/icons/pending.png":"../themes/default/img/icons/aprove.png"','type'=>'image','filter'=>array(1=>'Aprobado',0=>'Pendiente'), 'htmlOptions'=>array('align'=>'center')),
 		//'ESTADO',
 		array(
+               'name' => 'check',
+               'header'=>'Seleccionar',
+               'id' => 'selectedIds',
+               'value' => '$data->ID_RECEPCION',
+               'class' => 'CCheckBoxColumn',
+               'selectableRows' => '100',
+               'htmlOptions'=>array('align'=>'center'),
+           ),
+		array(
 			'class'=>'CButtonColumn',
+			'template'=>'{update}{delete}',
+			'htmlOptions'=>array('width' =>	'10%', 'class'=>'text-center'),
 		),
 	),
-));*/ ?>-->
+)); 
+
+echo CHtml::ajaxLink("Aprobar Entrega Documentos", $this->createUrl('recepcionDocumentos/aprobarDocumentos'),
+	array(
+        "type" => "post",
+        "data" => 'js:{theIds : $.fn.yiiGridView.getChecked("recepciondocumentos-grid","selectedIds").toString()}',
+        "success" => 'js:function(data){ 
+        	$.fn.yiiGridView.update("guide-grid"); location.reload();  
+        }' 
+        ),
+	array(
+    	'class' => 'btn btn-success'
+    )
+);
+echo "  ";
+echo CHtml::ajaxLink("Marcar como Pendiente", $this->createUrl('recepcionDocumentos/CambiarPendiente'), array(
+        "type" => "post",
+        "data" => 'js:{theIds : $.fn.yiiGridView.getChecked("recepciondocumentos-grid","selectedIds").toString()}',
+        "success" => 'js:function(data){ $.fn.yiiGridView.update("guide-grid"); location.reload();  }' 
+        ),
+	array(
+        'class' => 'btn btn-warning'
+    )
+);
+?>

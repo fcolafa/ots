@@ -26,21 +26,22 @@
 			<?php echo $form->error($model,'COD_TIPO_USUARIO'); ?>
 		</div>
 
-		<div class="span3">
+		<div class="span4">
 			<?php echo $form->labelEx($model,'NOMBRE_TIPO_USUARIO'); ?>
-			<?php echo $form->textField($model,'NOMBRE_TIPO_USUARIO',array('size'=>50,'maxlength'=>50)); ?>
+			<?php echo $form->textField($model,'NOMBRE_TIPO_USUARIO',array('size'=>50,'maxlength'=>50, 'class'=>'span12')); ?>
 			<?php echo $form->error($model,'NOMBRE_TIPO_USUARIO'); ?>
 		</div>
-
-		<div class="span3">
+	</div>
+	<div class="row">
+		<div class="span7">
 			<?php echo $form->labelEx($model,'DESCRIPCION_TIPO_USUARIO'); ?>
 			<?php echo $form->textArea($model,'DESCRIPCION_TIPO_USUARIO',array('rows'=>2, 'class'=>'span12')); ?>
 			<?php echo $form->error($model,'DESCRIPCION_TIPO_USUARIO'); ?>
 		</div>
 	</div>
-
+	<br>
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary offset1')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

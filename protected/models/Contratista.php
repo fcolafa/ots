@@ -126,4 +126,8 @@ class Contratista extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public static function getContratistasAutorizados(){
+		return CHtml::listData(Contratista::model()->findAll('AUTORIZADO=1'), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA' );
+	}
 }

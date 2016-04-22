@@ -47,5 +47,6 @@ $this->menu=array(
 			'name'=>'ESTADO_TRABAJADOR',
 			'value'=>($model->ESTADO_TRABAJADOR=="0")?"Activo":"Inactivo",	
 			),
+              
 	),
 )); ?>

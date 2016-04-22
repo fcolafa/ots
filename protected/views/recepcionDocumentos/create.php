@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver Recepciondocumentos', 'url'=>array('index')),
+	//array('label'=>'Ver Recepciondocumentos', 'url'=>array('index')),
 	array('label'=>'Administrar Recepciondocumentos', 'url'=>array('admin')),
 );
 ?>

@@ -147,6 +147,7 @@ class InsumosOtController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->condition = "NOMBRE_SUB_ITEM like :term";
 		$criteria->params = array(':term'=> '%'.$_GET['term'].'%');
+              
 		$criteria->limit = 20;
 		$data = InsumosOT::model()->findAll($criteria);
 		$arr = array();

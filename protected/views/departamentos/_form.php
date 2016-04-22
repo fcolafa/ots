@@ -22,25 +22,28 @@
 	<div class="row">
 	
 		<div class="span4">
-		<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
-		<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
-		<?php echo $form->error($model,'ID_EMPRESA'); ?>
-	</div>
+			<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
+			<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
+			<?php echo $form->error($model,'ID_EMPRESA'); ?>
+		</div>
 
-		<div class="span3">
+		<div class="span6">
 			<?php echo $form->labelEx($model,'NOMBRE_DEPARTAMENTO'); ?>
-			<?php echo $form->textField($model,'NOMBRE_DEPARTAMENTO',array('class'=>'span12', 'maxlength'=>80)); ?>
+			<?php echo $form->textField($model,'NOMBRE_DEPARTAMENTO',array('class'=>'span12', 'maxlength'=>80, 'class'=>'span12')); ?>
 			<?php echo $form->error($model,'NOMBRE_DEPARTAMENTO'); ?>
 		</div>
-		<div class="span5">
+	</div>
+	<div class="row">
+		<div class="span10">
 			<?php echo $form->labelEx($model,'DESCRIPCION_DEPARTAMENTO'); ?>
 			<?php echo $form->textArea($model,'DESCRIPCION_DEPARTAMENTO',array('rows'=>2, 'class'=>'span12')); ?>
 			<?php echo $form->error($model,'DESCRIPCION_DEPARTAMENTO'); ?>
 		</div>
 	</div>
+	
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary offset1')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

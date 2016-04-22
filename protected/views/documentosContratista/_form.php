@@ -20,21 +20,22 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<div class="span3">
+		<div class="span4">
 		<?php echo $form->labelEx($model,'NOMBRE_DOCUMENTO'); ?>
-		<?php echo $form->textField($model,'NOMBRE_DOCUMENTO',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'NOMBRE_DOCUMENTO',array('size'=>45,'maxlength'=>45, 'class'=>'span12')); ?>
 		<?php echo $form->error($model,'NOMBRE_DOCUMENTO'); ?>
 		</div>
-		
-		<div class="span5">
-		<?php echo $form->labelEx($model,'DESCRIPCION'); ?>
-		<?php echo $form->textArea($model,'DESCRIPCION',array('rows'=>2, 'class'=>'span12')); ?>
-		<?php echo $form->error($model,'DESCRIPCION'); ?>
-		</div>
 	</div>
+	<div class="row">
+		<div class="span6">
+			<?php echo $form->labelEx($model,'DESCRIPCION'); ?>
+			<?php echo $form->textArea($model,'DESCRIPCION',array('rows'=>2, 'class'=>'span12')); ?>
+			<?php echo $form->error($model,'DESCRIPCION'); ?>
+		</div>
+	</div>	
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary offset1')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

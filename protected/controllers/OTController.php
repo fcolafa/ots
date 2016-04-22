@@ -163,7 +163,7 @@ class OTController extends Controller
 		{
 			$model->attributes=$_POST['Ot'];
 			if($model->save()){
-				Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
+				//Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
 				$this->redirect(array('view','id'=>$model->ID_OT));
 
 			}
@@ -190,7 +190,7 @@ class OTController extends Controller
 		{
 			$model->attributes=$_POST['Ot'];
 			if($model->save()){
-				Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
+				//Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
 				$this->redirect(array('view','id'=>$model->ID_OT));
 			}
 		}
@@ -208,7 +208,7 @@ class OTController extends Controller
 	public function actionDelete($id)
 	{
 		$model=$this->loadModel($id);
-		Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
+		//Auditoria::model()->registrarAccion('', $model->ID_OT ,"contratista " $model->ID_CONTRATISTA.", solicita ".$model->SOLICITANTE.", fecha " $model->FECHA_OT);
 		$model->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser

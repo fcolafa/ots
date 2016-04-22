@@ -98,25 +98,19 @@
 	<div class="row">
 	
 	      <div class="span4">
-		<?php echo $form->labelEx($model,'firma'); ?>
+		<?php echo $form->labelEx($model,'_firma'); ?>
 		<?php //echo $form->textArea($model,'URL_FOTO_BARCO',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo CHtml::activeFileField($model,'firma'); ?>
-		<?php echo $form->error($model,'firma'); ?>
+		<?php echo CHtml::activeFileField($model,'_firma'); ?>
+		<?php echo $form->error($model,'_firma'); ?>
 	</div>	
-	
-		
-	
+	<?php if(!empty($model->URL_FIRMA)){ ?>
+        <div class="row">
+        <?php echo CHtml::image(Yii::app()->request->baseUrl.'/archivos/personal/'.$model->URL_FIRMA,"_firma",array("width"=>200)); }?> 
+        </div>
 	</div>
-
-	
-
-
-	
-	
-
-	
+	<br>
 	<div class="row">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-primary', 'name'=>'modificar_personal')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success', 'name'=>'modificar_personal')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

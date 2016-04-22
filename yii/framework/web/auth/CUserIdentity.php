@@ -46,7 +46,7 @@ class CUserIdentity extends CBaseUserIdentity
 	 * @param string $password password
 	 * @param string $empresa empresa
 	 */
-	public function __construct($username, $password, $empresa)
+	public function __construct($username, $password, $empresa=null)
 	{
 		$this->username=$username;
 		$this->password=$password;
