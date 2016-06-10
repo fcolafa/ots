@@ -58,11 +58,11 @@ echo "<div class=\"row span10\">";
 		$count++;
 		echo "<div class=\"row\">";
 			if ($cantidad_cont == $count) {
-				echo "<div class=\"span4 contratista_final\">";
+				echo "<div class=\"span4\">";//clase: contratista_final
 				echo "<input type=\"checkbox\" id=\"c_".$v->ID_CONTRATISTA."\" name=\"contratista[]\" value=\"".$v->ID_CONTRATISTA."\" onClick=\"javascript:showContent(".$v->ID_CONTRATISTA.")\"/>".$v->NOMBRE_CONTRATISTA."";
 				echo "</div>";	
 			}else{
-				echo "<div class=\"span4 contratista\">";
+				echo "<div class=\"span4\">";// clase contratista
 				echo "<input type=\"checkbox\" id=\"c_".$v->ID_CONTRATISTA."\" name=\"contratista[]\" value=\"".$v->ID_CONTRATISTA."\" onClick=\"javascript:showContent(".$v->ID_CONTRATISTA.")\"/>".$v->NOMBRE_CONTRATISTA."";
 				echo "</div>";
 			}

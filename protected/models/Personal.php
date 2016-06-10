@@ -44,7 +44,9 @@ class Personal extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ID_EMPRESA, RUT_PERSONA, NOMBRE_PERSONA, APELLIDO_PERSONA, ID_DEPARTAMENTO, ES_USUARIO, APRUEBA_DOCS', 'required'),
+			array('ID_EMPRESA, RUT_PERSONA, NOMBRE_PERSONA, APELLIDO_PERSONA, ID_DEPARTAMENTO, ES_USUARIO', 'required'),
+			array('APRUEBA_DOCS', 'required' ,'on'=>'update'),
+                        array('RUT_PERSONA, EMAIL','unique'),
 			array('ID_EMPRESA, ID_CARGO, ID_DEPARTAMENTO, ES_USUARIO, APRUEBA_DOCS', 'numerical', 'integerOnly'=>true),
 			array('RUT_PERSONA', 'length', 'max'=>15),
 			array('NOMBRE_PERSONA, APELLIDO_PERSONA, EMAIL', 'length', 'max'=>50),

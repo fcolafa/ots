@@ -75,7 +75,7 @@ class RecepciondocumentosController extends Controller
 		$orden = explode(',', $_POST['theIds']);
         if(!empty($_POST['theIds'])){
 	        foreach($orden as $doc){
-	        	$model = Recepciondocumentos::model()->findByPk($doc);
+	        	$model = RecepcionDocumentos::model()->findByPk($doc);
 	        	$model->ESTADO = 1;
 	        	$model->save();
 	        }
@@ -86,7 +86,7 @@ class RecepciondocumentosController extends Controller
 		$orden = explode(',', $_POST['theIds']);
         if(!empty($_POST['theIds'])){
 	        foreach($orden as $doc){
-	        	$model = Recepciondocumentos::model()->findByPk($doc);
+	        	$model = RecepcionDocumentos::model()->findByPk($doc);
 	        	$model->ESTADO = 0;
 	        	$model->save();
 	        }
@@ -103,7 +103,7 @@ class RecepciondocumentosController extends Controller
 
 		$sort = new CSort();
 		// crear una nueva instancia de un data provider para cargar los documentos segun el contratista
-	    $dpContratista=new CActiveDataProvider('Recepciondocumentos',array(
+	    $dpContratista=new CActiveDataProvider('RecepcionDocumentos',array(
 	    	'sort'=>array(
 	    		'defaultOrder'=>'FECHA_RECEPCION ASC',
 	    		),
@@ -161,9 +161,9 @@ class RecepciondocumentosController extends Controller
 
 	public function actionUpdate($id){
 		$model=$this->loadModel($id);
-		if(isset($_POST['Recepciondocumentos']))
+		if(isset($_POST['RecepcionDocumentos']))
 		{
-			$model->attributes=$_POST['Recepciondocumentos'];
+			$model->attributes=$_POST['RecepcionDocumentos'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -242,7 +242,7 @@ class RecepciondocumentosController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Recepciondocumentos');
+		$dataProvider=new CActiveDataProvider('RecepcionDocumentos');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -257,7 +257,7 @@ class RecepciondocumentosController extends Controller
 		$detalle = RecepcionDocumentos::model()->findAll(array('select'=>'ID_CONTRATISTA,FECHA_RECEPCION,ID_DOCUMENTO', 'order'=>'FECHA_RECEPCION DESC, ID_CONTRATISTA, ID_DOCUMENTO'));
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Recepciondocumentos']))
-			$model->attributes=$_GET['Recepciondocumentos'];
+			$model->attributes=$_GET['RecepcionDocumentos'];
 		$this->render('admin',array(
 			'model'=>$model,
 			'detalle'=>$detalle,
@@ -273,7 +273,7 @@ class RecepciondocumentosController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Recepciondocumentos::model()->findByPk($id);
+		$model=RecepcionDocumentos::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

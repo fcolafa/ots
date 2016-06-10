@@ -94,20 +94,74 @@
 	
 		
 	</div>
+             <div class="row">
+          
+           
+                <div class="span3">
+                    <?php echo $form->labelEx($usuario,'_PASSANTIGUA'); ?>
+                    <?php echo $form->passwordField($usuario,'_PASSANTIGUA',array("class"=>"span12", 'maxlength'=>60)); ?>
+                    <?php echo $form->error($usuario,'_PASSANTIGUA'); ?>
+                </div>
+                 
+		<div class="span4">
+			<?php echo $form->labelEx($usuario,'CONTRASENA'); ?>
+			<?php echo $form->passwordField($usuario,'CONTRASENA',array("class"=>"span12", 'maxlength'=>60)); ?>
+			<?php echo $form->error($usuario,'CONTRASENA'); ?>
+		</div>
+               <div class="span4">  
+             <?php echo $form->label($usuario,'_RPT_CONTRASENA'); ?>    
+             <?php echo $form->passwordField($usuario,'_RPT_CONTRASENA',array("class"=>"span12", 'maxlength'=>60)); ?>    
+             <?php echo $form->error($usuario,'_RPT_CONTRASENA');  ?> 
+            </div>
+        </div>
 
 	<div class="row">
 	
-	      <div class="span4">
+	         <?php 
+
+        $this->widget('ext.EFineUploader.EFineUploader',
+         array(
+               'id'=>'cotizacion',
+               'config'=>array(
+                   'autoUpload'=>true,
+                   'multiple'=> true,
+                               'request'=>array(
+                                  'endpoint'=>$this->createUrl('personal/upload'),
+                                  'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
+                                               ),
+                               'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+                               'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+                               'callbacks'=>array(
+                                                //'onComplete'=>"js:function(id, name, response){ $('li.qq-upload-success').remove(); }",
+                                                //'onError'=>"js:function(id, name, errorReason){ }",
+                                                 ),
+                               'validation'=>array(
+                                         'allowedExtensions'=>array('pdf','jpg','jpeg','png'),
+                                         'sizeLimit'=>5 * 1024 * 1024,//maximum file size in bytes
+                                       //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
+                                                  ),
+                   'callbacks'=>array(
+          'onComplete'=>"js:function(id, name, response){
+              var valid=true;
+
+             $('#Personal__firma').val(response.filename);
+                  
+           }",
+           'onError'=>"js:function(id, name, errorReason){ }",
+          'onValidateBatch' => "js:function(fileOrBlobData) {}", // because of crash
+        ),
+                              )
+              ));
+
+        ?>
+         <div class="row" style="display: none;">
+	
+             
 		<?php echo $form->labelEx($model,'_firma'); ?>
-		<?php //echo $form->textArea($model,'URL_FOTO_BARCO',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo CHtml::activeFileField($model,'_firma'); ?>
+		<?php echo $form->textField($model,'_firma'); ?>
 		<?php echo $form->error($model,'_firma'); ?>
+  
 	</div>	
-	<?php if(!empty($model->URL_FIRMA)){ ?>
-        <div class="row">
-        <?php echo CHtml::image(Yii::app()->request->baseUrl.'/archivos/personal/'.$model->URL_FIRMA,"_firma",array("width"=>200)); }?> 
-        </div>
-	</div>
 	<br>
 	<div class="row">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success', 'name'=>'modificar_personal')); ?>

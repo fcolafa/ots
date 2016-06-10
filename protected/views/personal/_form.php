@@ -10,7 +10,6 @@
 <script type="text/javascript">
 	$( document ).ready(function() {
 		//$('#formApruebaDocs').hide();
-
 		if ( !$('.checkUsuario').is(':checked') ) {
 			$('#formUsuario').hide();
 		}
@@ -48,20 +47,20 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
-        //'htmlOptions' => array('enctype'=>'multipart/form-data'),
+        'htmlOptions' => array('enctype'=>'multipart/form-data'),
 )); ?>
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
-	<?php echo $form->errorSummary($model, $usuario, $aprovacion); ?>
-
+	<?php echo $form->errorSummary(array($model, $usuario, $aprovacion)); ?>
+            
 	<div class="row">
 				
 		<div class="span3">
-					<?php echo $form->labelEx($model,'RUT_PERSONA', array('class'=>'valida_rut')); ?>
-					<?php echo $form->textField($model,'RUT_PERSONA',array('class'=>'span12 text-right','maxlength'=>13,'placeholder'=>'Ejemplo: 12345678-9', 'onkeyup' =>"this.value = MaskRut(this.value,true); ValidateRut(this.value);", 'is_numeric'=>"true")) ; ?>
-					<?php echo $form->error($model,'RUT_PERSONA'); ?>
-				</div>
+                <?php echo $form->labelEx($model,'RUT_PERSONA', array('class'=>'valida_rut')); ?>
+                <?php echo $form->textField($model,'RUT_PERSONA',array('class'=>'span12 text-right','maxlength'=>13,'placeholder'=>'Ejemplo: 12345678-9', 'onkeyup' =>"this.value = MaskRut(this.value,true); ValidateRut(this.value);", 'is_numeric'=>"true")) ; ?>
+                <?php echo $form->error($model,'RUT_PERSONA'); ?>
+		</div>
 		
 		<div class="span4">
 		<?php echo $form->labelEx($model,'NOMBRE_PERSONA'); ?>
@@ -92,18 +91,17 @@
 		</div>	
 
 		<div class="span2">
-					<?php $mUsuario= Usuarios::model()->findbyAttributes(array('NOMBRE_USUARIO'=>Yii::app()->user->id));
-					
-					if ( Yii::app()->user->JDP() || Yii::app()->user->A1() || Yii::app()->user->ADM()){
-							echo $form->labelEx($model,'ES_SUPERVISOR');
-							echo $form->checkBox($model,'ES_SUPERVISOR');}?>
-					<?php echo $form->error($model,'ES_SUPERVISOR');?>
+		<?php $mUsuario= Usuarios::model()->findbyAttributes(array('NOMBRE_USUARIO'=>Yii::app()->user->id));		
+                if ( Yii::app()->user->JDP() || Yii::app()->user->A1() || Yii::app()->user->ADM()){
+                                echo $form->labelEx($model,'ES_SUPERVISOR');
+                                echo $form->checkBox($model,'ES_SUPERVISOR');}?>
+            <?php echo $form->error($model,'ES_SUPERVISOR');?>
 		</div>
 		
 	</div>
 
 	<div class="row">
-	<div class="span4">
+	<div class="span3">
 		<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
 		<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
 		<?php echo $form->error($model,'ID_EMPRESA'); ?>
@@ -132,6 +130,7 @@
 	</div>	
 
 	<br>
+        
 	<div class="row">
 		<div class="span3">
 			<?php echo $form->labelEx($model,'ES_USUARIO'); ?>
@@ -140,7 +139,7 @@
 			<?php echo $form->checkBox($model,'ES_USUARIO', array('class'=>'checkUsuario')); ?>
 		</div>
 	</div>
-	<div id="formUsuario" class="row">
+        <div id="formUsuario" class="row">
 		<fieldset>
 			<legend>Datos Usuario</legend>
 			<div class="span3">
@@ -149,10 +148,10 @@
 				<?php echo $form->error($usuario,'NOMBRE_USUARIO'); ?>
 			</div>
 			<div class="span3">
-				<?php echo $form->labelEx($usuario,'CONTRASENA'); ?>
-				<?php echo $form->passwordField($usuario,'CONTRASENA'); ?>
-				<?php echo $form->error($usuario,'CONTRASENA'); ?>
-			</div>
+                                <?php echo $form->labelEx($usuario,'TODAS_LAS_EMPRESAS'); ?>
+                                <?php echo $form->checkBox($usuario,'TODAS_LAS_EMPRESAS'); ?>
+                                <?php echo $form->error($usuario,'TODAS_LAS_EMPRESAS'); ?>
+                        </div>
 			<div class="span3">
 				<?php echo $form->labelEx($usuario,'COD_TIPO_USUARIO'); ?>
 				<?php echo $form->dropDownList($usuario,'COD_TIPO_USUARIO', CHtml::listData(TipoUsuario::model()->findAll(),'COD_TIPO_USUARIO','NOMBRE_TIPO_USUARIO')); ?>
@@ -161,7 +160,9 @@
 		</fieldset>
 	</div>
 	<br>
+        <!--
 	
+<?php //if(!$model->isNewRecord){ ?>	
 	<div id="formApruebaDocs" class="row">
 		<div class="span3">
 			<?php echo $form->labelEx($model,'APRUEBA_DOCS'); ?>	
@@ -212,26 +213,26 @@
 						<th width="15%" align="center">Acciones</th>
 					</thead>
 					<tbody>
-						<?php foreach($aprobados as $ap) { ?>
+						<?php // foreach($aprobados as $ap) { ?>
 							<tr>
-								<td class="text-center"><?=$ap->ID_TIPO_DOC?></td>
-								<td class="text-center"><?=$ap->NOMBRE_NIVEL?></td>
-								<td class="text-center"><?=$ap->NIVEL_APROB?></td>
-								<td class="text-center"><?=$ap->MONTO_APROB?></td>
+								<td class="text-center"><?//=$ap->ID_TIPO_DOC?></td>
+								<td class="text-center"><//?=$ap->NOMBRE_NIVEL?></td>
+								<td class="text-center"><//?=$ap->NIVEL_APROB?></td>
+								<td class="text-center"><//?=$ap->MONTO_APROB?></td>
 								<td class="text-center">
 									<?php
-									echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/table_edit.png" title="Modificar" alt="Modificar"  width="20" />', array('NivelAprobacion/update', 'id'=> $ap->ID_NIVEL_APROB));
-
-									echo CHtml::ajaxLink(
-									    '<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/delete.png" title="Eliminar" alt="Eliminar"  width="20" />', 
-									    array('NivelAprobacion/delete', 'id'=>$ap->ID_NIVEL_APROB), 
-									    $ajaxOptions=array (
-									        'type'=>'POST',
-									        'beforeSend'=>'js:function(){if(confirm("Seguro de eliminar Autorizacion a documento ?"))return true;else return false;}',
-									        'success'=>"js:function(data){window.location='".Yii::app()->request->baseUrl."?r=Personal/update&id=".$model->ID_PERSONA."';}",
-									        ), 
-									    $htmlOptions=array ()
-								    );
+//									echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/table_edit.png" title="Modificar" alt="Modificar"  width="20" />', array('NivelAprobacion/update', 'id'=> $ap->ID_NIVEL_APROB));
+//
+//									echo CHtml::ajaxLink(
+//									    '<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/delete.png" title="Eliminar" alt="Eliminar"  width="20" />', 
+//									    array('NivelAprobacion/delete', 'id'=>$ap->ID_NIVEL_APROB), 
+//									    $ajaxOptions=array (
+//									        'type'=>'POST',
+//									        'beforeSend'=>'js:function(){if(confirm("Seguro de eliminar Autorizacion a documento ?"))return true;else return false;}',
+//									        'success'=>"js:function(data){window.location='".Yii::app()->request->baseUrl."?r=Personal/update&id=".$model->ID_PERSONA."';}",
+//									        ), 
+//									    $htmlOptions=array ()
+//								    );
 									?>
 								</td>
 							</tr>
@@ -239,10 +240,63 @@
 					</tbody>
 				</table>
 			</div>
-
-			<?php } ?>
 		</fieldset>
 	</div><br>
+       
+<?php// } }?>
+	 -->
+         
+         <?php 
+
+        $this->widget('ext.EFineUploader.EFineUploader',
+         array(
+               'id'=>'cotizacion',
+               'config'=>array(
+                   'autoUpload'=>true,
+                   'multiple'=> true,
+                               'request'=>array(
+                                  'endpoint'=>$this->createUrl('personal/upload'),
+                                  'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
+                                               ),
+                               'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+                               'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+                               'callbacks'=>array(
+                                                //'onComplete'=>"js:function(id, name, response){ $('li.qq-upload-success').remove(); }",
+                                                //'onError'=>"js:function(id, name, errorReason){ }",
+                                                 ),
+                               'validation'=>array(
+                                         'allowedExtensions'=>array('pdf','jpg','jpeg','png'),
+                                         'sizeLimit'=>5 * 1024 * 1024,//maximum file size in bytes
+                                       //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
+                                                  ),
+                   'callbacks'=>array(
+          'onComplete'=>"js:function(id, name, response){
+              var valid=true;
+
+             $('#Personal__firma').val(response.filename);
+                  
+           }",
+           'onError'=>"js:function(id, name, errorReason){ }",
+          'onValidateBatch' => "js:function(fileOrBlobData) {}", // because of crash
+        ),
+                              )
+              ));
+
+        ?>
+         <div class="row" style="display: none;">
+	
+             
+		<?php echo $form->labelEx($model,'_firma'); ?>
+		<?php echo $form->textField($model,'_firma'); ?>
+		<?php echo $form->error($model,'_firma'); ?>
+              
+        
+                
+	</div>	
+	<?php if(!empty($model->URL_FIRMA)){ ?>
+        <div class="row">
+        <?php echo CHtml::image(Yii::app()->request->baseUrl.'/archivos/firmas/'.$model->URL_FIRMA,"_firma",array("width"=>200)); }?> 
+        </div>
 	
 	<div class="row">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar' ,array('class'=>'btn btn-success', 'name'=>'modificar_personal')); ?>

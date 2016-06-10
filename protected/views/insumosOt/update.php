@@ -16,6 +16,6 @@ $this->menu=array(
 );
 ?>
 
-<h1>Modificar InsumosOt <?php echo $model->ID_INSUMOS_OT; ?></h1>
+<h1>Modificar Insumo Orden de Trabajo <?php echo $model->ID_INSUMOS_OT; ?></h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

@@ -51,7 +51,7 @@ class EWebUser extends CWebUser{
     protected function loadUser()
     {
         //$sql = "SELECT ID_PERSONA, COD_TIPO_USUARIO, ID_EMPRESA FROM usuarios Where ID_USUARIO=:value";
-        $sql = "SELECT ID_PERSONA, COD_TIPO_USUARIO, ID_EMPRESA FROM usuarios Where ID_PERSONA=:value";
+        $sql = "SELECT ID_PERSONA, COD_TIPO_USUARIO, ID_EMPRESA , TODAS_LAS_EMPRESAS FROM usuarios Where ID_PERSONA=:value";
         $params=array(':value'=>$this->id);
         if ( $this->_model === null ) {
             $this->_model = Usuarios::model()->findBySql($sql,$params);
@@ -82,5 +82,38 @@ class EWebUser extends CWebUser{
             $t = '';
         }
         return $t;
-    }   
+    }
+    function allCompany(){
+        if(Yii::app()->user->id != '')
+        {
+            $user = $this->loadUser();
+            $t = $user->TODAS_LAS_EMPRESAS;
+        }else{
+            $t='';
+        }
+        return $t;
+    }
+      function getUser_Id(){
+        if (Yii::app()->user->id != '')
+        {
+            $user = $this->loadUser(Yii::app()->user->id);
+            $t = $user->ID_USUARIO;
+        }else {
+            $t = '';            
+            
+        }
+        return $t;
+    }
+    function isFTime(){
+        if (Yii::app()->user->id != '')
+        {   $user = $this->loadUser(Yii::app()->user->id);
+            $t = $user->PRIMER_LOGIN;
+            
+                
+        }
+        else{
+            $t=1;
+        }
+        return $t;
+    }
 }

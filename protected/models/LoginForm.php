@@ -10,9 +10,7 @@ class LoginForm extends CFormModel
 {
 	public $username;
 	public $password;
-	public $empresa;
 	public $rememberMe;
-
 	private $_identity;
 
 	/**
@@ -24,7 +22,7 @@ class LoginForm extends CFormModel
 	{
 		return array(
 			// username and password are required
-			array('username, password, empresa', 'required'),
+			array('username, password', 'required'),
 			// rememberMe needs to be a boolean
 			array('rememberMe', 'boolean'),
 			// password needs to be authenticated
@@ -41,7 +39,7 @@ class LoginForm extends CFormModel
 			'username'=>'Nombre de Usuario',
 			'rememberMe'=>'Mantenerme Autentificado',
 			'password'=>'Contraseña',
-			'empresa'=>'Empresa',
+			
 		);
 	}
 
@@ -53,7 +51,7 @@ class LoginForm extends CFormModel
 	{
 		if(!$this->hasErrors())
 		{
-			$this->_identity = new UserIdentity($this->username, $this->password, $this->empresa);
+			$this->_identity = new UserIdentity($this->username, $this->password);
 			if(!$this->_identity->authenticate())
 				$this->addError('password','Usuario o Contraseña incorrecta');
 		}
@@ -67,21 +65,20 @@ class LoginForm extends CFormModel
 	{
 		if($this->_identity===null)
 		{
-			$this->_identity=new UserIdentity($this->username,$this->password, $this->empresa);
+			$this->_identity=new UserIdentity($this->username,$this->password);
 			$this->_identity->authenticate();
 		}
 		if($this->_identity->errorCode===UserIdentity::ERROR_NONE)
 		{
 			$duration=$this->rememberMe ? 3600*24*1 : 0; // 30 days
 			Yii::app()->user->login($this->_identity, $duration);
-
-			Yii::app()->getSession()->add('id_empresa', $this->empresa);  // setear id de empresa actual
-			$user = Empresa::model()->find('ID_EMPRESA=?',array($this->empresa));
-			Yii::app()->getSession()->add('empresa_actual', $user->NOMBRE_EMPRESA);  // setear nombre de la empresa actual
-
+                       
+                        $user=Usuarios::model()->find("NOMBRE_USUARIO='".$this->username."'");
+			Yii::app()->getSession()->add('id_empresa',$user->ID_EMPRESA);  // setear id de empresa actual
+			$emp = Empresa::model()->find('ID_EMPRESA=?',array($user->ID_EMPRESA));
+			Yii::app()->getSession()->add('empresa_actual', $emp->NOMBRE_EMPRESA);  // setear nombre de la empresa actual
 			// Obtener id de la empresa actual= Yii::app()->getSession()->get('id_empresa')
 			// Obtener nombre de empresa actual= Yii::app()->getSession()->get('empresa_actual')	
-
 			return true;
 		}
 		else

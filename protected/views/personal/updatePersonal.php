@@ -18,4 +18,4 @@ $this->menu=array(
 
 <h2 class="text-center">Modificar Datos <?php echo $model->NOMBRE_PERSONA; ?></h2>
 
-<?php $this->renderPartial('_formPersonal', array('model'=>$model)); ?>
+<?php $this->renderPartial('_formPersonal', array('model'=>$model,'usuario'=>$usuario)); ?>

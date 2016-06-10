@@ -10,7 +10,7 @@ return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Astilleros Calbuco S.A.',
 	'defaultController'=>'site/login',
-    'language' => 'es',
+        'language' => 'es',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -36,6 +36,20 @@ return array(
 
 	// application components
 	'components'=>array(
+            'mailer' => array(
+                    'class' => 'application.extensions.mailer.EMailer',
+                    'pathViews' => 'application.views.email',
+                    'pathLayouts' => 'application.views.email.layouts'
+                 ),
+                  'Smtpmail'=>array(
+                        'class'=>'application.extensions.smtpmail.PHPMailer',
+                        'Host'=>"mail.eject.cl",
+                        'Username'=>'hys@eject.cl',
+                        'Password'=>'13579r2d2',
+                        'Mailer'=>'smtp',
+                        'Port'=>25,
+                        'SMTPAuth'=>true,
+                  ),
 		'user'=>array(
 			// enable cookie-based authentication
 			'class'=> 'application.components.EWebUser',
@@ -77,7 +91,7 @@ return array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
-		/*'log'=>array(
+		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
 				array(
@@ -91,7 +105,7 @@ return array(
 				),
 				
 			),
-		),*/
+		),
 	),
 
 	// application-level parameters that can be accessed

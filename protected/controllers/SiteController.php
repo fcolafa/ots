@@ -113,7 +113,7 @@ class SiteController extends Controller
 				$this->redirect(array('site/index/'));
 		}
                 if(!Yii::app()->user->isGuest){
-                    $this->redirect(array('site/index/'));
+                        $this->redirect(array('site/index/'));
                 }
 		// display the login form
 		$this->render('login',array('model'=>$model));

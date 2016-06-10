@@ -50,13 +50,13 @@ $this->pageTitle=Yii::app()->name . ' - Acceso';
                     </div>
                 </div>
 
-                <div class="row">
+<!--                <div class="row">
                     <div class="span5 offset2">
-                        <?php echo $form->labelEx($model,'empresa'); ?>
-                        <?php echo $form->dropDownList($model,'empresa', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA')); ?>
-                        <?php echo $form->error($model,'empresa'); ?>
+                        <?php // echo  $form->labelEx($model,'empresa'); ?>
+                        <?php //echo $form->dropDownList($model,'empresa', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA')); ?>
+                        <?php //echo $form->error($model,'empresa'); ?>
                     </div>
-                </div>
+                </div>-->
 
                 <div class="row rememberMe">
                     <div class="span5 offset2">

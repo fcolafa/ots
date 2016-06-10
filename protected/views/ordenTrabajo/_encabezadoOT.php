@@ -1,5 +1,13 @@
+<?php
+$baseUrl = Yii::app()->theme->baseUrl; 
+$cs = Yii::app()->getClientScript();
+$cs->registerScriptFile($baseUrl.'/js/addCotFile.js');
+?>
+
+
 <script type="text/javascript">
 	/* Invierte la fecha */
+    var BASE = "<?php echo Yii::app()->baseUrl.'/archivos/temp/'; ?>";
     function Asignate(target)
     {
         var choose = target.value;
@@ -14,6 +22,18 @@
     }
 
     $( document ).ready(function() {
+        
+               <?php 
+               if($model->_cot)
+            foreach ($model->_cot as $item){
+                $criteria=new CDbCriteria();
+                $criteria->condition='NOMBRE_ARCHIVO="'.$item.'" AND ID_OT='.$model->ID_OT;
+                $cot= Cotizacion::model()->find($criteria);
+                echo "window.onload=addCotFiles();";
+                echo " $('#link'+indexcot).append('".CHtml::link(CHtml::encode($cot->NOMBRE_ARCHIVO), Yii::app()->baseUrl . '/archivos/cot/'.$cot->ID_OT."/". $cot->NOMBRE_ARCHIVO,array('target'=>'_blank','class'=>'attach'))."');";
+                echo "indexcot=indexcot+1;";
+            }
+     ?>  
     	if ( $('#cb_tipo_moneda').val() == 1 ) {
   			$('#tb_valor_moneda').val("1");
 			$("#tb_valor_moneda").attr("readonly","readonly"); 
@@ -65,7 +85,11 @@
 	        	$('#motivo_rechazo').show("fast");
 	        }
 	    });
-	});
+	
+    });
+   
+        
+        
 </script>
 
 <div id="msg_warnning" class="alert alert-warning" style="display: none">
@@ -82,6 +106,7 @@
 		// There is a call to performAjaxValidation() commented in generated controller code.
 		// See class documentation of CActiveForm for details on this.
 		'enableAjaxValidation'=>false,
+            'htmlOptions' => array('enctype' => 'multipart/form-data'),
 	)); ?>
 
 		<div class="row">
@@ -101,13 +126,8 @@
 					endif;
 				?></strong>
 			</div>
-				<div class="span1">
-					<label> Adjuntar:</label>
-				</div>
-				<div class="span4">
-					<?php echo CHtml::activeFileField($model,'ARCHIVO_ADJUNTO',array('class'=>'span12')); ?>
-					<?php echo $form->error($model,'archivo'); ?>
-				</div>
+
+        
 				<div class="span2">
 					<?php if(!empty($model->ARCHIVO_ADJUNTO)){
 							$this->widget('zii.widgets.CMenu', array(
@@ -123,6 +143,16 @@
 					?>
 				</div>				
 		</div>
+                <?php if(Yii::app()->user->GG()||Yii::app()->user->GOP()){ ?>
+                <div class="row">
+
+			<div class="span3">
+				<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
+				<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'Indicar Empresa')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('class'=>'span12' )); ?>
+				<?php echo $form->error($model,'ID_EMPRESA'); ?>
+			</div>
+                </div>
+                <?php } ?>
 		<hr>
 		<div class="row">
 			<div class="span3">
@@ -289,7 +319,68 @@
 			
 		</div>
 		<?php }?>
-		<div class="row">
+		
+                <br>
+                				<div class="span1">
+					<label> Cotizaciones:</label>
+				</div>
+            <table  class="">
+                <thead id="tblCotHead">
+                   
+                </thead>
+                <tbody id="tblCot">
+
+                </tbody>           
+            </table>
+<div class="row">
+        <?php 
+
+        $this->widget('ext.EFineUploader.EFineUploader',
+         array(
+               'id'=>'cotizacion',
+               'config'=>array(
+                   'autoUpload'=>true,
+                   'multiple'=> true,
+                               'request'=>array(
+                                  'endpoint'=>$this->createUrl('ordenTrabajo/upload'),
+                                  'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
+                                               ),
+                               'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+                               'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+                               'callbacks'=>array(
+                                                //'onComplete'=>"js:function(id, name, response){ $('li.qq-upload-success').remove(); }",
+                                                //'onError'=>"js:function(id, name, errorReason){ }",
+                                                 ),
+                               'validation'=>array(
+                                         'allowedExtensions'=>array('pdf','jpg','jpeg','png'),
+                                         'sizeLimit'=>5 * 1024 * 1024,//maximum file size in bytes
+                                       //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
+                                                  ),
+                   'callbacks'=>array(
+          'onComplete'=>"js:function(id, name, response){
+              var valid=true;
+
+             $('#OrdenTrabajo__cot').append(new Option(response.filename, response.filename, true, true));
+             addCotFiles();        
+             
+             $('#link'+indexcot).append('<a class=attach target=_blank href='+BASE+response.filename+'>'+response.filename+'</a>');
+             indexcot=indexcot+1; 
+           
+         
+           }",
+           'onError'=>"js:function(id, name, errorReason){ }",
+          'onValidateBatch' => "js:function(fileOrBlobData) {}", // because of crash
+        ),
+                              )
+              ));
+
+        ?>
+                </div>
+<div class="row" style="display: none;">		
+		<?php echo $form->dropdownlist($model,'_cot',$model->_cot,array('multiple'=>'multiple')); ?>
+                </div>
+                
+                <div class="row">
 			<div class="span3" style="margin-top: 25px;">
 				<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Guardar', array('class'=>'offset1 btn btn-success', 'name' => 'submit_ot')); ?>		
 			</div>	

@@ -35,8 +35,8 @@ class OrdenTrabajoController extends Controller
 			),
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','viewPDF','viewOt','delete','aprobarOt','CambiarPendiente','aprobarOtView'),
-				'expression'=>'$user->A1() || $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()',
+				'actions'=>array('create','update','admin','viewPDF','viewOt','delete','aprobarOt','CambiarPendiente','aprobarOtView','Upload','rechazarOtView'),
+				'expression'=>' $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()',
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -140,13 +140,35 @@ class OrdenTrabajoController extends Controller
 		if(isset($_POST['OrdenTrabajo']))
 		{
 			$model->attributes=$_POST['OrdenTrabajo'];
-                        $model->ID_EMPRESA=Yii::app()->getSession()->get('id_empresa');
+                        if(empty($model->ID_EMPRESA)||$model->ID_EMPRESA=='')
+                            $model->ID_EMPRESA=Yii::app()->getSession()->get('id_empresa');
 			$model->FECHA_OT = date('Y-m-d');
 			$model->USUARIO_CREADOR = Yii::app()->user->getState('identificador');
                         $model->APROBADO_I25=0;
+                        if(isset($_POST['OrdenTrabajo']['_cot']))
+                            $model->_cot=$_POST['OrdenTrabajo']['_cot'];
+                        
 			if($model->save())
 			{
+                            $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/'; 
+                            $newFolder=Yii::getPathOfAlias('webroot').'/archivos/cot/'; 
+                                if(!empty($model->_cot)){
+                                    $folder=$newFolder."/".$model->ID_OT;
+                                if(!file_exists($folder))
+                                    mkdir($folder,0777,true); 
+                                foreach($model->_cot as $file){
+                                    if(file_exists($tempFolder.$file)){
+                                        $cotfile=new Cotizacion;
+                                        $cotfile->ID_OT=$model->ID_OT;
+                                        $cotfile->NOMBRE_ARCHIVO=$file;
+                                        $cotfile->save();
+                                        copy($tempFolder.$cotfile->NOMBRE_ARCHIVO,$folder."/".$cotfile->NOMBRE_ARCHIVO);
+                                    } 
+                                }
+                            }
+                            
 				Auditoria::model()->registrarAccion('OT', $model->ID_OT ,"Tipo de OT: ".$model->ID_TIPO_OT." contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT);
+                                $this->sendMail($model, 'Nueva Orden de Trabajo', 'body_ot_message','jdp','Se ha creado una nueva orden de trabajo cuyo Nº es'.$model->ID_OT);
 				$this->redirect(array('update','id'=>$model->ID_OT));
 			}
 		}
@@ -166,7 +188,18 @@ class OrdenTrabajoController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+                
+                          $newfile=array();
+                          $criteria=new CDbCriteria();
+                          $criteria->condition="ID_OT=".$id;
+                          $cotfiles= Cotizacion::model()->findAll($criteria);
+                          
+                           if(!empty($cotfiles)){
+                            foreach($cotfiles as  $value){
+                                $newfile[$value->NOMBRE_ARCHIVO]=$value->NOMBRE_ARCHIVO;
+                            }
+                        $model->_cot=$newfile;
+                        }
 		if(isset($_POST['OrdenTrabajo']) && isset($_POST['submit_ot']))
 		{
 			$model->attributes = $_POST['OrdenTrabajo'];
@@ -176,9 +209,52 @@ class OrdenTrabajoController extends Controller
 			if($model->USUARIO_VOBO_GG==1){
 				$model->APROBADO_I25 = 1;
 			}
+                        
+                        if(isset($_POST['OrdenTrabajo']['_cot'])){
+                            $finalcot=  array_diff($newfile, $_POST['OrdenTrabajo']['_cot']);
+                            
+                            $newfiles=  array_diff($_POST['OrdenTrabajo']['_cot'],$newfile);
+                           
+                        }
+                        if(empty($_POST['OrdenTrabajo']['_cot']))
+                            $finalcot=  array_diff($newfile, array());
 			if($model->save())
 			{
-				//Agrgar modificaciones en Auditoria
+                               $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/'; 
+                               $newFolder=Yii::getPathOfAlias('webroot').'/archivos/cot/'; 
+                                   if(empty($finalcot)&&!empty($newfiles)){
+                                       $folder=$newFolder."/".$model->ID_OT;
+                                   if(!file_exists($folder))
+                                       mkdir($folder,0777,true); 
+                                   foreach($newfiles as $file){
+                                       if(file_exists($tempFolder.$file)){
+                                           $cotfile=new Cotizacion;
+                                           $cotfile->ID_OT=$model->ID_OT;
+                                           $cotfile->NOMBRE_ARCHIVO=$file;
+                                           $cotfile->save();
+                                           copy($tempFolder.$cotfile->NOMBRE_ARCHIVO,$folder."/".$cotfile->NOMBRE_ARCHIVO);
+                                       } 
+                                   }
+                               } if(!empty($finalcot)){
+                                   foreach($finalcot as $fc){
+                                       $dltcriteria=new CDbCriteria();
+                                       $dltcriteria->condition="NOMBRE_ARCHIVO='".$fc."'";
+                                       $deletefile=  Cotizacion::model()->find($dltcriteria);  
+                                   }
+                                   if($deletefile->delete()){
+                                $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/cot/'.$id.'/'; 
+                                $dir = opendir($tempFolder);
+                                foreach($finalcot as $fcot){
+                                     while($f = readdir($dir)){
+                                         if($fcot==$f)
+                                            unlink($tempFolder.$f);
+                                     }
+                                }
+                                 closedir($dir);
+
+                                 
+                               }
+                               }
 				Auditoria::model()->registrarAccion('OT', $model->ID_OT , "Tipo de OT: ".$model->ID_TIPO_OT. ", Contratista: ".$model->ID_CONTRATISTA.", solicita: ".$model->SOLICITANTE.", fecha: ".$model->FECHA_OT.", descripcion: ".$model->DESCRIPCION_OT);
 				$this->redirect(array('view','id'=>$model->ID_OT));
 			}
@@ -375,6 +451,20 @@ class OrdenTrabajoController extends Controller
 			Yii::app()->end();
 		}
 	}
+         public function actionRechazarOtView($id){
+                 $model= $this->loadModel($id);
+                 if(isset($_POST['OrdenTrabajo']))
+		{
+                 $model->attributes = $_POST['OrdenTrabajo'];
+                 $model->RECHAZAR_OT=1;
+                 $model->USUARIO_RECHAZA = Yii::app()->user->getState('identificador');
+                 if($model->save()){
+                    $this->sendMail($model, 'Orden de Trabajo Rechazada', 'body_ot_message','reject','Se ha rechazado la orden de trabajo cuyo Nº es'.$model->ID_OT);
+                    $this->redirect(array('view','id'=>$model->ID_OT));
+                    }
+                }
+                $this->render('createRechazioOT',array( 'model'=>$model));
+             }
 
 	public function actionAprobarOtView($id){
 		$model= OrdenTrabajo::model()->findByPk($id);
@@ -383,19 +473,23 @@ class OrdenTrabajoController extends Controller
 				$model->VOBO_JEFE_DPTO = 1;
 				$model->FECHA_VOBO_JDPTO = date('Y-m-d'); 
 				$model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','jdp','Se ha creado una nueva orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->ADM()&&$model->VOBO_JEFE_DPTO==1) {
 				$model->VOBO_ADMIN = 1;
 				$model->FECHA_VOBO_ADMIN = date('Y-m-d'); 
 				$model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','adm','Se ha aprobado una orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->GOP()&&$model->VOBO_ADMIN==1) {
 				$model->VOBO_GERENTE_OP = 1;
 				$model->FECHA_VOBO_GOP = date('Y-m-d'); 
 				$model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','gop','Se ha aprobado una orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN==1) {
 				$model->VOBO_GERENTE_GRAL = 1;
 				$model->FECHA_VOBO_GG = date('Y-m-d'); 
 				$model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
 				$model->APROBADO_I25 = 1;
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada totalmente', 'body_ot_message','success','Se ha aprobado completamente la orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}
 			$model->save();
 		}
@@ -413,19 +507,23 @@ class OrdenTrabajoController extends Controller
 				$model->VOBO_JEFE_DPTO = 1;
 				$model->FECHA_VOBO_JDPTO = date('Y-m-d'); 
 				$model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','jdp','Se ha creado una nueva orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->ADM()&&$model->VOBO_JEFE_DPTO==1) {
 				$model->VOBO_ADMIN = 1;
 				$model->FECHA_VOBO_ADMIN = date('Y-m-d'); 
 				$model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','adm','Se ha aprobado una orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->GOP()&&$model->VOBO_ADMIN==1) {
 				$model->VOBO_GERENTE_OP = 1;
 				$model->FECHA_VOBO_GOP = date('Y-m-d'); 
 				$model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message','gop','Se ha aprobado una orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN==1) {
 				$model->VOBO_GERENTE_GRAL = 1;
 				$model->FECHA_VOBO_GG = date('Y-m-d'); 
 				$model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
 				$model->APROBADO_I25 = 1;
+                                $this->sendMail($model, 'Orden de Trabajo Aprobada totalmente', 'body_ot_message','success','Se ha aprobado completamente la orden de trabajo cuyo Nº es'.$model->ID_OT);
 			}
 //                  Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
 //                    $manifest->delete();
@@ -477,7 +575,7 @@ class OrdenTrabajoController extends Controller
         if($usuario){
             $persona=  Personal::model()->findByPk($usuario->ID_PERSONA);
             if(!empty($persona->URL_FIRMA))
-                $img=Yii::app()->baseUrl.'/archivos/personal/'.$persona->URL_FIRMA;
+                $img=Yii::app()->baseUrl.'/archivos/firmas/'.$persona->URL_FIRMA;
             else
                 $img=Yii::app()->theme->baseUrl.'/img/icons/blackApprove.png';
          
@@ -487,7 +585,7 @@ class OrdenTrabajoController extends Controller
     }
     public function getSupervisor(){
         $criteria=new CDbCriteria();
-        $criteria->condition="ES_SUPERVISOR=1 AND ID_PERSONA<>1 AND ID_EMPRESA =".Yii::app()->getSession()->get('id_empresa');
+        $criteria->condition="ES_SUPERVISOR=1 AND ID_EMPRESA =".Yii::app()->getSession()->get('id_empresa');
         $personal=Personal::model()->findAll($criteria);
         $supervisor=array();
         foreach($personal as $persona){
@@ -505,4 +603,86 @@ class OrdenTrabajoController extends Controller
             }     
         return  $ccfinal;
     }
+    public function actionUpload()
+    {
+        $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/';         
+        Yii::import("ext.EFineUploader.qqFileUploader");
+        $uploader = new qqFileUploader();
+        $uploader->allowedExtensions = array('pdf','jpg','jpeg','png');
+        $uploader->sizeLimit = 5 * 1024 * 1024;//maximum file size in bytes
+        $uploader->chunksFolder = $tempFolder;
+        $result = $uploader->handleUpload($tempFolder);
+        $result['filename'] = $uploader->getUploadName();
+        $result['folder'] = $tempFolder;
+        $uploadedFile=$tempFolder.$result['filename'];
+        header("Content-Type: text/plain");
+        $result=htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+        echo $result;
+        Yii::app()->end();
+    }
+      public function actionDeleteOldFile($tempFolder=null,$token){
+            $cont=0;
+            if($token=="PDS4WaMD"){
+                if($tempFolder==null)
+                    $tempFolder=Yii::getPathOfAlias('webroot').'/images/temp/'; 
+            
+           $dir = opendir($tempFolder);
+                while($f = readdir($dir)){
+                if((time()-filemtime($tempFolder.$f) >= 3600*4*2) and !(is_dir($tempFolder.$f)))
+                    unlink($tempFolder.$f);
+                }
+            closedir($dir);
+            
+            }
+           
+        }
+          private function sendMail($model, $subject,$view,$type=null,$content=null)
+	{
+	
+                $mail=Yii::app()->Smtpmail;
+                $mail->SMTPDebug = 1;
+                $mail->CharSet = 'UTF-8';
+                $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Web Aprobacion de Documentos');
+                $mail->Subject = $subject;
+                $mail->MsgHTML(Yii::app()->controller->renderPartial($view, array('model'=>$model,'subject'=>$subject,'content'=>$content),true));
+//                if($type=='message'&& !empty($model->id_user_asigned))              
+//                    $mail->AddAddress($model->idUsera->email, $subject);
+                if($type=='jdp'||$type=='adm'||$type=='gop'||$type=='gg')
+                {
+                    $criteria=new CDbCriteria();
+                    switch ($type) {
+                        case 'jdp':
+                            $criteria->condition="COD_TIPO_USUARIO='JDP'";
+                            break;
+                        case 'adm':
+                           $criteria->condition="COD_TIPO_USUARIO='ADM'";
+                            break;
+                        case 'gop':
+                            $criteria->condition="COD_TIPO_USUARIO='GOP' OR COD_TIPO_USUARIO='GG'";
+                            break;
+                        case 'gg':
+                            $criteria->condition="COD_TIPO_USUARIO='GG'";
+                            break;
+                    }
+                   
+                    $users= Usuarios::model()->findAll($criteria);
+                    foreach($users as $u){
+                        $personal=  Personal::model()->findByPk($u->ID_PERSONA);
+                        $mail->AddAddress($personal->EMAIL, $subject);
+                    }
+                }else
+                    if($type=='success'||$type=='reject')
+                    {
+                         $personal=  Personal::model()->findByPk($model->USUARIO_CREADOR);
+                         $mail->AddAddress($personal->EMAIL, $subject);
+                         
+                    }
+                if(!$mail->Send()) 
+                    Yii::app()->user->setFlash('error',Yii::t('validation','Error al enviar correo Electronico'));
+                else 
+                    Yii::app()->user->setFlash('success',Yii::t('validation','Notificación enviada por Correo Electronico'));
+                
+                 
+           
+	}
 }

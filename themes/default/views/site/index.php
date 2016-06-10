@@ -36,11 +36,12 @@ $variable = Yii::app()->user->A1();
     <div class="container-fluid" valign="center"  style="padding-top:0%;">
         <div >
             <!-- Div de Personal -->
+            <?php if(Yii::app()->user->A1()){?>
             <div align="center" valign="top" class="messageButtonb blue">
                 <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/user_accounts.png" alt="Personal"  width="15%" />', array('personal/admin'));?>
                 <div  class="dashIconText"><?php echo CHtml::link('<h4>Personal</h4>',array('personal/admin')); ?></div>
             </div>
-            
+            <?php } ?>
             <!-- Div de Contratistas -->
             <div align="center" valign="top" class="messageButtonb blue">
                 <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/worker.png" alt="Contratistas"  width="15%" />', array('contratista/admin'));?>

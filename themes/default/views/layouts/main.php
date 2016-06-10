@@ -28,6 +28,7 @@
 	  $cs->registerCssFile($baseUrl.'/css/abound.css');
 	  $cs->registerCssFile($baseUrl.'/css/tables.css');
       $cs->registerCssFile($baseUrl.'/css/styles.css');
+      $cs->registerCssFile($baseUrl.'/css/style.css');
     //$cs->registerCssFile($baseUrl.'/css/icons-style.css');
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
@@ -50,7 +51,7 @@
         
     <script type="text/javascript">    
         var guest="<?php echo Yii::app()->user->isGuest?'false':'true'?>";
-        var stime=5;
+        var stime=100;
         $(document).ready(function () {
 		var idleState = false;
 		var idleTimer = null;

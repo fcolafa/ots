@@ -28,31 +28,31 @@ class UsuariosController extends Controller
 	{
 		return array(
 			//R
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				//grupo 
-				//'expression'=>'$user->U2()',
-			),
-			//RU
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index','view','update'),
-				//'expression'=>'$user->U1()',
-			),
-			//CRU
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','index','view'),
-				//'expression'=>'$user->OP1() || $user->F2() || $user->M2()',
-			),
-			//CRUD todos los permisos otorgados a las cuentas indicadas
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view'),
-				'expression'=>'$user->A1() || $user->A2()',
-			),
-			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view'),
-				'expression'=>'$user->SA()',
-			),
+//			array('allow',  // allow all users to perform 'index' and 'view' actions
+//				'actions'=>array('index','view'),
+//				//grupo 
+//				//'expression'=>'$user->U2()',
+//			),
+//			//RU
+//			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+//				'actions'=>array('index','view','update'),
+//				//'expression'=>'$user->U1()',
+//			),
+//			//CRU
+//			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+//				'actions'=>array('create','update','admin','index','view'),
+//				//'expression'=>'$user->OP1() || $user->F2() || $user->M2()',
+//			),
+//			//CRUD todos los permisos otorgados a las cuentas indicadas
+//			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+//				'actions'=>array('create','update','admin','delete','index','view'),
+//				'expression'=>'$user->A1() || $user->A2()',
+//			),
+//			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
+//			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+//				'actions'=>array('create','update','admin','delete','index','view'),
+//				'expression'=>'$user->SA()',
+//			),
 
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -85,8 +85,15 @@ class UsuariosController extends Controller
 		if(isset($_POST['Usuarios']))
 		{
 			$model->attributes=$_POST['Usuarios'];
-			if($model->save())
+			$pass=$this->generatePass();
+		        $model->_PASSANTIGUA = md5($pass);
+                        $model->CONTRASENA = md5($pass);
+                        $model->_RPT_CONTRASENA = md5($pass);
+                        $model->FECHA_CREACION_USUARIO=  date("y/m/d H:i:s");
+                        $model->PRIMER_LOGIN=1;
+                            if($model->save()&& $this->sendMail($model,$pass))
 				$this->redirect(array('view','id'=>$model->ID_USUARIO));
+                           
 		}
 
 		$this->render('create',array(
@@ -105,21 +112,30 @@ class UsuariosController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+                $pass= $model->CONTRASENA;
+                $isUpdate=false;
+                 if(Yii::app()->user->getUser_Id()==$id){
+                    $model->CONTRASENA='';
+                    $model->_RPT_CONTRASENA = '';
+                    $isUpdate=true;
+                }
 		if(isset($_POST['Usuarios']))
 		{
 			$pwd = $model->CONTRASENA;
 			$model->attributes=$_POST['Usuarios'];
-
-			if(isset($model->CONTRASENA) && ($model->CONTRASENA != '')){
-				$md5Pass = md5($model->CONTRASENA);
-				$model->CONTRASENA = $md5Pass;
-			}else{
-				$model->CONTRASENA = $pwd;
-			}
+                           if($isUpdate && !empty($model->CONTRASENA) && !empty($model->_RPT_CONTRASENA )){
+                                $model->CONTRASENA = md5($model->CONTRASENA);
+                                $model->_RPT_CONTRASENA = md5($model->_RPT_CONTRASENA);
+                       
+                        }
 			
-			if($model->save())
+			if($model->save()){
+                             if($isUpdate){
+                                    $model->CONTRASENA = '';
+                                    $model->_RPT_CONTRASENA = '';
+                                }
 				$this->redirect(array('view','id'=>$model->ID_USUARIO));
+                        }
 		}else{
 			$model->CONTRASENA = "";
 		}
@@ -128,6 +144,48 @@ class UsuariosController extends Controller
 			'model'=>$model,
 		));
 	}
+                public function actionUpdateProfile($id)
+	{
+		$model=$this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+                $pass= $model->CONTRASENA;
+                $model->CONTRASENA='';
+                //$model->CONTRASENA = '';
+                $model->_RPT_CONTRASENA = '';
+                if(Yii::app()->user->getUser_Id()!=$id)
+                    throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');    
+		if(isset($_POST['Usuarios']))
+		{
+                        
+			$model->attributes=$_POST['Usuarios'];
+                            if(!empty($model->CONTRASENA)&& !empty($model->_RPT_CONTRASENA)){
+                                $model->CONTRASENA = md5($model->CONTRASENA);
+                                $model->_RPT_CONTRASENA = md5($model->_RPT_CONTRASENA);
+                       
+                        }
+                         $model->PRIMER_LOGIN=0;
+			//$model->CONTRASENA=md5($model->CONTRASENA); //Encriptar en MD5
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->ID_USUARIO));
+                        
+                   $model->CONTRASENA = '';
+                   $model->_RPT_CONTRASENA = '';
+		}
+
+		$this->render('updateProfile',array(
+			'model'=>$model,
+		));
+	}
+         private function generatePass(){
+            $str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+            $pass = "";
+            for($i=0;$i<8;$i++) {
+            $pass .= substr($str,rand(0,62),1);
+            }
+            return $pass;
+          }
 
 	/**
 	 * Deletes a particular model.
@@ -195,5 +253,20 @@ class UsuariosController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+        private function sendMail($model, $pass)
+	{
+                $mail=Yii::app()->Smtpmail;
+                $mail->SMTPDebug = 1;
+                $mail->CharSet = 'UTF-8';
+                $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Web Aprobacion de Documentos');
+                $mail->Subject = 'Datos de Cuenta';
+                $mail->MsgHTML(Yii::app()->controller->renderPartial('body', array('model'=>$model,'pass'=>$pass),true));
+                $mail->AddAddress($model->EMAIL_USUARIO, 'Test');
+                if(!$mail->Send()) {
+                    Yii::app()->user->setFlash('error',Yii::t('validation','Error al enviar correo Electronico'));
+                }else {
+                    Yii::app()->user->setFlash('success',Yii::t('validation','Datos de usuario enviados por correo Electronico'));
+                } 
 	}
 }

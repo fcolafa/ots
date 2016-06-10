@@ -29,10 +29,10 @@ $('.search-form form').submit(function(){
 <?php 
   	Yii::app()->clientScript->registerScript('detallesOT', 
   	"
-	//jQuery(document).on('hover', '.mas_icon', function() {
-    	$('#presupuesto-grid > table > tbody > tr .mas_icon').hover(function () {
-    	//var id = $(this).parent().parent().find('td:first').text();
-        var id = $(this).find('td:first').text();
+	jQuery(document).on('hover', '.mas_icon', function() {
+    //	$('#presupuesto-grid > table > tbody > tr .mas_icon').hover(function () {
+    	var id = $(this).parent().parent().find('td:first').text();
+        //var id = $(this).find('td:first').text();
         // var row = $(this).find('td:first');
         $.ajax({
 		  	type: 'POST',
@@ -45,9 +45,10 @@ $('.search-form form').submit(function(){
 		 	},
 			dataType: 'json',
 			success: function (data) {
-				$(this).attr('data-toggle', 'tooltip');
-				$(this).attr('title', data);
-				$(this).tooltip();
+				$('.mas_icon').attr('data-toggle', 'tooltip');
+				$('.mas_icon').attr('title', data);
+				//$('.mas_icon').attr('data-content', data);
+				$('.mas_icon').tooltip();
 		  	}
 		});
     });
@@ -133,10 +134,15 @@ $('.search-form form').submit(function(){
 							),
 							),true);
 	
+        if(Yii::app()->user->allCompany())
+            $search=$model->searchAllcompany();
+        else
+            $search=$model->search();
+        
 	$this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'presupuesto-grid',
 		'selectionChanged'=>'mostrarDetalles',
-		'dataProvider'=>$model->search(),
+		'dataProvider'=>$search,
 		'htmlOptions'=>array('style'=>'text-align:left; width: 100%;'),
 		'afterAjaxUpdate'=>"function() {
  								jQuery('#FECHA_OT').datepicker(jQuery.extend({showMonthAfterYear:false}, jQuery.datepicker.regional['es'], {'showAnim':'fold','dateFormat':'yy-mm-dd','changeMonth':'true','showButtonPanel':'true','changeYear':'true','constrainInput':'false'}));
@@ -152,6 +158,14 @@ $('.search-form form').submit(function(){
 				'value'=>'@$data->personal->NOMBRE_PERSONA',
 				'htmlOptions'=>array('width' =>	'15%'),
 			),
+                        array(
+                                'name'=>'_empresa',
+                                'value'=>'@$data->empresa->NOMBRE_EMPRESA',
+                                'filter'=>  CHtml::activeTextField($model, '_empresa'),
+                                'htmlOptions'=>array('width' =>'15%'),
+                                'visible'=>Yii::app()->user->allCompany(),
+
+                        ),
 			array(
 				'name'=>'ID_DEPARTAMENTO',
 				'value'=>'@$data->departamentos->NOMBRE_DEPARTAMENTO',
@@ -176,7 +190,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('width' =>	'10%', 'align'=>'center'),
+				'htmlOptions'=>array('width' =>	'5%', 'align'=>'center'),
 			),
 			array(
 				'name'=>'VOBO_ADMIN',
@@ -184,7 +198,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('width' =>	'10%', 'align'=>'center'),
+				'htmlOptions'=>array('width' =>	'5%', 'align'=>'center'),
 			),
 			
 			array(
@@ -193,7 +207,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('align'=>'center'),
+				'htmlOptions'=>array('align'=>'center','width' =>'5%'),
 			),
 			array(
 				'name'=>'VOBO_GERENTE_GRAL',
@@ -201,7 +215,7 @@ $('.search-form form').submit(function(){
                                 'type'=>'image',
                         	//'value'=>'"../themes/default/img/icons/aprove.png"',
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
-				'htmlOptions'=>array('align'=>'center'),
+				'htmlOptions'=>array('align'=>'center','width' =>'5%'),
 			),
 			
 		
@@ -221,15 +235,15 @@ $('.search-form form').submit(function(){
                    'htmlOptions'=>array('align'=>'center'),
                ),
 			array(	'class'=>'CButtonColumn',
-					'template'=>'{more}{view}{update}{delete}',
+					'template'=>'{view}{update}{delete}',
 					'header'=>'Opciones',
 					'buttons'=>array(
-						'more' => array(
+					/*	'more' => array(
 							'label' => 'Mas',
 							'options' => array('class'=>'mas_icon', 'prevent'=>'default'),
 							'click' => 'js:function() { return false;}',
 							'imageUrl'=>Yii::app()->theme->baseUrl.'/img/plus.png',
-						),
+						),*/
 						'update' => array('visible'=> 'Yii::app()->user->A1() || Yii::app()->user->ADM() || Yii::app()->user->GG() || Yii::app()->user->GOP() || Yii::app()->user->JDP()'),
 						'delete' => array('visible'=> 'Yii::app()->user->A1() || Yii::app()->user->ADM() || Yii::app()->user->GG() || Yii::app()->user->GOP() || Yii::app()->user->JDP()'),
 						),

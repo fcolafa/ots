@@ -18,17 +18,12 @@
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
 	<?php echo $form->errorSummary($model); ?>
-
+      
 	<div class="row">
 		<div class="span2">
 			<?php echo $form->labelEx($model,'NOMBRE_USUARIO'); ?>
 			<?php echo $form->textField($model,'NOMBRE_USUARIO',array('class'=>'span12','maxlength'=>20)); ?>
 			<?php echo $form->error($model,'NOMBRE_USUARIO'); ?>
-		</div>
-		<div class="span2">
-			<?php echo $form->labelEx($model,'CONTRASENA'); ?>
-			<?php echo $form->textField($model,'CONTRASENA',array('class'=>'span12','maxlength'=>1024)); ?>
-			<?php echo $form->error($model,'CONTRASENA'); ?>
 		</div>
 		<div class="span2">
 			<?php echo $form->labelEx($model,'COD_TIPO_USUARIO'); ?>
@@ -41,6 +36,7 @@
 			<?php echo $form->error($model,'RUT_USUARIO'); ?>
 		</div>
 	</div>
+        
 
 	<div class="row">
 		<div class="span4">

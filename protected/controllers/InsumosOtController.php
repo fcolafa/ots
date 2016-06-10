@@ -86,17 +86,16 @@ class InsumosOtController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['InsumosOt']))
+		//die(print_r($_POST['InsumosOt']['ID_INSUMOS_OT']));
+		if(isset($_POST['InsumosOT']))
 		{
-			$model->attributes=$_POST['InsumosOt'];
+			$model->attributes=$_POST['InsumosOT'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->ID_INSUMOS_OT));
+                            $this->redirect(array('ordenTrabajo/update','id'=>$model->ID_OT));
+				//$this->redirect(array('view','id'=>$model->ID_INSUMOS_OT));
 		}
-
 		$this->render('update',array(
 			'model'=>$model,
 		));

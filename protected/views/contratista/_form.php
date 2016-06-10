@@ -38,7 +38,7 @@
 				<div class="span2">
 					<?php //$mUsuario= Usuario::model()->findbyAttributes(array('NOMBRE_USUARIO'=>Yii::app()->user->id));
 					//$rol=$mUsuario->COD_TIPO_USUARIO;
-						if ( Yii::app()->user->A1() || Yii::app()->user->GE() || Yii::app()->user->SG()){
+						if ( Yii::app()->user->A1() ){
 							echo $form->labelEx($model,'AUTORIZADO');
 							echo $form->checkBox($model,'AUTORIZADO');
 						}
@@ -110,7 +110,7 @@
 	</table>
 	<br>
 	<div class="row">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar',array('class'=>'btn btn-primary offset3')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar',array('class'=>'btn btn-success')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

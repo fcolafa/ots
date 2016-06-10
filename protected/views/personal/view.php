@@ -16,7 +16,7 @@ $this->menu=array(
 );
 ?>
 
-<h2 class="text-center">Personal # <?php echo $model->NOMBRE_PERSONA; ?></h2>
+<h2 class="text-center">Personal <?php echo $model->NOMBRE_PERSONA; ?></h2>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,

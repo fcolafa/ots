@@ -15,11 +15,13 @@ class UserIdentity extends CUserIdentity
 	 * against some persistent user identity storage (e.g. database).
 	 * @return boolean whether authentication succeeds.
 	 */
-	private $_id;
+     private $_id;
+     
+     
      public function authenticate()
      {
           $username = strtolower($this->username);
-          $user = Usuarios::model()->findByAttributes(array('NOMBRE_USUARIO'=>$this->username,'ID_EMPRESA'=>$this->empresa));          
+          $user = Usuarios::model()->findByAttributes(array('NOMBRE_USUARIO'=>$this->username));          
           $md5 = md5($this->password);
 
           if($user===null)

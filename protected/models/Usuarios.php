@@ -17,6 +17,8 @@ class Usuarios extends CActiveRecord
 {
 
 	public $empresa;
+        public $_RPT_CONTRASENA;      
+        public $_PASSANTIGUA;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -33,14 +35,19 @@ class Usuarios extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('NOMBRE_USUARIO, CONTRASENA, COD_TIPO_USUARIO', 'required'),
-			array('ID_PERSONA', 'numerical', 'integerOnly'=>true),
+			array('NOMBRE_USUARIO, COD_TIPO_USUARIO', 'required'),
+			array('CONTRASENA, _RPT_CONTRASENA', 'required' ,'on'=>'updPersonal'),
+			array('NOMBRE_USUARIO', 'required', 'on'=>'actualizacion'),
+			array('NOMBRE_USUARIO', 'unique'),
+			array('ID_PERSONA, ID_EMPRESA, TODAS_LAS_EMPRESAS', 'numerical', 'integerOnly'=>true),
 			array('NOMBRE_USUARIO', 'length', 'max'=>50),
-			array('CONTRASENA', 'length', 'max'=>1024),
+			array('CONTRASENA', 'length', 'max'=>1024, 'min'=>6),
 			array('COD_TIPO_USUARIO', 'length', 'max'=>5),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('ID_USUARIO, empresa, NOMBRE_USUARIO, CONTRASENA, COD_TIPO_USUARIO, ID_PERSONA', 'safe', 'on'=>'search'),
+                        array('_RPT_CONTRASENA, _PASSANTIGUA', 'safe'),
+                        array('_PASSANTIGUA','updatePassword','on'=>'updPersonal'),
+                       
+                      
+			array('_RPT_CONTRASENA, _PASSANTIGUA ,FECHA_CREACION_USUARIO, ID_USUARIO, empresa, NOMBRE_USUARIO, CONTRASENA, COD_TIPO_USUARIO, ID_PERSONA', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,12 +71,15 @@ class Usuarios extends CActiveRecord
 		return array(
 			'ID_USUARIO' => 'Id Usuario',
 			'NOMBRE_USUARIO' => 'Nombre Usuario',
-			'CONTRASENA' => 'Contrasena',
+			'CONTRASENA' => 'Contraseña',
 			'COD_TIPO_USUARIO' => 'Cod Tipo Usuario',
 			'ID_PERSONA' => 'Id Persona',
+                        'ID_EMPRESA' => 'Id Empresa',
+			'TODAS_LAS_EMPRESAS' => 'Todas Las Empresas',
+                        '_PASSANTIGUA' => 'Contraseña Actual',
+			'_RPT_CONTRASENA' => 'Repetir Contraseña Nueva',
 		);
 	}
-
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -93,12 +103,14 @@ class Usuarios extends CActiveRecord
 		$criteria->compare('CONTRASENA',$this->CONTRASENA,true);
 		$criteria->compare('COD_TIPO_USUARIO',$this->COD_TIPO_USUARIO,true);
 		$criteria->compare('ID_PERSONA',$this->ID_PERSONA);
+                $criteria->compare('ID_EMPRESA',$this->ID_EMPRESA);
+		$criteria->compare('TODAS_LAS_EMPRESAS',$this->TODAS_LAS_EMPRESAS);
+                $criteria->compare('PRIMER_LOGIN',$this->PRIMER_LOGIN);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -110,8 +122,14 @@ class Usuarios extends CActiveRecord
 		return parent::model($className);
 	}
 
-		public function validatePassword($password)
+        public function validatePassword($password)
 	{
-		return $password === $this->CONTRASENA;
+            return $password === $this->CONTRASENA;
 	}
+        public function updatePassword($attribute, $params) {
+            $user= Usuarios::model()->findByPk($this->ID_USUARIO);
+                if (md5($this->_PASSANTIGUA)!=$user->CONTRASENA)
+                     $this->addError($attribute, Yii::t('validation','Contraseña Incorrecta'));
+        }   
+	
 }

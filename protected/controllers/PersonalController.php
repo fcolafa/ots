@@ -18,7 +18,6 @@ class PersonalController extends Controller
 			'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
-
 	/**
 	 * Specifies the access control rules.
 	 * This method is used by the 'accessControl' filter.
@@ -34,36 +33,37 @@ class PersonalController extends Controller
 				//'expression'=>'$user->U2()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view','viewPersonal','updatePersonal'),
+				'actions'=>array('create','update','admin','delete','index','view','viewPersonal','updatePersonal','upload'),
 				'expression'=>'$user->A1()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('viewPersonal','updatePersonal'),
-				'expression'=>'$user->ADM() || $user->JDP()||$user->GG()||$user->GOP()',
+				'actions'=>array('viewPersonal','updatePersonal','upload'),
+				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
 	}
-
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
 	{
+                
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
 	}
 	public function actionViewPersonal($id)
 	{
+            if(Yii::app()->user->id!=$id)
+                      throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
 		$this->render('viewPersonal',array(
 			'model'=>$this->loadModel($id),
 		));
 	}
-
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -73,39 +73,75 @@ class PersonalController extends Controller
 		$model = new Personal;
 		$usuario = new Usuarios;
 		$nivelAprov = new NivelAprobacion;
-
+                
+            
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Personal'], $_POST['Usuarios'], $_POST['NivelAprobacion'] ) )
+		if(isset($_POST['Personal']) )
 		{
 			$model->attributes=$_POST['Personal'];
-			$usuario->attributes=$_POST['Usuarios'];
-		 	$nivelAprov->attributes=$_POST['NivelAprobacion'];
-
-		 	$valid = $model->validate();
-		 	$valid = ( $model->ES_USUARIO==1 )? $usuario->validate(): $valid;
-		 	$valid = ( $model->APRUEBA_DOCS==1 )? $nivelAprov->validate(): $valid;
-
-			if( $valid )
-			{	
-				$model->save();
-				Auditoria::model()->registrarAccion('', null ,"Nueva persona: ".$model->RUT_PERSONA.", Es usuario: ".$model->ES_USUARIO.", Aprueba Docs: ".$model->APRUEBA_DOCS);
-				if ($model->ES_USUARIO==1) {
-					$usuario->ID_PERSONA = $model->ID_PERSONA;
-					$usuario->CONTRASENA = md5($usuario->CONTRASENA);
-					$usuario->ID_EMPRESA = $model->ID_EMPRESA;
-					$usuario->save();
-				}
+                        $model->_firma=CUploadedFile::getInstance($model,'_firma');
+                        if(isset($_POST['Personal']['_firma']))
+                            $model->_firma=$_POST['Personal']['_firma'];
+                        $valid = $model->validate();
+                        if(isset($_POST['Usuarios'])){
+                            $usuario->attributes=$_POST['Usuarios'];
+                            $valid = ( $model->ES_USUARIO==1 )? $usuario->validate(): $valid;
+                        }
+			//$usuario->setScenario('creacion');
+                        if(isset($_POST['NivelAprobacion'])){
+                            $nivelAprov->attributes=$_POST['NivelAprobacion'];		 	
+                            $valid = ( $model->APRUEBA_DOCS==1 )? $nivelAprov->validate(): $valid;
+                        }
+				
+				if($model->save()){
+                                   
+                                  $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/firmas/'; 
+                                  if(!file_exists($tempFolder))
+                                    mkdir($tempFolder,0777,true); 
+                                    $newFolder=Yii::getPathOfAlias('webroot').'/archivos/firmas/'; 
+                                    
+                                    $file=$model->_firma;
+                                  if(!empty($file)){
+                                    $perfile=  $this->loadModel($model->ID_PERSONA);
+                                    $info = pathinfo($tempFolder.$model->_firma);
+                                    $ext = $info['extension'];
+                                    $perfile->URL_FIRMA=$model->ID_PERSONA.'.'.$ext;
+                                    if($perfile->save(false))
+                                    copy($tempFolder.$model->_firma,$newFolder.$model->ID_PERSONA.'.'.$ext); 
+                                  }
+                                 
+                             
+                                  Auditoria::model()->registrarAccion('', null ,"Nueva persona: ".$model->RUT_PERSONA.", Es usuario: ".$model->ES_USUARIO.", Aprueba Docs: ".$model->APRUEBA_DOCS);
 				if ($model->APRUEBA_DOCS==1 ) {
 					$nivelAprov->save();
 					$usuario_aprobacion = new UsuarioAprobacion;
 					$usuario_aprobacion->ID_USUARIO = $usuario->ID_USUARIO;
 					$usuario_aprobacion->ID_NIVEL_APROB = $nivelAprov->ID_NIVEL_APROB;
 					$usuario_aprobacion->save();
-				}
-				$this->redirect(array('view','id'=>$model->ID_PERSONA));
-			}
+                                }
+                                if ($model->ES_USUARIO==1) {
+					$usuario->ID_PERSONA = $model->ID_PERSONA;
+					$pass=$this->generatePass();
+                                        $usuario->_PASSANTIGUA = md5($pass);
+                                        $usuario->CONTRASENA = md5($pass);
+                                        $usuario->_RPT_CONTRASENA = md5($pass);
+                                        $usuario->FECHA_CREACION_USUARIO= date("y/m/d H:i:s");
+                                        $usuario->PRIMER_LOGIN=1;
+					$usuario->ID_EMPRESA = $model->ID_EMPRESA;
+					if($usuario->save()){
+                                            $this->sendMail($usuario,$pass,$model->EMAIL);
+                                       
+                                       
+                                        }
+                                }
+                                      
+                                    $this->redirect(array('view','id'=>$model->ID_PERSONA));
+                                
+                        }
+                        
+                
 		}
 
 		$this->render('create',array(
@@ -114,34 +150,63 @@ class PersonalController extends Controller
 			'aprovacion'=>$nivelAprov,
 		));
 	}
-        public function actionUpdatePersonal($id){
-           
-        
-             $model= $this->loadModel($id);
+
+    public function actionUpdatePersonal($id){
+            $model= $this->loadModel($id);
+            $criteria = new CDbCriteria;  
+            $criteria->condition ='ID_PERSONA='.$id;
+            $usuario=  Usuarios::model()->find($criteria);
+            $usuario->scenario = 'updPersonal';    
              if(Yii::app()->user->id!=$id)
                        throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
-             $filename=$model->ID_PERSONA. ".jpg";
-             $model->URL_FIRMA = $filename;
-            if(isset($_POST['Personal'])){
+                $usuario->_PASSANTIGUA ='';
+                $usuario->CONTRASENA ='';
+                $usuario->_RPT_CONTRASENA ='';
+                
+            if(isset($_POST['Personal'],$_POST['Usuarios'])){
                 $model->attributes=$_POST['Personal'];
                 $model->_firma=CUploadedFile::getInstance($model,'_firma');
-                $filename=$id. ".jpg";
-                if($model->save()){
-                    if(!empty($model->_firma)){
-                        try{
-                           $model->URL_FIRMA = $filename;
-                           $model->_firma->saveAs(Yii::app()->basePath.'/../archivos/personal/'.$filename);
-                   }catch(Exception $e){
-                        echo "No se ha logrado actualizar la cuenta ";
-                   }
-				}   
+                $usuario->attributes=$_POST['Usuarios'];
+                if(isset($_POST['Personal']['_firma']))
+                        $model->_firma=$_POST['Personal']['_firma'];
+                 
+                
+                if ($model->ES_USUARIO==1 && $usuario->validate()) {
+                    if(!empty($usuario->CONTRASENA) && ($usuario->CONTRASENA != '')){
+                            $md5Pass = md5($usuario->CONTRASENA);
+                            $usuario->CONTRASENA = $md5Pass;
+                    }
+                    $usuario->ID_PERSONA = $model->ID_PERSONA;
+					//$usuario->CONTRASENA = md5($usuario->CONTRASENA);
+					
+                    }
+                                
+                    $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/firmas/'; 
+                    if(!file_exists($tempFolder))
+                        mkdir($tempFolder,0777,true); 
+                    $newFolder=Yii::getPathOfAlias('webroot').'/archivos/firmas/'; 
+                      $file=$model->_firma;
+                                  if(!empty($file)){
+                                    $info = pathinfo($tempFolder.$model->_firma);
+                                    $ext = $info['extension'];
+                                    $model->URL_FIRMA=$id.'.'.$ext;
+                                    copy($tempFolder.$model->_firma,$newFolder.$id.'.'.$ext); 
+                                  }     
+                if($usuario->save()&& $model->save()){          
                     $this->redirect(array('viewPersonal','id'=>$model->ID_PERSONA));
+                    
                 }
+                
+                $usuario->_PASSANTIGUA ='';
+                $usuario->CONTRASENA ='';
+                $usuario->_RPT_CONTRASENA ='';
+                
             }
             $this->render('updatePersonal',array(
 			'model'=>$model,
+                        'usuario'=>$usuario,
 		));
-        }
+    }
 
 	/**
 	 * Updates a particular model.
@@ -154,9 +219,11 @@ class PersonalController extends Controller
 		$usuario = ($model->ES_USUARIO)? Usuarios::model()->findByAttributes(array('ID_PERSONA'=>$id)): new Usuarios;
 		$nivelAprob = new NivelAprobacion;
 		$aprobados	= array();
-		if ($model->APRUEBA_DOCS) {
-			$sql = "SELECT * FROM (usuario_aprobacion ua INNER JOIN nivel_aprobacion na ON ua.ID_NIVEL_APROB=na.ID_NIVEL_APROB) INNER JOIN tipo_documento td ON na.ID_TIPO_DOC=td.ID_TIPO_DOC where ua.ID_USUARIO=".$usuario->ID_USUARIO;
-			$aprobados	= NivelAprobacion::model()->findAllBySql($sql);
+		if ($model->ES_USUARIO) {
+			if ($model->APRUEBA_DOCS) {
+				$sql = "SELECT * FROM (usuario_aprobacion ua INNER JOIN nivel_aprobacion na ON ua.ID_NIVEL_APROB=na.ID_NIVEL_APROB) INNER JOIN tipo_documento td ON na.ID_TIPO_DOC=td.ID_TIPO_DOC where ua.ID_USUARIO=".$usuario->ID_USUARIO;
+				$aprobados	= NivelAprobacion::model()->findAllBySql($sql);
+			}
 		}
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -165,36 +232,38 @@ class PersonalController extends Controller
 		if(isset($_POST['Personal'], $_POST['Usuarios'], $_POST['NivelAprobacion']) && isset($_POST['modificar_personal']))
 		{		
 			$model->attributes=$_POST['Personal'];
+			$pwd = $usuario->CONTRASENA;
 			$usuario->attributes=$_POST['Usuarios'];
+			//die(print_r($pwd."  ".$usuario->CONTRASENA));
+			$usuario->setScenario('actualizacion');
 		 	$nivelAprov->attributes=$_POST['NivelAprobacion'];
 
 		 	$valid = $model->validate();
 		 	$valid = ( $model->ES_USUARIO==1 )? $usuario->validate(): $valid;
-		 	$valid = ( $model->APRUEBA_DOCS==1 )? $nivelAprov->validate(): $valid;
+		 	//$valid = ( $model->APRUEBA_DOCS==1 )? $nivelAprov->validate(): $valid;
 
 			if( $valid )
 			{	
 				$model->save();
 				Auditoria::model()->registrarAccion('', null ,"Nueva persona: ".$model->RUT_PERSONA.", Es usuario: ".$model->ES_USUARIO.", Aprueba Docs: ".$model->APRUEBA_DOCS);
 				if ($model->ES_USUARIO==1) {
-					$pwd = $usuario->CONTRASENA;
 					if(isset($usuario->CONTRASENA) && ($usuario->CONTRASENA != '')){
 						$md5Pass = md5($usuario->CONTRASENA);
 						$usuario->CONTRASENA = $md5Pass;
-					}else{
+					}else {
 						$usuario->CONTRASENA = $pwd;
 					}
 					$usuario->ID_PERSONA = $model->ID_PERSONA;
-					$usuario->CONTRASENA = md5($usuario->CONTRASENA);
+					//$usuario->CONTRASENA = md5($usuario->CONTRASENA);
 					$usuario->save();
 				}
-				if ($model->APRUEBA_DOCS==1 ) {
+				/*if ($model->APRUEBA_DOCS==1 ) {
 					$nivelAprov->save();
 					$usuario_aprobacion = new UsuarioAprobacion;
 					$usuario_aprobacion->ID_USUARIO = $usuario->ID_USUARIO;
 					$usuario_aprobacion->ID_NIVEL_APROB = $nivelAprov->ID_NIVEL_APROB;
 					$usuario_aprobacion->save();
-				}
+				}*/
 				$this->redirect(array('view','id'=>$model->ID_PERSONA));
 			}
 		}	
@@ -235,6 +304,7 @@ class PersonalController extends Controller
 		$user_creador = OrdenTrabajo::model()->findByAttributes(array('USUARIO_CREADOR'=>$id));
 		$solicitante = OrdenTrabajo::model()->findByAttributes(array('SOLICITANTE'=>$id));
 		$supervisor = OrdenTrabajo::model()->findByAttributes(array('SUPERVISOR'=>$id));
+		$usuario = Usuarios::model()->findByAttributes(array('ID_PERSONA'=>$id));
 
 		$msg ="No se pudo eliminar ya que está se encuentra como ";
 
@@ -244,11 +314,13 @@ class PersonalController extends Controller
 			$msg.= "solicitante de una Ot ";
 		}elseif (count($supervisor) > 0) {
 			$msg.= "supervisor de una Ot";
+		}elseif (count($usuario) > 0){
+			$msg.= "usuario en el sistema";
 		}
 		
 		try{
 			$this->loadModel($id)->delete();
-			Auditoria::model()->registrarAccion('', $model->ID_PERSONA , $model->NOMBRE_PERSONA);
+			Auditoria::model()->registrarAccion('', $model->ID_PERSONA , "Se elimina persona ".$model->NOMBRE_PERSONA);
 			if(!isset($_GET['ajax']))
 		        Yii::app()->user->setFlash('success','Persona eliminada correctamente');
 		    else
@@ -318,5 +390,46 @@ class PersonalController extends Controller
 			Yii::app()->end();
 		}
 	}
+           private function sendMail($model, $pass,$email)
+	{
+	
+                $mail=Yii::app()->Smtpmail;
+                $mail->SMTPDebug = 1;
+                $mail->CharSet = 'UTF-8';
+                $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Aprobación de Documentos');
+                $mail->Subject = 'Datos de Cuenta';
+                $mail->MsgHTML(Yii::app()->controller->renderPartial('body', array('model'=>$model,'pass'=>$pass,'email'=>$email),true));
+                $mail->AddAddress($email, 'Test');
+                if(!$mail->Send()) {
+                    Yii::app()->user->setFlash('error',Yii::t('validation','Error al enviar correo Electronico'));
+                }else {
+                    Yii::app()->user->setFlash('success',Yii::t('validation','Datos de usuario enviados por correo Electronico'));
+                } 
+	}
+          private function generatePass(){
+            $str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+            $pass = "";
+            for($i=0;$i<8;$i++) {
+            $pass .= substr($str,rand(0,62),1);
+            }
+            return $pass;
+          }
+             public function actionUpload()
+            {
+                $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/firmas/';         
+                Yii::import("ext.EFineUploader.qqFileUploader");
+                $uploader = new qqFileUploader();
+                $uploader->allowedExtensions = array('pdf','jpg','jpeg','png');
+                $uploader->sizeLimit = 5 * 1024 * 1024;//maximum file size in bytes
+                $uploader->chunksFolder = $tempFolder;
+                $result = $uploader->handleUpload($tempFolder);
+                $result['filename'] = $uploader->getUploadName();
+                $result['folder'] = $tempFolder;
+                $uploadedFile=$tempFolder.$result['filename'];
+                header("Content-Type: text/plain");
+                $result=htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+                echo $result;
+                Yii::app()->end();
+            }
 }
  

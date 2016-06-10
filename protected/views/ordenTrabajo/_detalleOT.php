@@ -15,6 +15,7 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+    'htmlOptions' => array('enctype' => 'multipart/form-data'),
 )); ?>
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
