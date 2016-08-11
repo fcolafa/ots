@@ -257,7 +257,7 @@ class UsuariosController extends Controller
         private function sendMail($model, $pass)
 	{
                 $mail=Yii::app()->Smtpmail;
-                $mail->SMTPDebug = 1;
+                $mail->SMTPDebug = 2;
                 $mail->CharSet = 'UTF-8';
                 $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Web Aprobacion de Documentos');
                 $mail->Subject = 'Datos de Cuenta';

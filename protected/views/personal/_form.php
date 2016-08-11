@@ -79,7 +79,7 @@
 	
 	<div class="row">
 		<div class="span3">
-			<?php echo $form->labelEx($model,'TELEFONO'); ?>
+			<b><?php echo $form->labelEx($model,'TELEFONO'); ?></b>
 			<?php echo $form->textField($model,'TELEFONO',array('class'=>'span12', 'maxlength'=>80)); ?>
 			<?php echo $form->error($model,'TELEFONO'); ?>
 		</div>

@@ -217,6 +217,14 @@ $('.search-form form').submit(function(){
                                 'filter'=>array(1=>'Aprobado',0=>'Pendiente'),
 				'htmlOptions'=>array('align'=>'center','width' =>'5%'),
 			),
+			array(
+                                'header'=>'Estado Orden de trabajo ',
+				'name'=>'RECHAZAR_OT',
+				'value'=>'$data->getImage($data->RECHAZAR_OT, $data->VOBO_GERENTE_GRAL)',
+                                'type'=>'image',
+                                'filter'=>false,
+                        	'htmlOptions'=>array('align'=>'center','width' =>'5%'),
+			),
 			
 		
 			/*array(
@@ -235,7 +243,7 @@ $('.search-form form').submit(function(){
                    'htmlOptions'=>array('align'=>'center'),
                ),
 			array(	'class'=>'CButtonColumn',
-					'template'=>'{view}{update}{delete}',
+					'template'=>'{view}{update}',
 					'header'=>'Opciones',
 					'buttons'=>array(
 					/*	'more' => array(
@@ -244,7 +252,7 @@ $('.search-form form').submit(function(){
 							'click' => 'js:function() { return false;}',
 							'imageUrl'=>Yii::app()->theme->baseUrl.'/img/plus.png',
 						),*/
-						'update' => array('visible'=> 'Yii::app()->user->A1() || Yii::app()->user->ADM() || Yii::app()->user->GG() || Yii::app()->user->GOP() || Yii::app()->user->JDP()'),
+						'update' => array('visible'=> '$data->VOBO_GERENTE_GRAL!=1&&(Yii::app()->user->A1() || Yii::app()->user->ADM() || Yii::app()->user->GG() || Yii::app()->user->GOP() || Yii::app()->user->JDP())'),
 						'delete' => array('visible'=> 'Yii::app()->user->A1() || Yii::app()->user->ADM() || Yii::app()->user->GG() || Yii::app()->user->GOP() || Yii::app()->user->JDP()'),
 						),
 					'htmlOptions'=>array('width' =>	'10%', 'class'=>'text-center'),

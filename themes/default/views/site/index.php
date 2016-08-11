@@ -50,8 +50,10 @@ $variable = Yii::app()->user->A1();
 
             <!-- Div de Ordenes de Trabajo -->
             <div align="center" valign="top" class="messageButtonb blue">
+                <span class="badge badge-important iconMenuBadge"><?php echo OrdenTrabajo::model()->getNumberOTR()?></span>
                 <span class="badge badge-warning iconMenuBadge"><?php echo OrdenTrabajo::model()->getNumberOTP()?></span>
                 <span class="badge badge-success iconMenuBadge"><?php echo OrdenTrabajo::model()->getNumberOTA()?></span>
+                
                 
                 <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/work-order.png" alt="Ordenes de Trabajo"  width="15%" />', array('ordenTrabajo/admin'));?>
                 <div  class="dashIconText"><?php echo CHtml::link('<h4>Ordenes de Trabajo</h4>',array('ordenTrabajo/admin')); ?></div>

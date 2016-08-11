@@ -8,10 +8,10 @@
 return array(
 	'theme' => 'default',
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'Astilleros Calbuco S.A.',
+	'name'=>'Aprobacion de documentos',
 	'defaultController'=>'site/login',
+        'timeZone'=>'America/Santiago',
         'language' => 'es',
-
 	// preloading 'log' component
 	'preload'=>array('log'),
 
@@ -43,11 +43,11 @@ return array(
                  ),
                   'Smtpmail'=>array(
                         'class'=>'application.extensions.smtpmail.PHPMailer',
-                        'Host'=>"mail.eject.cl",
-                        'Username'=>'hys@eject.cl',
-                        'Password'=>'13579r2d2',
+                        'Host'=>"199.195.119.4",
+                        'Username'=>'desarrollo@pcgeek.cl',
+                        'Password'=>'r2d2.desarrollo',
                         'Mailer'=>'smtp',
-                        'Port'=>25,
+                        'Port'=>25 ,
                         'SMTPAuth'=>true,
                   ),
 		'user'=>array(

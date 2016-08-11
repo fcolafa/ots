@@ -10,14 +10,21 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	//array('label'=>'Ver Orden de Trabajo', 'url'=>array('index')),
 	array('label'=>'Exportar a PDF', 'url'=>array('viewPDF', 'id'=>$model->ID_OT), 'visible'=>$model->APROBADO_I25==1?1:0, 'linkOptions' => array('target'=>'_blank')),
-	array('label'=>'Crear Orden de Trabajo', 'url'=>array('create')),
-	array('label'=>'Actualizar Orden de Trabajo', 'url'=>array('update', 'id'=>$model->ID_OT)),
-	array('label'=>'Borrar Orden de Trabajo', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID_OT),'confirm'=>'está usted seguro que desea eliminar del sistema este elemento?')),
+	array('label'=>'Crear Orden de Trabajo', 'url'=>array('create'),'visible'=> !Yii::app()->user->GG()),
+	array('label'=>'Actualizar Orden de Trabajo', 'url'=>array('update', 'id'=>$model->ID_OT),'visible'=> $model->VOBO_GERENTE_GRAL!=1),
+	//array('label'=>'Borrar Orden de Trabajo', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID_OT),'confirm'=>'está usted seguro que desea eliminar del sistema este elemento?')),
 	array('label'=>'Administrar Orden de Trabajo', 'url'=>array('admin')),
 );
+$clname='borde-azul';
+if($model->RECHAZAR_OT==1)
+   $clname='borde-rojo';
+else
+if($model->VOBO_GERENTE_GRAL==1)
+   $clname='borde-verde';
 ?>
 
-	<div class="borde-azul" id="ot-aprobada">
+
+	<div class="<?php echo $clname ?>" id="ot-aprobada">
 		<br>
 		<table width="100%">
 			<thead>
@@ -191,7 +198,7 @@ $this->menu=array(
 		<br>
 		<table width="100%">
 			<tr>
-                <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento <br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
+                <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° Jefe Depto. <br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
                 <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
                                 
 			</tr>
@@ -199,49 +206,76 @@ $this->menu=array(
 				<td width='20%' class="bordered"> <?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG)?></td>
 			</tr>
 			<tr>
-				<td width='20%' class="bordered h7 text-center"> V°B° Administrador</td><td width='20%' class="bordered h7 text-center">V°B° G.OP.</td><td width='20%' class="bordered h7 text-center">V°B° G.G</td>
+				<td width='20%' class="bordered h7 text-center"> V°B° Jefe Administrativo</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Planta</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Zonal</td>
 			</tr>
 			<tr>
 				<td width='20%' class="bordered h7 text-center"> Monto hasta USD 2.500</td><td width='40%' class="bordered h7 text-center" colspan="2">Monto sobre USD 2.500</td>
 			</tr>
 		</table>
+                <?php  if($model->RECHAZAR_OT==1 ){ ?>
+                <h3>Observaciones:</h3>
+                 <?php 
+                $persona=  Personal::model()->findByPk($model->USUARIO_RECHAZA);
+                $nombre=$persona->NOMBRE_PERSONA.' '.$persona->APELLIDO_PERSONA;
+                ?>
+                <p>Orden rechazada por:<b><?php echo $nombre?></b><br> motivo:<?php echo $model->MOTIVO_RECHAZO?></p>
+                <?php } ?>
 	</div>
 	<?php
 	if ($model->APROBADO_I25) :
-	    Yii::import('ext.mPrint.mPrint');
-	    $this->widget('ext.mPrint.mPrint', array(
-	        'title' => 'Elemento PDF.',
-	        'tooltip' => 'HTML PDF',
-	        'text' => 'Imprimir',
-	        'element' => '#ot-aprobada',
-	        /*'exceptions' => array(     
-	            '.summary',
-	        ),
-	        'publishCss' => true,*/
-	        'id' => 'PRINT_BUTTON_ID',
-	    ));
+//	    Yii::import('ext.mPrint.mPrint');
+//	    $this->widget('ext.mPrint.mPrint', array(
+//	        'title' => 'Elemento PDF.',
+//	        'tooltip' => 'HTML PDF',
+//	        'text' => 'Imprimir',
+//	        'element' => '#ot-aprobada',
+//	        /*'exceptions' => array(     
+//	            '.summary',
+//	        ),
+//	        'publishCss' => true,*/
+//	        'id' => 'PRINT_BUTTON_ID',
+//	    ));
 	endif;
 	?>
-	<br>
+    
 	<?php 
 		if(Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG()){
+                    
+                    if($model->RECHAZAR_OT==0 && $model->VOBO_GERENTE_GRAL!=1){
 			echo CHtml::link('<div  class="btn btn-success">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span> Aprobar Orden de Trabajo</h4>
 			</div>', 
 			array('OrdenTrabajo/aprobarOtView', 'id'=>$model->ID_OT),
                         array('confirm' => 'Desea Aprobar Ot?'));     
 		
+                	
                 	echo CHtml::link('<div  class="btn btn-danger">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span> Rechazar Orden de Trabajo</h4>
 			</div>', 
 			array('OrdenTrabajo/rechazarOtView', 'id'=>$model->ID_OT),
-                    array('confirm' => 'Esta seguro que desea rechazar la Orden de trabajo?'));     
-		
+                        array('confirm' => 'Esta seguro que desea rechazar la Orden de trabajo?'));     
+                    }elseif($model->RECHAZAR_OT==1){
+                        echo CHtml::link('<div  class="btn btn-success">
+		    	<h4> <span class="glyphicon glyphicon-ok"></span> Reaprobar Orden de Trabajo</h4>
+			</div>', 
+			array('OrdenTrabajo/reaprobarOtView', 'id'=>$model->ID_OT),
+                        array('confirm' => 'Confirma que se hicieron las modificaciones pertinentes para reaprobar la Orden de trabajo?'));  
+                    }
              
                 echo '<h4>Cotizaciones:</h4>';
                 echo $model->getCotFile();
                 }
 	?>
+    <br>
+       <?php
+        echo '<h4>Consultas:</h4>';
+        echo $this->getOTMessages($model->ID_OT);
+        echo CHtml::link('<div  class="btn btn-warning">
+		    	<h4> <span class="glyphicon glyphicon-ok"></span> Consulta</h4>
+			</div>', 
+			array('consulta/create', 'id'=>$model->ID_OT));     
+        ?>
+    
 
 <style type="text/css">
 	.table-bordered th, .table-bordered td, .table-bordered{border:1px solid #0B0B3B !important;} .bordered{border:1px solid #0B0B3B !important;}

@@ -66,34 +66,44 @@
 				</font>
 			</table>
 				<br><br>
-			<table width="800px">
+			<table width="100%" class="table table-condensed bordered">
+			<thead>
+				<br><br>
+				<tr> 
+					<th colspan="9">
+						<center>DISTRIBUCION DE COSTOS</center>
+					</th>
+				</tr>
+				<tr>
+					<th width="5%" class="bordered"> N°</th>
+					<th width="44%" class="bordered"> Descripción</th>
+					<th width="12%" class="text-right bordered"> Valor Total</th>
+					<th width="7%" class="text-right bordered"> Cotizacion</th>
+					<th width="7%" class="bordered"> C. C.</th>
+					<th width="9%" class="bordered"> C. C. C.</th>
+					<th width="9%" class="bordered"> S. C. C.</th>
+					<th width="7%" class="bordered"> Sección</th>
+				<tr>
+			</thead>
+			<tbody>
+				<?php // inicializo los acumuladores
+				$tot_contrat = 0; 
 
-				<!-- <td colspan='3'><b> Fecha : </b><?php//echo$model->FECHA_OT?> </td> -->
-
-			  <tr class='table-bordered'>
-					<th width='5%' class="text-center">Nro</th>
-					<th width='50%'>Descripción</th>
-					<th width='13%'>Valor Total</th>
-					<th width='12%'>Factura</th>
-					<th width='20%'> Centro Costos </th>
-			  </tr>
-
-				<?php  $item_actual = ""; $neto = 0; $iva = 0; $total = 0;
-						foreach ($detalle as $det): ?>
-
-						<tr class="table-bordered">
-							<td class="text-right"><small><?=$det->NUMERO_SUB_ITEM.". "?></small></td>
-							<td><small><?=$det->NOMBRE_SUB_ITEM ?></small></td>
-							<!--<td class="text-right"><small><?//=@$det->CANTIDAD?></small></td>-->
-							<td class="text-right"><small><?=number_format($det->COSTO_CONTRATISTA,0,',','.')?></small></td>
-							<td class="text-right"><small><?=@number_format($det->NRO_COTIZACION,0,',','.')?></small></td>
+				foreach ($detalle as $sub): 	?>
+						<tr>
+							<td class="bordered"> <?=$sub->NUMERO_SUB_ITEM?> </td>
+							<td class="bordered"> <?=$sub->NOMBRE_SUB_ITEM?> </td>
+							<td class="text-right bordered"> <?=number_format($sub->COSTO_CONTRATISTA,0,',','.')?> </td>
+							<td class="text-right bordered"> <?=$sub->NRO_COTIZACION ?> </td>
+							<td class="text-right bordered"> <?=$sub->centroCosto->NUMERO_CENTRO ?> </td>
+							<td class="text-right bordered"> <?=$sub->iDCCC->NUMERO_CUENTA ?> </td>
+							<td class="text-right bordered"> <?=$sub->iDSCC->SCC_NUMERO ?> </td>
+							<td class="text-right bordered"> <?=$sub->iDSEC->SEC_NUMERO ?> </td>
 						</tr>
-						<?php $neto += $det->COSTO_CONTRATISTA;
-						endforeach; 
-							$iva = ($neto * 19 / 100) ;
-							$total = $neto + $iva;
-				?>
-			</table>
+					<?php $tot_contrat += $sub->COSTO_CONTRATISTA; 
+				endforeach; ?>
+			</tbody>
+		</table>
 				<br>
 			<table width="800px">
 				<tr>
@@ -124,14 +134,14 @@
 			<br>
 			<table width="800px">
 				<tr>
-                                    <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° J. Departamento<br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
+                                    <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° Jefe Depto.<br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
                                         <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
 				</tr>
 				<tr>
 					<td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG)?></td>
 				</tr>
 				<tr>
-					<td width='20%' class="bordered h7 text-center"> V°B° Administrador</td><td width='20%' class="bordered h7 text-center">V°B° G.OP.</td><td width='20%' class="bordered h7 text-center">V°B° G.G</td>
+					<td width='20%' class="bordered h7 text-center"> V°B° Jefe Administrativo</td><td width='20%' class="bordered h7 text-center">'V°B° Gerente Planta</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Zonal</td>
 				</tr>
 				<tr>
 					<td width='20%' class="bordered h7 text-center"> Monto hasta USD 2.500</td><td width='40%' class="bordered h7 text-center" colspan="2">Monto sobre USD 2.500</td>

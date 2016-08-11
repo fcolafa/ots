@@ -33,11 +33,11 @@ class PersonalController extends Controller
 				//'expression'=>'$user->U2()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view','viewPersonal','updatePersonal','upload'),
+				'actions'=>array('create','update','admin','delete','index','view','viewPersonal','updatePersonal','upload','resetPersonal'),
 				'expression'=>'$user->A1()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('viewPersonal','updatePersonal','upload'),
+				'actions'=>array('viewPersonal'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -101,7 +101,6 @@ class PersonalController extends Controller
                                   if(!file_exists($tempFolder))
                                     mkdir($tempFolder,0777,true); 
                                     $newFolder=Yii::getPathOfAlias('webroot').'/archivos/firmas/'; 
-                                    
                                     $file=$model->_firma;
                                   if(!empty($file)){
                                     $perfile=  $this->loadModel($model->ID_PERSONA);
@@ -136,12 +135,9 @@ class PersonalController extends Controller
                                        
                                         }
                                 }
-                                      
                                     $this->redirect(array('view','id'=>$model->ID_PERSONA));
                                 
                         }
-                        
-                
 		}
 
 		$this->render('create',array(
@@ -150,7 +146,22 @@ class PersonalController extends Controller
 			'aprovacion'=>$nivelAprov,
 		));
 	}
-
+    public function actionResetPersonal($id){
+        $personal=  $this->loadModel($id);
+        $criteria=new CDbCriteria();
+        $criteria->condition="ID_PERSONA=".$personal->ID_PERSONA;
+        $usuario= Usuarios::model()->find($criteria);
+        if($usuario){
+            $pass=$this->generatePass();
+            $usuario->CONTRASENA = md5($pass);
+            if($usuario->save()){
+                $this->sendMail($usuario,$pass,$personal->EMAIL);
+            //$usuario->_RPT_CONTRASENA = md5($pass);
+            }
+        
+        } 
+        $this->redirect(array('view','id'=>$personal->ID_PERSONA));
+    }    
     public function actionUpdatePersonal($id){
             $model= $this->loadModel($id);
             $criteria = new CDbCriteria;  
@@ -165,7 +176,6 @@ class PersonalController extends Controller
                 
             if(isset($_POST['Personal'],$_POST['Usuarios'])){
                 $model->attributes=$_POST['Personal'];
-                $model->_firma=CUploadedFile::getInstance($model,'_firma');
                 $usuario->attributes=$_POST['Usuarios'];
                 if(isset($_POST['Personal']['_firma']))
                         $model->_firma=$_POST['Personal']['_firma'];
@@ -176,25 +186,25 @@ class PersonalController extends Controller
                             $md5Pass = md5($usuario->CONTRASENA);
                             $usuario->CONTRASENA = $md5Pass;
                     }
-                    $usuario->ID_PERSONA = $model->ID_PERSONA;
+                            $usuario->ID_PERSONA = $model->ID_PERSONA;
 					//$usuario->CONTRASENA = md5($usuario->CONTRASENA);
-					
+			$usuario->save();		
                     }
                                 
                     $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/firmas/'; 
                     if(!file_exists($tempFolder))
                         mkdir($tempFolder,0777,true); 
                     $newFolder=Yii::getPathOfAlias('webroot').'/archivos/firmas/'; 
-                      $file=$model->_firma;
+                     $file=$model->_firma;
                                   if(!empty($file)){
                                     $info = pathinfo($tempFolder.$model->_firma);
                                     $ext = $info['extension'];
                                     $model->URL_FIRMA=$id.'.'.$ext;
                                     copy($tempFolder.$model->_firma,$newFolder.$id.'.'.$ext); 
-                                  }     
-                if($usuario->save()&& $model->save()){          
+                                  }
+                                  
+                if($model->save()){          
                     $this->redirect(array('viewPersonal','id'=>$model->ID_PERSONA));
-                    
                 }
                 
                 $usuario->_PASSANTIGUA ='';
@@ -390,13 +400,13 @@ class PersonalController extends Controller
 			Yii::app()->end();
 		}
 	}
-           private function sendMail($model, $pass,$email)
+        private function sendMail($model, $pass,$email)
 	{
 	
                 $mail=Yii::app()->Smtpmail;
-                $mail->SMTPDebug = 1;
+                $mail->SMTPDebug = 2;
                 $mail->CharSet = 'UTF-8';
-                $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Aprobación de Documentos');
+                $mail->SetFrom('desarollo@pcgeek.cl', 'Sistema Aprobación de Documentos');
                 $mail->Subject = 'Datos de Cuenta';
                 $mail->MsgHTML(Yii::app()->controller->renderPartial('body', array('model'=>$model,'pass'=>$pass,'email'=>$email),true));
                 $mail->AddAddress($email, 'Test');

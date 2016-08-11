@@ -205,6 +205,7 @@ class OrdenTrabajo extends CActiveRecord
     public function getNumberOTP(){
         if(!Yii::app()->user->isGuest){
             $criteria=new CDbCriteria();
+             if(Yii::app()->user->allCompany()!=1){
             $idempresa=Yii::app()->getSession()->get('id_empresa');
             $condition='ID_EMPRESA';
             if(!empty($idempresa))
@@ -212,15 +213,16 @@ class OrdenTrabajo extends CActiveRecord
             else
                 $condition.=' IS NOT NULL';
             $condition.=' AND ';
-            
+             }else
+                 $condition='';
                 if(Yii::app()->user->ADM())
-                   $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=0';
+                   $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=0 AND RECHAZAR_OT <> 1';
                 elseif(Yii::app()->user->GOP()) 
-                   $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0";
+                   $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
                 elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
-                       $condition.='VOBO_JEFE_DPTO=0'; 
+                       $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1'; 
                     elseif(Yii::app()->user->GG()) 
-                   $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=0";
+                   $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=0 AND RECHAZAR_OT <> 1";
             $criteria->condition=$condition;
             $number=count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria),'ID_OT','ID_OT'));
             return $number;
@@ -229,6 +231,36 @@ class OrdenTrabajo extends CActiveRecord
            public function getNumberOTA(){
                 if(!Yii::app()->user->isGuest){
                     $criteria=new CDbCriteria();
+                    if(Yii::app()->user->allCompany()!=1){
+                    $condition="";
+                    $idempresa=Yii::app()->getSession()->get('id_empresa');
+                    
+                    $condition='ID_EMPRESA';
+                        if(!empty($idempresa))
+                            $condition.="=".$idempresa;
+                        else
+                            $condition.=' IS NOT NULL ';
+                         $condition.=' AND ';
+                    }else
+                 $condition='';
+                        if(Yii::app()->user->ADM())
+                           $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT <> 1';
+                        elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
+                           $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1';                
+                        elseif(Yii::app()->user->GOP()) 
+                           $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=1 AND RECHAZAR_OT <> 1";
+                        elseif(Yii::app()->user->GG() ) 
+                           $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=1 AND RECHAZAR_OT <> 1";
+
+                    $criteria->condition=$condition;
+                    $number=count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria),'ID_OT','ID_OT'));
+                    return $number;
+                }
+           }
+           public function getNumberOTR(){
+                if(!Yii::app()->user->isGuest){
+                    $criteria=new CDbCriteria();
+                    if(Yii::app()->user->allCompany()!=1){
                     $condition="";
                     $idempresa=Yii::app()->getSession()->get('id_empresa');
                     $condition='ID_EMPRESA';
@@ -237,14 +269,16 @@ class OrdenTrabajo extends CActiveRecord
                         else
                             $condition.=' IS NOT NULL ';
                          $condition.=' AND ';
+                    }else
+                    $condition='';
                         if(Yii::app()->user->ADM())
-                           $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1';
+                           $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT = 1';
                         elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
-                           $condition.='VOBO_JEFE_DPTO=1';                
+                           $condition.='RECHAZAR_OT = 1';                
                         elseif(Yii::app()->user->GOP()) 
-                           $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=1";
+                           $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT = 1";
                         elseif(Yii::app()->user->GG() ) 
-                           $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=1";
+                           $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT = 1";
 
                     $criteria->condition=$condition;
                     $number=count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria),'ID_OT','ID_OT'));
@@ -301,6 +335,17 @@ class OrdenTrabajo extends CActiveRecord
                 return $link;
             else
                 return null;
+        }
+        public function getImage($rechazo,$gg){
+            if($rechazo==1)
+                return "../themes/default/img/icons/reprove.png";
+            elseif($gg==1)
+                  return "../themes/default/img/icons/aprove.png";
+            else
+                return "../themes/default/img/icons/pending.png";
+            
+                
+                
         }
 }
 

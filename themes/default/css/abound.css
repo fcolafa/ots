@@ -614,6 +614,13 @@ input[type=radio] + label, input[type=checkbox] + label { display:inline !import
 /*.errorMessage {background-color:#e67e22;}*/
 .borde3gris{border-right:3px solid #62C462 !important;} .borde_3gris{border-left:3px solid #62C462 !important;} .borde3azul{border-right:3px solid #62C462 !important;} .borde_3azul{border-left:3px solid #62C462 !important;}
 
+.borde-verde{
+  border-radius: 10px 10px 10px 10px;
+  -moz-border-radius: 10px 10px 10px 10px;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border: 2px solid #429147;
+  padding:5px 10px;
+}
 .borde-azul{
   border-radius: 10px 10px 10px 10px;
   -moz-border-radius: 10px 10px 10px 10px;
@@ -621,6 +628,14 @@ input[type=radio] + label, input[type=checkbox] + label { display:inline !import
   border: 2px solid #428bca;
   padding:5px 10px;
 }
+.borde-rojo{
+  border-radius: 10px 10px 10px 10px;
+  -moz-border-radius: 10px 10px 10px 10px;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border: 2px solid #FF0000;
+  padding:5px 10px;
+}
+
 .borde-gris{border-radius: 5px 5px 5px 5px;-moz-border-radius: 5px 5px 5px 5px;-webkit-border-radius: 5px 5px 5px 5px;border: 2px solid #CCC;padding:5px 5px;}
 .borde-abajo{border-bottom: 1px solid #CCC;padding:5px 5px;}
 /* Estilo tipo gridview para tabla*/
@@ -772,3 +787,59 @@ div.wide.form .field_name_help
 	text-align: right;
 	margin-left: 110px;
 }
+.OTresponse {
+background: #E6EFC2 url(images/info.gif) center no-repeat;
+background-position: 15px 50%; /* x-pos y-pos */
+text-align: left;
+margin-left: 10%;
+padding: 5px 20px 5px 45px;
+border-top: 2px solid #438E47;
+border-bottom: 2px solid #438E47;
+color:#438E47;
+}
+
+
+.OTMessage {
+background: #E7F9F8 url(images/info.gif) center no-repeat;
+background-position: 15px 50%; /* x-pos y-pos */
+text-align: left;
+padding: 5px 20px 5px 45px;
+border-top: 2px solid #1DB9E8;
+border-bottom: 2px solid #1DB9E8;
+color:#1DB9E8;
+}
+
+.ticketNone {
+background: #FFF6BF url(images/info.gif) center no-repeat;
+background-position: 15px 50%; /* x-pos y-pos */
+text-align: left;
+padding: 5px 20px 5px 45px;
+border-top: 2px solid #FBC383;
+border-bottom: 2px solid #FBC383;
+color:#fbb450;
+}
+.fecham {
+float: right;
+ text-align: center;
+ width: 50px;
+ font-family: "Times New Roman", Times, serif;
+ font-weight:bold;
+ border:1px solid;
+ }
+.mes, .año {
+ font-size: 14px;
+ }
+.dia {
+ font-size: 30px;
+
+ }
+ .hora{
+    font-size: 10;
+    line-height: 10px;
+ }
+ .consulta{
+   padding-left: 2%;
+ }
+ .namem{
+     font-size: 15px;
+ }

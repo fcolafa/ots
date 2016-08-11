@@ -49,4 +49,10 @@ $this->menu=array(
 			),
               
 	),
-)); ?>
+));
+                        echo CHtml::link('<div  class="btn btn-error">
+		    	<h4> <span class="glyphicon glyphicon-ok"></span> Restablecer contraseña</h4>
+			</div>', 
+			array('Personal/resetPersonal', 'id'=>$model->ID_PERSONA),
+                        array('confirm' => 'Esta seguro que desea restablecer la contraseña?'));   
+?>
