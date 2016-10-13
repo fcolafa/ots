@@ -61,6 +61,7 @@ $this->menu=array(
 						<?=@$model->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO?>
 					</td>
 				</tr>
+                    
                                 <tr>
                                     <td rowspan="4"><?php echo (!empty($model->URL_FIRMA))?'<div style="text-align:center;"><image style="height=auto; width:200px;" src='.Yii::app()->baseUrl.'/archivos/firmas/'.$model->URL_FIRMA.' /></div>':''; ?></td>
                                 </tr>

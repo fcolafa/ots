@@ -108,16 +108,18 @@
 			<table width="800px">
 				<tr>
 					<td width='70%'></td><td class="bordered" width='10%'>Neto</td>
-					<td width='20%' class="text-right bordered"> <?=number_format($neto,0,',','.')?>	</td>
+					<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 				</tr>
-				<?php if ($model->APLICA_IVA) : ?>
+				<?php if ($model->APLICA_IVA) : 
+					$iva = $tot_contrat*0.19;
+				?>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>IVA</td>
 						<td width='20%' class="text-right bordered"> <?=number_format($iva,0,',','.')?>	</td>
 					</tr>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>Total</td>
-						<td width='20%' class="text-right bordered"> <?=number_format($total,0,',','.')?>	</td>
+						<td width='20%' class="text-right bordered"> <?=number_format(($tot_contrat+$iva),0,',','.')?>	</td>
 					</tr>
 				<?php else : ?>
 					<tr>
@@ -126,7 +128,7 @@
 					</tr>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>Total</td>
-						<td width='20%' class="text-right bordered"> <?=number_format($neto,0,',','.')?>	</td>
+						<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 					</tr>
 				<?php endif; ?>
 

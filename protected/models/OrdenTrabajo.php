@@ -124,7 +124,7 @@ class OrdenTrabajo extends CActiveRecord
 
 		$criteria=new CDbCriteria;
                 $criteria->order='FECHA_OT DESC';
-                $criteria->condition='ID_EMPRESA='.Yii::app()->getSession()->get('id_empresa');
+                $criteria->condition='ID_EMPRESA='.Yii::app()->getSession()->get('id_empresa').' AND USUARIO_CREADOR='.Yii::app()->user->id;
 		$criteria->compare('ID_OT',$this->ID_OT);
 		$criteria->compare('ID_CONTRATISTA',$this->ID_CONTRATISTA);
 		$criteria->compare('SOLICITANTE',$this->SOLICITANTE,true);
@@ -145,6 +145,7 @@ class OrdenTrabajo extends CActiveRecord
 		
 			if(Yii::app()->user->ADM()){
 				$criteria->compare('VOBO_JEFE_DPTO',1);
+                              
 			}elseif (Yii::app()->user->GOP()) {
 				$criteria->compare('VOBO_JEFE_DPTO',1);	
 				$criteria->compare('VOBO_ADMIN',1);
@@ -219,10 +220,12 @@ class OrdenTrabajo extends CActiveRecord
                    $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=0 AND RECHAZAR_OT <> 1';
                 elseif(Yii::app()->user->GOP()) 
                    $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
-                elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
-                       $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1'; 
-                    elseif(Yii::app()->user->GG()) 
+                elseif(Yii::app()->user->JDP())
+                       $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR='.Yii::app()->user->id; 
+                elseif(Yii::app()->user->GG()) 
                    $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=0 AND RECHAZAR_OT <> 1";
+                elseif(Yii::app()->user->A1())
+                    $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1'; 
             $criteria->condition=$condition;
             $number=count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria),'ID_OT','ID_OT'));
             return $number;
@@ -245,12 +248,15 @@ class OrdenTrabajo extends CActiveRecord
                  $condition='';
                         if(Yii::app()->user->ADM())
                            $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT <> 1';
-                        elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
-                           $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1';                
+                        elseif(Yii::app()->user->JDP())
+                           $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR='.Yii::app()->user->id;                
                         elseif(Yii::app()->user->GOP()) 
                            $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=1 AND RECHAZAR_OT <> 1";
                         elseif(Yii::app()->user->GG() ) 
                            $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=1 AND RECHAZAR_OT <> 1";
+                        elseif(Yii::app()->user->A1())
+                             $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1';  
+                            
 
                     $criteria->condition=$condition;
                     $number=count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria),'ID_OT','ID_OT'));
@@ -273,8 +279,10 @@ class OrdenTrabajo extends CActiveRecord
                     $condition='';
                         if(Yii::app()->user->ADM())
                            $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT = 1';
-                        elseif(Yii::app()->user->JDP()|| Yii::app()->user->A1())
-                           $condition.='RECHAZAR_OT = 1';                
+                        elseif(Yii::app()->user->A1())
+                           $condition.='RECHAZAR_OT =1';      
+                        elseif(Yii::app()->user->JDP())
+                           $condition.='RECHAZAR_OT = 1 AND  USUARIO_CREADOR='.Yii::app()->user->id;                
                         elseif(Yii::app()->user->GOP()) 
                            $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT = 1";
                         elseif(Yii::app()->user->GG() ) 

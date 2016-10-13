@@ -37,7 +37,7 @@ class PersonalController extends Controller
 				'expression'=>'$user->A1()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('viewPersonal'),
+				'actions'=>array('viewPersonal','updatePersonal'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users

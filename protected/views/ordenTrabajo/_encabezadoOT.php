@@ -143,7 +143,7 @@ $cs->registerScriptFile($baseUrl.'/js/addCotFile.js');
 					?>
 				</div>				
 		</div>
-                <?php if(Yii::app()->user->GG()||Yii::app()->user->GOP()){ ?>
+                <?php if(Yii::app()->user->allCompany()){ ?>
                 <div class="row">
 
 			<div class="span3">
@@ -256,7 +256,7 @@ $cs->registerScriptFile($baseUrl.'/js/addCotFile.js');
 		<div class="row">
 			<div class="span12">
 				<?php echo $form->labelEx($model,'DESCRIPCION_OT'); ?>
-				<?php echo $form->textField($model,'DESCRIPCION_OT',array('maxlength'=>50, 'class'=>'span12')); ?>
+				<?php echo $form->textArea($model,'DESCRIPCION_OT',array( 'class'=>'span12')); ?>
 				<?php echo $form->error($model,'DESCRIPCION_OT'); ?>
 			</div>
 		</div>
