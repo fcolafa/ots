@@ -171,7 +171,7 @@ if($model->VOBO_GERENTE_GRAL==1)
 				<td width='15%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 				<!--<td width='23%'></td>-->
 			</tr>
-			<?php if ($model->APLICA_IVA) : ?>
+			<?php if ($model->APLICA_IVA==1) : ?>
 				<tr>
 					<td width='70%'></td><td class="bordered" width='15%'><b>IVA</b></td>
 					<td width='15%' class="text-right bordered"> <?=number_format(($tot_contrat*19/100),0,',','.')?></td>

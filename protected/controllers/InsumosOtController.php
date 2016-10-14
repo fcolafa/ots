@@ -34,7 +34,7 @@ class InsumosOtController extends Controller
 			),*/
 			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','delete','listarSubItems'),
+				'actions'=>array('update','delete','listarSubItems'),
 				'expression'=>'$user->A1() || $user->JDP() || $user->ADM()',
 			),
 
@@ -61,14 +61,14 @@ class InsumosOtController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new InsumosOt;
+		$model=new InsumosOT;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['InsumosOt']))
+		if(isset($_POST['InsumosOT']))
 		{
-			$model->attributes=$_POST['InsumosOt'];
+			$model->attributes=$_POST['InsumosOT'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->ID_INSUMOS_OT));
 		}
@@ -108,13 +108,15 @@ class InsumosOtController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
-
+            $model=  $this->loadModel($id);
+            $idot=$model->ID_OT;
+            $model->delete();
+            echo '<script type="text/javascript">window.location.href="/ordenTrabajo/update/"'.$id.'; </script>';
+            //if(!isset($_GET['ajax']))
+            //$this->redirect('ordenTrabajo/update',array('id'=>$idot));  
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-	}
-
+             //      echo json_encode(array('redirect'=>$this->createUrl('/ordenTrabajo/update',array('id'=>$idot))));
+        }
 	/**
 	 * Lists all models.
 	 */
@@ -131,7 +133,7 @@ class InsumosOtController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new InsumosOt('search');
+		$model=new InsumosOT('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['InsumosOt']))
 			$model->attributes=$_GET['InsumosOt'];
@@ -170,7 +172,7 @@ class InsumosOtController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=InsumosOt::model()->findByPk($id);
+		$model=InsumosOT::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

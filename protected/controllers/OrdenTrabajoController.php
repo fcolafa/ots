@@ -110,6 +110,9 @@ class OrdenTrabajoController extends Controller {
     }
 
     public function actionViewPDF($id) {
+        $model=  $this->loadModel($id);
+         if($model->VOBO_ADMIN!=1 || $model->VOBO_JEFE_DPTO!=1 || $model->VOBO_GERENTE_OP!=1 || $model->VOBO_GERENTE_GRAL !=1)
+            throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
         Yii::import('ext.MPDF57.mpdf', true);
 
         $detalle = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'CAST(NUMERO_SUB_ITEM AS UNSIGNED), NOMBRE_SUB_ITEM'));
@@ -119,7 +122,7 @@ class OrdenTrabajoController extends Controller {
 
         //die(Yii::app()->Theme->BAs);
         //$stylesheet = file_get_contents(Yii::app()->Theme->BaseUrl.'/css/abound.css'); // external css
-        $mpdf->WriteHTML($this->renderPartial('ot_pdf', array('model' => $this->loadModel($id), 'detalle' => $detalle), true));
+        $mpdf->WriteHTML($this->renderPartial('ot_pdf', array('model' => $model, 'detalle' => $detalle), true));
         $mpdf->Output();
     }
 
@@ -176,6 +179,9 @@ class OrdenTrabajoController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->loadModel($id);
+        if($model->VOBO_ADMIN==1 || $model->VOBO_JEFE_DPTO==1 || $model->VOBO_GERENTE_OP==1 || $model->VOBO_GERENTE_GRAL ==1)
+            throw new CHttpException(300, 'no se puede modificar debido que la orden de trabajo esta en proceso de aprobacion');
+       
         if (Yii::app()->user->JDP() && $model->USUARIO_CREADOR != Yii::app()->user->id)
             throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
         $new_sub_item = new InsumosOT;
@@ -483,7 +489,12 @@ class OrdenTrabajoController extends Controller {
                 $model->FECHA_VOBO_JDPTO = date('Y-m-d');
                 $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
                 $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->ID_OT);
-            } elseif (Yii::app()->user->ADM() && $model->VOBO_JEFE_DPTO == 1 && $model->VOBO_ADMIN != 1) {
+            } elseif(Yii::app()->user->ADM() && $model->RECHAZAR_OT == 0 && $model->VOBO_ADMIN != 1 ){
+                    if($model->VOBO_JEFE_DPTO != 1 ){
+                        $model->VOBO_JEFE_DPTO = 1;
+                        $model->FECHA_VOBO_JDPTO = date('Y-m-d');
+                        $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+                    }
                 $model->VOBO_ADMIN = 1;
                 $model->FECHA_VOBO_ADMIN = date('Y-m-d');
                 $model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
@@ -515,12 +526,20 @@ class OrdenTrabajoController extends Controller {
                     $model->FECHA_VOBO_JDPTO = date('Y-m-d');
                     $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
                     $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->ID_OT);
-                } elseif (Yii::app()->user->ADM() && $model->VOBO_JEFE_DPTO == 1 && $model->RECHAZAR_OT == 0 && $model->VOBO_ADMIN != 1) {
+                } elseif (Yii::app()->user->ADM() && $model->RECHAZAR_OT == 0 && $model->VOBO_ADMIN != 1 ){
+                    die("pase por aqui");
+                    if($model->VOBO_JEFE_DPTO != 1 ){
+                        
+                        $model->VOBO_JEFE_DPTO = 1;
+                        $model->FECHA_VOBO_JDPTO = date('Y-m-d');
+                        $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+                    }
                     $model->VOBO_ADMIN = 1;
                     $model->FECHA_VOBO_ADMIN = date('Y-m-d');
                     $model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
-                    $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', ' gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->ID_OT);
-                } elseif (Yii::app()->user->GOP() && $model->VOBO_ADMIN == 1 && $model->RECHAZAR_OT == 0 && $model->VOBO_GERENTE_OP != 1) {
+                    $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', ' gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->ID_OT);   
+                }
+                elseif (Yii::app()->user->GOP() && $model->VOBO_ADMIN == 1 && $model->RECHAZAR_OT == 0 && $model->VOBO_GERENTE_OP != 1) {
                     $model->VOBO_GERENTE_OP = 1;
                     $model->FECHA_VOBO_GOP = date('Y-m-d');
                     $model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');

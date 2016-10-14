@@ -110,7 +110,7 @@
 					<td width='70%'></td><td class="bordered" width='10%'>Neto</td>
 					<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 				</tr>
-				<?php if ($model->APLICA_IVA) : 
+				<?php if ($model->APLICA_IVA==1) : 
 					$iva = $tot_contrat*0.19;
 				?>
 					<tr>

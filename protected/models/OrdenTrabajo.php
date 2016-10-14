@@ -118,7 +118,8 @@ class OrdenTrabajo extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+       
+        public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -187,7 +188,7 @@ class OrdenTrabajo extends CActiveRecord
                 //
                 //
 		
-			if(Yii::app()->user->ADM()){
+			if(Yii::app()->user->ADM()&& Yii::app()->user->id!=$this->USUARIO_CREADOR){
 				$criteria->compare('VOBO_JEFE_DPTO',1);
 			}elseif (Yii::app()->user->GOP()) {
 				$criteria->compare('VOBO_JEFE_DPTO',1);	

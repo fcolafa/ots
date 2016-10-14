@@ -54,8 +54,10 @@
 	<br>
 
 	<div class="row">
+            
 		<table id="tabla_items" width='100%' class='table table-condensed table-hover'>
 			<thead class='borde-azul'>
+                             <?php if($model->VOBO_JEFE_DPTO!=1 ||$model->VOBO_ADMIN !=1 || $model->VOBO_GERENTE_OP!=1|| $model->VOBO_GERENTE_GRAL!=1){ ?>
 				<tr class='primary'> 
 					<th colspan='19'>Agregar Detalle</th> 
 				</tr>
@@ -186,9 +188,11 @@
 							echo $form->error($new_sub_item,'ID_SEC');
 						?>
 					</td>
+                                       
 					<td class="min80"> 
 						<?php echo CHtml::submitButton('Guardar',array('class'=>'btn btn-primary', 'name' => 'sub_item_ot')); ?>
 					</td>
+                                        <?php }?>
 			  </tr>
 			</thead> <!-- fin creacion new subitem-->
 			<thead><tr></tr><td class="text-right" colspan="9">.</td></thead>
@@ -209,16 +213,16 @@
 							<td class="text-center">
 								<?php 
 								if ($model->VOBO_JEFE_DPTO != 1):
-									echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/table_edit.png" title="Modificar" alt="Modificar"  width="20" />', array('InsumosOT/update', 'id'=> $sub->ID_INSUMOS_OT));
+									echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/table_edit.png" title="Modificar" alt="Modificar"  width="20" />', array('insumosOt/update', 'id'=> $sub->ID_INSUMOS_OT));
 
-								 	echo " ".CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/delete.png" title="Eliminar" alt="Eliminar"  width="20" />', $this->createUrl('InsumosOT/delete', array('id' => $sub->ID_INSUMOS_OT)), 
+								 	echo " ".CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/small_icons/delete.png" title="Eliminar" alt="Eliminar"  width="20" />', $this->createUrl('insumosOt/delete', array('id' => $sub->ID_INSUMOS_OT)), 
 									    array(								       
 									       'onclick' => '{' . 
 									       		CHtml::ajax(array(
 											        'beforeSend' => 'js:function(){if(confirm("Seguro de eliminar este subitem ?"))return true;else return false;}',
 											        'type'=> 'POST',
-											        'url'=> $this->createUrl('InsumosOT/delete', array('id' => $sub->ID_INSUMOS_OT,'ajax'=>'delete')),
-									       			'success' => "js:function(data){window.location='".Yii::app()->request->baseUrl."?r=OrdenTrabajo/update&id=".$sub->ID_OT."';}")) .
+											        'url'=> $this->createUrl('insumosOt/delete', array('id' => $sub->ID_INSUMOS_OT,'ajax'=>'delete')),
+									       			'success' => "js:function(data){window.location='".Yii::app()->request->baseUrl."/ordenTrabajo/update/".$sub->ID_OT."';}")) .
 									       'return false;}', // returning false prevents the default navigation to another url on a new page 									       
 									       'class' => 'delete-icon', 'id' => 'x' . $sub->ID_INSUMOS_OT)
 									   );
