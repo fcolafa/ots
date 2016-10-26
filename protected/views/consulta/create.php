@@ -6,10 +6,8 @@ $this->breadcrumbs=array(
 	'Consultas'=>array('index'),
 	'Crear',
 );
-
 $this->menu=array(
-	//array('label'=>'Ver Consulta', 'url'=>array('index')),
-	//array('label'=>'Administrar Consulta', 'url'=>array('admin')),
+	array('label'=>'Volver',  'url'=>array('ordenTrabajo/view', 'id'=>$id)),
 );
 ?>
 

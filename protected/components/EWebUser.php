@@ -32,6 +32,12 @@ class EWebUser extends CWebUser{
            return $user->COD_TIPO_USUARIO==LevelLookUp::JDP;
         return false;
     }
+    function LOG(){
+        $user = $this->loadUser();
+        if ($user)
+           return $user->COD_TIPO_USUARIO==LevelLookUp::LOG;
+        return false;
+    }
 
     function A1(){
         $user = $this->loadUser();

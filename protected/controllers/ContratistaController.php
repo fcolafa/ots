@@ -36,12 +36,12 @@ class ContratistaController extends Controller
 			//RU
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('index','view','update'),
-				'expression'=>'$user->A1() || $user->JDP()',
+				'expression'=>'$user->A1() || $user->JDP() || $user->LOG()',
 			),
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update','admin','delete','index','view'),
-				'expression'=>'$user->A1() || $user->JDP()',
+				'expression'=>'$user->A1() || $user->JDP() || $user->LOG()',
 			),
 			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
 			/*array('allow', // allow authenticated user to perform 'create' and 'update' actions

@@ -43,6 +43,10 @@
 					<td><h5> Giro </h5></td><td>: <?=$model->contratista->GIRO_AREA ?> </td>
 					<td><h6> Reparación </h6></td><td>:</td><td class="table-bordered text-center"><?php if ($model->ID_TIPO_OT == 5) echo "X";?></td>
 				</tr>
+				<tr>
+					<td><h5></h5></td><td></td>
+					<td><h6> Arriendo </h6></td><td>:</td><td class="table-bordered text-center"><?php if ($model->ID_TIPO_OT == 6) echo "X";?></td>
+				</tr>
 			</table>
 			<HR style="background-color:black; height:1px;">
 				<br>
@@ -107,27 +111,27 @@
 				<br>
 			<table width="800px">
 				<tr>
-					<td width='70%'></td><td class="bordered" width='10%'>Neto</td>
+					<td width='70%'></td><td class="bordered" width='10%'>Neto <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 					<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 				</tr>
 				<?php if ($model->APLICA_IVA==1) : 
 					$iva = $tot_contrat*0.19;
 				?>
 					<tr>
-						<td width='70%'></td><td class="bordered" width='10%'>IVA</td>
+						<td width='70%'></td><td class="bordered" width='10%'>IVA <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 						<td width='20%' class="text-right bordered"> <?=number_format($iva,0,',','.')?>	</td>
 					</tr>
 					<tr>
-						<td width='70%'></td><td class="bordered" width='10%'>Total</td>
+						<td width='70%'></td><td class="bordered" width='10%'>Total <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 						<td width='20%' class="text-right bordered"> <?=number_format(($tot_contrat+$iva),0,',','.')?>	</td>
 					</tr>
 				<?php else : ?>
 					<tr>
-						<td width='70%'></td><td class="bordered" width='10%'>IVA</td>
+						<td width='70%'></td><td class="bordered" width='10%'>IVA <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 						<td width='20%' class="text-right bordered"> 0	</td>
 					</tr>
 					<tr>
-						<td width='70%'></td><td class="bordered" width='10%'>Total</td>
+						<td width='70%'></td><td class="bordered" width='10%'>Total <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 						<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
 					</tr>
 				<?php endif; ?>

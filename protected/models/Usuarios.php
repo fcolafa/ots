@@ -60,6 +60,7 @@ class Usuarios extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'usuarioAprobacions' => array(self::HAS_MANY, 'UsuarioAprobacion', 'ID_USUARIO'),
+                        'iDPERSONA' => array(self::BELONGS_TO, 'Personal', 'ID_PERSONA'),
 		);
 	}
 

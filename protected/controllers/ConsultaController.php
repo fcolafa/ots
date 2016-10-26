@@ -34,7 +34,7 @@ class ConsultaController extends Controller
 			//CRU
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create'),
-				'expression'=>' $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()',
+				'expression'=>' $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()|| $user->A1()',
 			),
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			
@@ -86,6 +86,7 @@ class ConsultaController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+                        'id'=>$id,
 		));
 	}
 

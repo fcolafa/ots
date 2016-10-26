@@ -6,7 +6,7 @@
 
 	$this->menu=array(
 //		array('label'=>'Ver Presupuestos', 'url'=>array('index')),
-		array('label'=>'Crear Orden de Trabajo', 'url'=>array('create'), 'visible'=>Yii::app()->user->A1()||Yii::app()->user->JDP()||Yii::app()->user->A1()||Yii::app()->user->ADM()||Yii::app()->user->GG()),
+		array('label'=>'Crear Orden de Trabajo', 'url'=>array('create'), 'visible'=>  Yii::app()->user->LOG()||Yii::app()->user->A1()||Yii::app()->user->JDP()||Yii::app()->user->A1()||Yii::app()->user->ADM()||Yii::app()->user->GG()),
 	);
 ?>
 

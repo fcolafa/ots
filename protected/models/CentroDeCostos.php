@@ -35,6 +35,7 @@ class CentroDeCostos extends CActiveRecord
 		return array(
 			array('ID_EMPRESA, NUMERO_CENTRO, NOMBRE_CENTRO_COSTO', 'required'),
 			array('ID_EMPRESA, ID_CLIENTE, NUMERO_CENTRO', 'numerical', 'integerOnly'=>true),
+                        array('NUMERO_CENTRO','unique'),
 			array('NOMBRE_CENTRO_COSTO', 'length', 'max'=>250),
 			array('DESCRIPCION_CENTRO_COSTO', 'safe'),
 			// The following rule is used by search().
