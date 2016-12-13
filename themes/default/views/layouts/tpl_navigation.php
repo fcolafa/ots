@@ -44,6 +44,8 @@
                                 array('label' => 'Ordenes de Trabajo <span class="badge badge-success">' . OrdenTrabajo::model()->getNumberOTA() . '</span> <span class="badge badge-warning">' . OrdenTrabajo::model()->getNumberOTP() . '</span><span class="badge badge-important">' . OrdenTrabajo::model()->getNumberOTR() . '</span>', 'url' => array('ordenTrabajo/admin')),
                             //array('label'=>'Contratistas', 'url'=>array('contratista/admin')), //'visible'=>Yii::app()->user->A1()),
                             )),
+                        array('label' => 'Tickets <span class="badge badge-success">'.Ticket::model()->getNumberTC().'</span><span class="badge badge-important">' . Ticket::model()->getNumberTP() . '</span>', 'url' => array('/ticket/admin'), 'visible' => !Yii::app()->user->isGuest),
+                           
                         array('label' => 'Contratistas <span class="caret"></span>', 'url' => '#', 'visible' => Yii::app()->user->A1() || Yii::app()->user->JDP(), 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
                             'items' => array(
                                 array('label' => 'Gestionar Contratistas', 'url' => array('contratista/admin')),

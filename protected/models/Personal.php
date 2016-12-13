@@ -72,6 +72,7 @@ class Personal extends CActiveRecord
 			'iDCARGO' => array(self::BELONGS_TO, 'Cargos', 'ID_CARGO'),
 			'iDDEPARTAMENTO' => array(self::BELONGS_TO, 'Departamentos', 'ID_DEPARTAMENTO'),
 			'iDEMPRESA' => array(self::BELONGS_TO, 'Empresa', 'ID_EMPRESA'),
+                         'iDUSUARIO'=>array(self::HAS_ONE, 'Usuarios', 'ID_PERSONA'),
 		);
 	}
 

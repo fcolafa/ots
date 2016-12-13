@@ -54,6 +54,18 @@ $cs->registerCssFile($baseUrl.'/css/manual.css');
 		        },
 		    });
 		});
+		$("#creacion_ticket").click(function(event) {
+			$.ajax({
+		        url:"<?php echo Yii::app()->createUrl('manual/creacionTicket');?>",
+		        data:{},
+		        type:"POST",
+		        dataType:"html",
+		        success:function(response){
+		        	$('#contenido').empty();
+		            $('#contenido').append(response);
+		        },
+		    });
+		});
 
 		$("#adm_contrat").click(function(event) {
 			$.ajax({

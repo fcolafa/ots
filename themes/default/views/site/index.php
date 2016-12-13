@@ -33,8 +33,15 @@ $variable = Yii::app()->user->A1();
     <div id="msg_warnning" class="alert alert-warning" style="display: none">
         
     </div>
+    
+    <div id="msg_warnning" class="alert alert-warning">
+        <h2> Novedades:</h2>
+        <li>Se ha implementado un modulo de ticket de soporte, mediante el cual pueden informar al equipo de desarrollo acerca de cualquier incidencia encontrada en el sistema y adicionalmente hacer seguimiento a estas.</li>
+        <li>para mas informacion: <?php echo CHtml::link('Manual',array('manual/')); ?></li></div>
+    </div>
+    
     <div class="container-fluid" valign="center"  style="padding-top:0%;">
-        <div >
+        <div>
             <!-- Div de Personal -->
             <?php if(Yii::app()->user->A1()){?>
             <div align="center" valign="top" class="messageButtonb blue">
@@ -58,12 +65,21 @@ $variable = Yii::app()->user->A1();
                 <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/work-order.png" alt="Ordenes de Trabajo"  width="15%" />', array('ordenTrabajo/admin'));?>
                 <div  class="dashIconText"><?php echo CHtml::link('<h4>Ordenes de Trabajo</h4>',array('ordenTrabajo/admin')); ?></div>
             </div>
+            <div align="center" valign="top" class="messageButtonb blue">
+                <span class="badge badge-important iconMenuBadge"><?php echo Ticket::model()->getNumberTP()?></span>
+                <span class="badge badge-success iconMenuBadge"><?php echo Ticket::model()->getNumberTC()?></span>
+                
+                
+                <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/tickets.png" alt="Ticket Soporte"  width="15%" />', array('ticket/admin'));?>
+                <div  class="dashIconText"><?php echo CHtml::link('<h4>Ticket Soporte</h4>',array('ticket/admin')); ?></div>
+            </div>
 
             <!-- Div de Aprobacion de Documentos-->
+            <!--
             <div align="center" valign="top" class="messageButtonb blue">
-                <?php echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/appicon.png" alt="Aprobación de Documentos"  width="15%" />', array('ordenTrabajo/admin'));?>
-                <div  class="dashIconText"><?php echo CHtml::link('<h4>Aprobación de Documentos</h4>',array('ordenTrabajo/admin')); ?></div>
-            </div>
+                <?php //echo CHtml::link('<img src='.'"'. Yii::app()->theme->baseUrl.'/img/big_icons/Dashboard/appicon.png" alt="Aprobación de Documentos"  width="15%" />', array('ordenTrabajo/admin'));?>
+                <div  class="dashIconText"><?php //echo CHtml::link('<h4>Aprobación de Documentos</h4>',array('ordenTrabajo/admin')); ?></div>
+            </div>-->
         </div>
     </div>
 </div><!--/row-->

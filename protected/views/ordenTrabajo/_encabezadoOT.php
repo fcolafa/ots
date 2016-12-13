@@ -24,19 +24,15 @@ $cs->registerScriptFile($baseUrl . '/js/addCotFile.js');
     $(document).ready(function () {
 
 <?php
-if ($model->_cot)
-    foreach ($model->_cot as $item) {
-        echo "window.onload=addCotFiles();";
-        if (!$model->isNewRecord) {
-            $criteria = new CDbCriteria();
-            $criteria->condition = 'NOMBRE_ARCHIVO="' . $item . '" AND ID_OT=' . $model->ID_OT;
-            $cot = Cotizacion::model()->find($criteria);
-            echo " $('#link'+indexcot).append('" . CHtml::link(CHtml::encode($cot->NOMBRE_ARCHIVO), Yii::app()->baseUrl . '/archivos/cot/' . $cot->ID_OT . "/" . $cot->NOMBRE_ARCHIVO, array('target' => '_blank', 'class' => 'attach')) . "');";
-        } else {
-            echo " $('#link'+indexcot).append('" . CHtml::link(CHtml::encode($item), Yii::app()->baseUrl . '/archivos/temp/' . $item, array('target' => '_blank', 'class' => 'attach')) . "');";
-        }
-        echo "indexcot=indexcot+1;";
-    }
+if ($model->_cot) {
+    $guias = $model->_cot;
+    $jguias = json_encode($guias);
+    echo "var jguias = " . $jguias . ";\n";
+    echo "for(var j in jguias){ ";
+    echo "item=jguias[j];";
+    echo "addFiles('tblCot','OrdenTrabajo__cot',item);";
+    echo "}";
+}
 ?>
         if ($('#cb_tipo_moneda').val() == 1) {
             $('#tb_valor_moneda').val("1");
@@ -368,12 +364,9 @@ if ($model->_cot)
                     'onComplete' => "js:function(id, name, response){
               var valid=true;
 
-             $('#OrdenTrabajo__cot').append(new Option(response.filename, response.filename, true, true));
-             addCotFiles();        
-             
-             $('#link'+indexcot).append('<a class=attach target=_blank href='+BASE+response.filename+'>'+response.filename+'</a>');
+             $('#OrdenTrabajo__cot').append(new Option(response.filename, response.filename, true, true));          
+             addFiles('tblCot','OrdenTrabajo__cot',response.filename);
              indexcot=indexcot+1; 
-           
          
            }",
                     'onError' => "js:function(id, name, errorReason){ }",
@@ -383,8 +376,8 @@ if ($model->_cot)
         ));
         ?>
     </div>
-    <div class="row" style="display: none;">		
-<?php echo $form->dropdownlist($model, '_cot', $model->_cot, array('multiple' => 'multiple')); ?>
+    <div class="row" style="display: none">		
+        <?php echo $form->dropdownlist($model, '_cot', $model->_cot, array('multiple' => 'multiple')); ?>
     </div>
 
     <div class="row">

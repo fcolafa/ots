@@ -36,6 +36,7 @@ class InsumosOT extends CActiveRecord
 			array('ID_INSUMOS_OT, ID_OT, ID_CENTRO_COSTO, ID_CCC, ID_SEC, ID_SCC', 'numerical', 'integerOnly'=>true),
 			array('NUMERO_SUB_ITEM', 'length', 'max'=>6),
 			array('NOMBRE_SUB_ITEM', 'length', 'max'=>150),
+                        array('COSTO_CONTRATISTA','onlyPoints'),
 			array('COSTO_CONTRATISTA', 'length', 'max'=>10),
 			array('NRO_COTIZACION', 'length', 'max'=>50),
 			// The following rule is used by search().
@@ -119,4 +120,8 @@ class InsumosOT extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+        public function onlyPoints($attribute, $params) {
+		if(!empty($this->COSTO_CONTRATISTA))
+			$this->COSTO_CONTRATISTA=str_replace(',', '.', $this->COSTO_CONTRATISTA);
+    }
 }

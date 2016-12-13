@@ -150,7 +150,6 @@ class OrdenTrabajoController extends Controller {
             $model->APROBADO_I25 = 0;
             if (isset($_POST['OrdenTrabajo']['_cot']))
                 $model->_cot = $_POST['OrdenTrabajo']['_cot'];
-
             if ($model->save()) {
                 $tempFolder = Yii::getPathOfAlias('webroot') . '/archivos/temp/';
                 $newFolder = Yii::getPathOfAlias('webroot') . '/archivos/cot/';
@@ -217,7 +216,6 @@ class OrdenTrabajoController extends Controller {
 
             if (isset($_POST['OrdenTrabajo']['_cot'])) {
                 $finalcot = array_diff($newfile, $_POST['OrdenTrabajo']['_cot']);
-
                 $newfiles = array_diff($_POST['OrdenTrabajo']['_cot'], $newfile);
             }
             if (empty($_POST['OrdenTrabajo']['_cot']))
@@ -234,8 +232,11 @@ class OrdenTrabajoController extends Controller {
                             $cotfile = new Cotizacion;
                             $cotfile->ID_OT = $model->ID_OT;
                             $cotfile->NOMBRE_ARCHIVO = $file;
-                            $cotfile->save();
-                            copy($tempFolder . $cotfile->NOMBRE_ARCHIVO, $folder . "/" . $cotfile->NOMBRE_ARCHIVO);
+                            $cotfile->COMENTARIOS_COTIZACION = null;
+                            $cotfile->DEF_COT = 0;
+                            if ($cotfile->save()) {
+                                copy($tempFolder . $cotfile->NOMBRE_ARCHIVO, $folder . "/" . $cotfile->NOMBRE_ARCHIVO);
+                            }
                         }
                     }
                 } if (!empty($finalcot)) {
@@ -347,6 +348,19 @@ class OrdenTrabajoController extends Controller {
         return $model;
     }
 
+    public function getFormat($type, $money) {
+        
+        switch ($type) {
+            case 'PESOS CL':
+                return number_format($money, 0, ',', '.');
+                break;
+            case 'USD':
+                return number_format($money, 2, '.', ' ');
+                break;
+            default:
+                return number_format($money, 2, ',', '.');
+        }
+    }
     public function actionViewOt() {
         $id = $_POST['id_ot'];
         $model = $this->loadModel($id);
@@ -516,7 +530,7 @@ class OrdenTrabajoController extends Controller {
                 $model->APROBADO_I25 = 1;
                 $this->sendMail($model, 'Orden de Trabajo Aprobada totalmente', 'body_ot_message', 'success', 'Se ha aprobado completamente la orden de trabajo cuyo Nº es ' . $model->ID_OT);
             } elseif (Yii::app()->user->LOG() && $model->RECHAZAR_OT == 0 && $model->VOBO_JEFE_DPTO != 1) {
-              
+
                 $this->sendMail($model, 'Orden de Trabajo requiere aprobacion', 'body_ot_message', 'log', 'La orden de trabajo cuyo Nº es ' . $model->ID_OT . ' requiere de su aprobacion');
             }
             $model->save();
@@ -529,7 +543,7 @@ class OrdenTrabajoController extends Controller {
         if (!empty($_POST['theIds'])) {
             foreach ($orden as $ot) {
                 $model = OrdenTrabajo::model()->findByPk($ot);
-                if(Yii::app()->user->JDP() && $model->RECHAZAR_OT == 0 && $model->VOBO_JEFE_DPTO != 1) {
+                if (Yii::app()->user->JDP() && $model->RECHAZAR_OT == 0 && $model->VOBO_JEFE_DPTO != 1) {
                     $model->VOBO_JEFE_DPTO = 1;
                     $model->FECHA_VOBO_JDPTO = date('Y-m-d');
                     $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
@@ -671,14 +685,11 @@ class OrdenTrabajoController extends Controller {
         $mail = Yii::app()->Smtpmail;
         $mail->SMTPDebug = 2;
         $mail->CharSet = 'UTF-8';
-        $mail->SetFrom('cnavarro@pcgeek.cl', 'Sistema Aprobacion de Documentos');
+        $mail->SetFrom('desarrollo@pcgeek.cl', 'Sistema Aprobacion de Documentos');
         $mail->Subject = $subject;
         $mail->MsgHTML(Yii::app()->controller->renderPartial($view, array('model' => $model, 'subject' => $subject, 'content' => $content), true));
-//                if($type=='message'&& !empty($model->id_user_asigned))              
-//                    $mail->AddAddress($model->idUsera->email, $subject);
 
-
-        if ($type == 'adm' || $type == 'gop' || $type == 'gg'|| $type=='log') {
+        if ($type == 'adm' || $type == 'gop' || $type == 'gg' || $type == 'log') {
             $criteria = new CDbCriteria();
             switch ($type) {
                 case 'adm':
@@ -691,8 +702,8 @@ class OrdenTrabajoController extends Controller {
                     $criteria->condition = "COD_TIPO_USUARIO='GG'";
                     break;
                 case 'log':
-                   
-                    $criteria->with=array('iDPERSONA.iDDEPARTAMENTO');
+                    $criteria->with = array('iDPERSONA.iDDEPARTAMENTO');
+                    $criteria->together = true;
                     $criteria->condition = "COD_TIPO_USUARIO='JDP' and iDDEPARTAMENTO.NOMBRE_DEPARTAMENTO='Logística'";
                     break;
             }
@@ -703,8 +714,7 @@ class OrdenTrabajoController extends Controller {
                 if (!empty($personal->EMAIL) && ($u->TODAS_LAS_EMPRESAS == 1 || $u->ID_EMPRESA == Yii::app()->getSession()->get('id_empresa')))
                     $mail->AddAddress($personal->EMAIL, $subject);
             }
-        }else
-        if ($type == 'success' || $type == 'reject' || $type == 'jdp') {
+        }elseif ($type == 'success' || $type == 'reject' || $type == 'jdp') {
             $personal = Personal::model()->findByPk($model->USUARIO_CREADOR);
             $mail->AddAddress($personal->EMAIL, $subject);
         }
@@ -728,7 +738,7 @@ class OrdenTrabajoController extends Controller {
 
             $approve = CHtml::link("Responder", Yii::app()->createUrl("consulta/create", array("id" => $id, "message" => $m->ID_CONSULTA)));
             echo '<div class="' . $class . '"><div class="fecham">
-                                <div class="mes">' . Yii::app()->dateFormatter->format("MMMM", strtotime($m->FECHA_CONSULTA)) . '</div>                        
+                                <div class="mes">' . Yii::app()->dateFormatter->format("MMM", strtotime($m->FECHA_CONSULTA)) . '</div>                        
                                 <div class="dia">' . Yii::app()->dateFormatter->format("d", strtotime($m->FECHA_CONSULTA)) . '</div>
                                 <div class="año">' . Yii::app()->dateFormatter->format("y", strtotime($m->FECHA_CONSULTA)) . '</div>' .
             '<div class="hora">' . Yii::app()->dateFormatter->format("hh:mm", strtotime($m->FECHA_CONSULTA)) . '</div></div>' .
@@ -747,11 +757,11 @@ class OrdenTrabajoController extends Controller {
                 $approve = "";
                 // $approve=CHtml::link("Responder",Yii::app()->createUrl("consulta/create",array("id"=>$id,"message"=>$r->ID_CONSULTA)));
                 echo '<div class="' . $class . '"><div class="fecham">
-                                <div class="mes">' . Yii::app()->dateFormatter->format("MMMM", strtotime($r->FECHA_CONSULTA)) . '</div>                        
+                                <div class="mes">' . Yii::app()->dateFormatter->format("MMM", strtotime($r->FECHA_CONSULTA)) . '</div>                        
                                 <div class="dia">' . Yii::app()->dateFormatter->format("d", strtotime($r->FECHA_CONSULTA)) . '</div>
                                 <div class="año">' . Yii::app()->dateFormatter->format("y", strtotime($r->FECHA_CONSULTA)) . '</div>' .
                 '<div class="hora">' . Yii::app()->dateFormatter->format("hh:mm", strtotime($r->FECHA_CONSULTA)) . '</div></div>' .
-                $asigned . '<p class="consulta"><br>' . $r->CONSULTA . '</p>' . '</div>';
+                $asigned . '<p class="consulta"><br>' . $r->CONSULTA . '</p>' . '</div><br>';
 
 
                 // $repprove=CHtml::link("Reprobar medida Correctiva",Yii::app()->createUrl("ticket/repprove",array("id"=>$m->id_ticket_message)), array('confirm' => 'Esta Seguro que desea reprobar la medida correctiva propuesta?'));

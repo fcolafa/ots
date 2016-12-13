@@ -97,6 +97,7 @@ class OrdenTrabajo extends CActiveRecord {
             'tipo_de_ot' => array(self::BELONGS_TO, 'TipoDeOT', 'ID_TIPO_OT'),
             'tipo_moneda' => array(self::BELONGS_TO, 'TipoMoneda', 'ID_TIPO_MONEDA'),
             'creador' => array(self::BELONGS_TO, 'Personal', 'USUARIO_CREADOR'),
+            'solicitante'=>array(self::BELONGS_TO, 'Personal', 'SOLICITANTE'),
         );
     }
 
@@ -143,7 +144,7 @@ class OrdenTrabajo extends CActiveRecord {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
-        $criteria->order = 'FECHA_OT DESC';
+        $criteria->order = 'ID_OT DESC';
         $criteria->compare('ID_OT', $this->ID_OT);
         $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
         $criteria->compare('SOLICITANTE', $this->SOLICITANTE, true);
@@ -186,11 +187,10 @@ class OrdenTrabajo extends CActiveRecord {
 
     public function searchAllcompany() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-
         $criteria = new CDbCriteria;
         $criteria->with = array('empresa');
         $criteria->together = true;
-        $criteria->order = 'FECHA_OT DESC, t.ID_EMPRESA ASC';
+        $criteria->order = 'ID_OT DESC, t.ID_EMPRESA ASC';
         $criteria->compare('ID_OT', $this->ID_OT);
         $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
         $criteria->compare('SOLICITANTE', $this->SOLICITANTE, true);
@@ -354,7 +354,7 @@ class OrdenTrabajo extends CActiveRecord {
     }
 
     public static function getTax() {
-        return array('1' => 'Afecto a IVA', '2' => 'Exento');
+        return array('1' => 'Afecto a IVA', '2' => 'Exento','3'=>'Boleta Honorario (-10%)');
     }
 
     public function validFile($model, $attribute) {

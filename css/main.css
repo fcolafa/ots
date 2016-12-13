@@ -46,6 +46,14 @@ body
 	padding: 10px 20px;
 	font-size: 200%;
 }
+.backheader {
+    background-image: url(../images/fondo_destacados.png);
+    background-repeat: no-repeat;
+    height: 201px;
+    width: 940px;
+    float: left;
+    margin-top: -1px;
+}
 
 #mainmenu
 {

@@ -52,13 +52,13 @@
 				<br>
 			<table width="710px">
 					<tr>
-						<td width="60px"><h5>Solicitante </h5></td><td width="250px"><h5>: <small><?=$model->SOLICITANTE ?></small></h5></td>
-						<td width="110px"><h5>Supervisor </h5></td><td width="290px"><h5>: <small><?=$model->SUPERVISOR ?></small></h5></td>
+						<td width="60px"><h5>Solicitante </h5></td><td width="250px"><h5>: <small><?= @$model->solicitante->NOMBRE_PERSONA . ' ' . @$model->solicitante->APELLIDO_PERSONA ?></small></h5></td>
+						<td width="110px"><h5>Supervisor </h5></td><td width="290px"><h5>: <small><?= @$model->personal->NOMBRE_PERSONA .' '.@$model->personal->APELLIDO_PERSONA ?></small></h5></td>
 					</tr>
 						
 					<tr>
 						<td><h5>Departamento </h5></td><td><h5>: <small><?=$model->departamentos->NOMBRE_DEPARTAMENTO ?></small></h5></td>
-						<td><h5>Fecha Ejecución </h5></td><td><h5>: <small><?=$model->FECHA_EJECUCION ?></small></h5></td>
+						<td><h5>Fecha Ejecución </h5></td><td><h5>: <small><?=Yii::app()->dateFormatter->format("d MMMM y",strtotime($model->FECHA_EJECUCION)) ?></small></h5></td>
 					</tr>
 			</table>
 					<br>
@@ -97,7 +97,7 @@
 						<tr>
 							<td class="bordered"> <?=$sub->NUMERO_SUB_ITEM?> </td>
 							<td class="bordered"> <?=$sub->NOMBRE_SUB_ITEM?> </td>
-							<td class="text-right bordered"> <?=number_format($sub->COSTO_CONTRATISTA,0,',','.')?> </td>
+							<td class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA, $sub->COSTO_CONTRATISTA) ?> </td>
 							<td class="text-right bordered"> <?=$sub->NRO_COTIZACION ?> </td>
 							<td class="text-right bordered"> <?=$sub->centroCosto->NUMERO_CENTRO ?> </td>
 							<td class="text-right bordered"> <?=$sub->iDCCC->NUMERO_CUENTA ?> </td>
@@ -112,27 +112,36 @@
 			<table width="800px">
 				<tr>
 					<td width='70%'></td><td class="bordered" width='10%'>Neto <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
-					<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
+					<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$tot_contrat)?>	</td>
 				</tr>
 				<?php if ($model->APLICA_IVA==1) : 
 					$iva = $tot_contrat*0.19;
 				?>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>IVA <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
-						<td width='20%' class="text-right bordered"> <?=number_format($iva,0,',','.')?>	</td>
+						<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$iva)?>	</td>
 					</tr>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>Total <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
-						<td width='20%' class="text-right bordered"> <?=number_format(($tot_contrat+$iva),0,',','.')?>	</td>
+						<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$tot_contrat+$iva)?>	</td>
 					</tr>
-				<?php else : ?>
+				<?php elseif($model->APLICA_IVA==2):?>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>IVA <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
 						<td width='20%' class="text-right bordered"> 0	</td>
 					</tr>
 					<tr>
 						<td width='70%'></td><td class="bordered" width='10%'>Total <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
-						<td width='20%' class="text-right bordered"> <?=number_format($tot_contrat,0,',','.')?>	</td>
+						<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$tot_contrat)?>	</td>
+					</tr>
+				<?php elseif($model->APLICA_IVA==3):?>
+					<tr>
+						<td width='70%'></td><td class="bordered" width='10%'> -10% <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
+						<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$tot_contrat*0.1)?>	</td>
+					</tr>
+					<tr>
+						<td width='70%'></td><td class="bordered" width='10%'>Total <?=$model->tipo_moneda->SIGNO_MONEDA ?></td>
+						<td width='20%' class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA,$tot_contrat*0.9)?>	</td>
 					</tr>
 				<?php endif; ?>
 

@@ -24,7 +24,7 @@ class ManualController extends Controller
 	public function accessRules() {
         return array(
             array('allow',
-                'actions' => array('index','creacionOt','aprobacion','creacionUsuario','contratistas','documentosContratista','recepcionDocumentos'), 
+                'actions' => array('index','creacionOt','aprobacion','creacionUsuario','contratistas','documentosContratista','recepcionDocumentos','creacionTicket'), 
                 'users' => array('*'),
             ),
             // deny all other actions
@@ -48,6 +48,9 @@ class ManualController extends Controller
 	public function actionCreacionOt(){
 		$this->renderPartial('creacionOt');	
 	}
+        public function actionCreacionTicket(){
+            $this->renderPartial('creacionTicket');
+        }
 
 	public function actionAprobacion(){
 		$this->renderPartial('aprobacion');	

@@ -14,6 +14,12 @@
 		         	<!--<li><a id="aprobar" href='#'><span>Aprobaciones</span></a></li>-->
 		      	</ul>
 		   	</li>
+		   	<li class='has-sub'><a href='#'><span>Ticket</span></a>
+		    	<ul>
+		        	<li><a id="creacion_ticket" href='#'><span>Administración de tickets</span></a></li>
+		         	<!--<li><a id="aprobar" href='#'><span>Aprobaciones</span></a></li>-->
+		      	</ul>
+		   	</li>
 		   	<li class='has-sub'><a href='#'><span>Contratistas</span></a>
 		    	<ul>
 		        	<li><a id="adm_contrat" href='#'><span>Administración Contratistas</span></a></li>

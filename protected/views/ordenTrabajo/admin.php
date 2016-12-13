@@ -153,9 +153,14 @@ $('.search-form form').submit(function(){
 				'name'=>'ID_OT',
 				'htmlOptions'=>array('width' =>	'5%', 'class'=>'text-center'),
 			),
+//			array(
+//				'name'=>'USUARIO_CREADOR',
+//				'value'=>'@$data->creador->NOMBRE_PERSONA." ".@$data->creador->APELLIDO_PERSONA',
+//				'htmlOptions'=>array('width' =>	'10%'),
+//			),
 			array(
 				'name'=>'SOLICITANTE',
-				'value'=>'@$data->personal->NOMBRE_PERSONA',
+				'value'=>'@$data->solicitante->NOMBRE_PERSONA." ".@$data->solicitante->APELLIDO_PERSONA',
 				'htmlOptions'=>array('width' =>	'15%'),
 			),
                         array(

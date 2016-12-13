@@ -68,7 +68,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
                     <?= $model->contratista->NOMBRE_CONTRATISTA ?>
                 </td>
                 <td width="30%"><b>Fecha OT : </b>
-                    <?= $model->FECHA_OT ?>
+                    <?= Yii::app()->dateFormatter->format("d MMMM y",strtotime($model->FECHA_OT)) ?>
                 </td>
                 <td width="30%"></td>
             </tr>
@@ -88,6 +88,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
         <tbody class="borde-abajo	">
             <tr>
                 <td colspan="2"><b>Solicitante :</b>
+                    <?= @$model->solicitante->NOMBRE_PERSONA . ' ' . @$model->solicitante->APELLIDO_PERSONA ?>
                 </td>
                 <td><b>Tipo de OT :</b>
                     <?= $model->tipo_de_ot->NOMBRE_TIPO_OT ?>
@@ -95,7 +96,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
             </tr>
             <tr>
                 <td colspan="2"><b>Supervisor :</b>
-                    <?= @$model->personal->NOMBRE_PERSONA ?>
+                    <?= @$model->personal->NOMBRE_PERSONA .' '.@$model->personal->APELLIDO_PERSONA ?>
                 </td>
                 <td>
 
@@ -106,7 +107,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
                     <?= $model->departamentos->NOMBRE_DEPARTAMENTO ?>
                 </td>
                 <td> <b>Fecha Ejecución :</b>
-                    <?= $model->FECHA_EJECUCION ?>
+                    <?= Yii::app()->dateFormatter->format("d MMMM y",strtotime($model->FECHA_EJECUCION)) ?>
                 </td>
             </tr>
         </tbody>
@@ -137,7 +138,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
         <tr>
             <th width="5%" class="bordered"> N°</th>
             <th width="50%" class="bordered"> Descripción</th>
-            <th width="10%" class="text-right bordered"> Valor Total</th>
+            <th width="10%" class="text-right bordered"> Valor Total <?= $model->tipo_moneda->SIGNO_MONEDA ?></th>
             <th width="7%" class="text-right bordered"> Cotizacion</th>
             <th width="5%" class="bordered"> C. C.</th>
             <th width="9%" class="bordered"> C. C. C.</th>
@@ -155,48 +156,60 @@ if ($model->VOBO_GERENTE_GRAL == 1)
                 <tr>
                     <td class="bordered"> <?= $sub->NUMERO_SUB_ITEM ?> </td>
                     <td class="bordered"> <?= $sub->NOMBRE_SUB_ITEM ?> </td>
-                    <td class="text-right bordered"> <?= number_format($sub->COSTO_CONTRATISTA, 0, ',', '.') ?> </td>
+                    <td class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, $sub->COSTO_CONTRATISTA) ?> </td>
                     <td class="text-right bordered"> <?= $sub->NRO_COTIZACION ?> </td>
                     <td class="text-right bordered"> <?= $sub->centroCosto->NUMERO_CENTRO ?> </td>
-                    <td class="text-right bordered"> <?= $sub->iDCCC->NUMERO_CUENTA ?> </td>
-                    <td class="text-right bordered"> <?= $sub->iDSCC->SCC_NUMERO ?> </td>
-                    <td class="text-right bordered"> <?= $sub->iDSEC->SEC_NUMERO ?> </td>
+                    <td class="text-right bordered"> <?= @$sub->iDCCC->NUMERO_CUENTA ?> </td>
+                    <td class="text-right bordered"> <?= @@$sub->iDSCC->SCC_NUMERO ?> </td>
+                    <td class="text-right bordered"> <?= @$sub->iDSEC->SEC_NUMERO ?> </td>
                 </tr>
-    <?php $tot_contrat += $sub->COSTO_CONTRATISTA;
-endforeach;
-?>
+                <?php
+                $tot_contrat += $sub->COSTO_CONTRATISTA;
+            endforeach;
+            ?>
         </tbody>
     </table>
     <br>
     <table width="100%">
         <tr>
             <td width='70%'></td><td class="bordered" width='15%'><b>Neto <?= $model->tipo_moneda->SIGNO_MONEDA ?></b></td>
-            <td width='15%' class="text-right bordered"> <?= number_format($tot_contrat, 0, ',', '.') ?>	</td>
+            <td width='15%' class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, $tot_contrat) ?>	</td>
             <!--<td width='23%'></td>-->
         </tr>
-<?php if ($model->APLICA_IVA == 1) : ?>
+        <?php if ($model->APLICA_IVA == 1) : ?>
             <tr>
                 <td width='70%'></td><td class="bordered" width='15%'><b>IVA <?= $model->tipo_moneda->SIGNO_MONEDA ?></b></td>
-                <td width='15%' class="text-right bordered"> <?= number_format(($tot_contrat * 19 / 100), 0, ',', '.') ?></td>
+                <td width='15%' class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, ($tot_contrat * 19 / 100)) ?></td>
                 <!--<td width='23%'></td>-->
             </tr>
             <tr>
                 <td width='70%'></td><td class="bordered" width='15%'><b>Total <?= $model->tipo_moneda->SIGNO_MONEDA ?></b></td>
-                <td width='15%' class="text-right bordered"> <?= number_format(($tot_contrat + ($tot_contrat * 19 / 100)), 0, ',', '.') ?>	</td>
+                <td width='15%' class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, ($tot_contrat + ($tot_contrat * 19 / 100))) ?>	</td>
                 <!--<td width='23%'></td>-->
             </tr>
-<?php else : ?>
+        <?php elseif ($model->APLICA_IVA == 2) : ?>
             <tr>
-                <td width='70%'></td><td class="bordered" width='15%'>IVA <?= $model->tipo_moneda->SIGNO_MONEDA ?></td>
+                <td width='70%'></td><td class="bordered" width='15%'> <?= $model->tipo_moneda->SIGNO_MONEDA ?></td>
                 <td width='15%' class="text-right bordered"> 	</td>
                 <!--<td width='23%'></td>-->
             </tr>
             <tr>
                 <td width='70%'></td><td class="bordered" width='15%'>Total <?= $model->tipo_moneda->SIGNO_MONEDA ?></td>
-                <td width='15%' class="text-right bordered"> <?= number_format($tot_contrat, 0, ',', '.') ?>	</td>
+                <td width='15%' class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, $tot_contrat) ?></td>
                 <!--<td width='23%'></td>-->
             </tr>
-<?php endif; ?>
+        <?php elseif ($model->APLICA_IVA == 3) : ?>
+            <tr>
+                <td width='70%'></td><td class="bordered" width='15%'>-10%</td>
+                <td width='15%' class="text-right bordered"><?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, $tot_contrat * 0.1) ?></td>
+                <!--<td width='23%'></td>-->
+            </tr>
+            <tr>
+                <td width='70%'></td><td class="bordered" width='15%'>Total <?= $model->tipo_moneda->SIGNO_MONEDA ?></td>
+                <td width='15%' class="text-right bordered"> <?= $this->getFormat($model->tipo_moneda->TIPO_MONEDA, $tot_contrat * 0.9) ?>	</td>
+                <!--<td width='23%'></td>-->
+            </tr>
+        <?php endif; ?>
     </table>
     <br>
     <table width="100%">
@@ -222,7 +235,7 @@ endforeach;
         $nombre = $persona->NOMBRE_PERSONA . ' ' . $persona->APELLIDO_PERSONA;
         ?>
         <p>Orden rechazada por:<b><?php echo $nombre ?></b><br> motivo:<?php echo $model->MOTIVO_RECHAZO ?></p>
-<?php } ?>
+    <?php } ?>
 </div>
 <?php
 if ($model->APROBADO_I25) :
@@ -242,19 +255,19 @@ endif;
 ?>
 
 <?php
-if (Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG() || Yii::app()->user->LOG()) {
+if (Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG() || Yii::app()->user->LOG() || Yii::app()->user->A1()) {
 
     if ($model->RECHAZAR_OT == 0 && $model->VOBO_GERENTE_GRAL != 1) {
-        
-        if(Yii::app()->user->LOG())
-            $texto="Enviar Orden de Trabajo";
+
+        if (Yii::app()->user->LOG())
+            $texto = "Enviar Orden de Trabajo";
         else
-            $texto='Aprobar Orden de Trabajo';
-        if($model->VOBO_JEFE_DPTO!=1){
+            $texto = 'Aprobar Orden de Trabajo';
+
         echo CHtml::link('<div  class="btn btn-success">
-		    	<h4> <span class="glyphicon glyphicon-ok"></span>'.$texto.'</h4>
+		    	<h4> <span class="glyphicon glyphicon-ok"></span>' . $texto . '</h4>
 			</div>', array('OrdenTrabajo/aprobarOtView', 'id' => $model->ID_OT), array('confirm' => 'Desea Aprobar Ot?'));
-        }
+
         if (!Yii::app()->user->LOG()) {
             echo CHtml::link('<div  class="btn btn-danger">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span> Rechazar Orden de Trabajo</h4>
