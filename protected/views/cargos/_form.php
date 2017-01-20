@@ -23,7 +23,17 @@
 		<div class="span3">
 
 			<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
-			<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
+			<?php echo $form->dropDownList($model,'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),
+                                     array(
+                            'class' => 'span12',
+                            'empty' => 'Indicar Empresa',
+                                            'maxlength'=>80,
+                        'ajax' => array(
+                            'type' => 'POST',
+                            'url' => CController::createUrl('cargos/getCargos'),
+                            'update' => '#' . CHtml::activeId($model, 'DEPENDENCIA_CARGO'),
+                        ))); ?>
+                         
 			<?php echo $form->error($model,'ID_EMPRESA'); ?>
 		</div>
 
@@ -33,13 +43,17 @@
 			<?php echo $form->error($model,'NOMBRE_CARGO'); ?>
 			</div>
 		<div class="span3">
-		<!-- select cargos dependiente de empresa    -->
+	              <?php
+                 $lista_cargos = array();
+            if (isset($model->DEPENDENCIA_CARGO)) {
+                $id_dep = intval($model->DEPENDENCIA_CARGO);
+                $lista_cargos = CHtml::listData(Departamentos::model()->findAllByAttributes(array('ID_DEPARTAMENTO' => $id_dep)), 'ID_CARGO', 'NOMBRE_CARGO');
+            }
+
+        ?>
 			<?php 
 				echo $form->labelEx($model,'DEPENDENCIA_CARGO');
-				if ($empresa>0)
-					echo $form->dropDownList($model,'DEPENDENCIA_CARGO', array(''=>'-Seleccione Cargo-')+CHtml::listData(Cargos::model()->findAllByAttributes(array('ID_EMPRESA'=>$empresa)), 'ID_CARGO', 'NOMBRE_CARGO') ,array('id'=>'cb_cargos', 'class'=>'form-control'));
-				else
-					echo $form->dropDownList($model,'DEPENDENCIA_CARGO', array() ,array('id'=>'cb_cargos', 'class'=>'form-control'));
+				echo $form->dropDownList($model,'DEPENDENCIA_CARGO', $lista_cargos ,array( 'class'=>'form-control'));
 				echo $form->error($model,'DEPENDENCIA_CARGO');
 			?>
 		</div>

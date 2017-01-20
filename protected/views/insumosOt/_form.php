@@ -53,9 +53,9 @@
             <?php echo $form->labelEx($model, 'ID_CENTRO_COSTO'); ?>
             <?php
             $criteria = new CDbCriteria();
-            $criteria->condition = "ID_EMPRESA=" . Yii::app()->getSession()->get('id_empresa');
+            $criteria->condition = "ID_EMPRESA=" . $model->iDOT->ID_EMPRESA;
             $criteria->order = 'NUMERO_CENTRO';
-            echo $form->dropDownList($model, 'ID_CENTRO_COSTO', CHtml::listData(CentroDeCostos::model()->findAll($criteria), 'ID_CENTRO_COSTO', 'NUMERO_CENTRO'), 
+            echo $form->dropDownList($model, 'ID_CENTRO_COSTO', CHtml::listData(CentroDeCostos::model()->findAll($criteria), 'ID_CENTRO_COSTO', 'concatened'), 
                     array(
                 
                 'ajax' => array(
@@ -81,7 +81,7 @@
             $lista_dos = array();
             if (isset($model->ID_CCC)) {
                 $id_cc = intval($model->ID_CENTRO_COSTO);
-                $lista_dos = CHtml::listData(Ccc::model()->findAll("ID_CENTRO_COSTO='$id_cc'"), 'ID_CCC', 'NUMERO_CUENTA');
+                $lista_dos = CHtml::listData(Ccc::model()->findAll("ID_CENTRO_COSTO='$id_cc'"), 'ID_CCC', 'concatened');
             }
             echo $form->dropDownList($model, 'ID_CCC', $lista_dos, array(
                 
@@ -107,7 +107,7 @@
             $lista_tres = array();
             if (isset($model->ID_SCC)) {
                 $id_ccc = intval($model->ID_CCC);
-                $lista_tres = CHtml::listData(Scc::model()->findAll("ID_CCC='$id_ccc'"), 'ID_SCC', 'SCC_NUMERO');
+                $lista_tres = CHtml::listData(Scc::model()->findAll("ID_CCC='$id_ccc'"), 'ID_SCC', 'concatened');
             }
             echo $form->dropDownList($model, 'ID_SCC', $lista_tres, array(
                 'ajax' => array(
@@ -130,7 +130,7 @@
 $lista_cuatro = array();
 if (isset($model->ID_SEC)) {
     $id_scc = intval($model->ID_SCC);
-    $lista_cuatro = CHtml::listData(Sec::model()->findAll("ID_SCC='$id_scc'"), 'ID_SEC', 'SEC_NUMERO');
+    $lista_cuatro = CHtml::listData(Sec::model()->findAll("ID_SCC='$id_scc'"), 'ID_SEC', 'concatened');
 }
 echo $form->dropDownList($model, 'ID_SEC', $lista_cuatro);
 ?>

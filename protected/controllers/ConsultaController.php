@@ -34,7 +34,7 @@ class ConsultaController extends Controller
 			//CRU
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create'),
-				'expression'=>' $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()|| $user->A1()|| $user->LOG()',
+				'expression'=>' $user->ADM() || $user->GG() || $user->GOP() || $user->JDP()|| $user->A1()|| $user->LOG()|| $user->OP()',
 			),		
 			array('deny',  // deny all users
 				'users'=>array('*'),

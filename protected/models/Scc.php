@@ -107,4 +107,8 @@ class Scc extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+         public function getConcatened()
+        {
+                return $this->SCC_NUMERO.' - '.$this->SCC_DESCRIPCION;
+        }
 }

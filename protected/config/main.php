@@ -63,6 +63,7 @@ return array(
             'rules' => array(
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                array('api/auth', 'pattern' => 'api/auth', 'verb' => 'GET'),
                 array('api/list', 'pattern' => 'api/<model:\w+>', 'verb' => 'GET'),
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ),
@@ -84,7 +85,7 @@ return array(
             // use 'site/error' action to display errors
             'errorAction' => 'site/error',
         ),
-    /* 'log'=>array(
+     'log'=>array(
       'class'=>'CLogRouter',
       'routes'=>array(
       array(
@@ -93,12 +94,12 @@ return array(
       ),
       // uncomment the following to show log messages on web pages
 
-      array(
-      'class'=>'CWebLogRoute',
-      ),
+//      array(
+//      'class'=>'CWebLogRoute',
+//      ),
 
       ),
-      ), */
+      ), 
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']

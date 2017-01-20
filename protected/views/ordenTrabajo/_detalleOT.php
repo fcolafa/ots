@@ -127,9 +127,9 @@
                         <td width="10%">
                             <?php
                             $criteria = new CDbCriteria();
-                            $criteria->condition = "ID_EMPRESA=" . Yii::app()->getSession()->get('id_empresa');
+                            $criteria->condition = "ID_EMPRESA=" . $model->ID_EMPRESA;
                             $criteria->order = 'NUMERO_CENTRO';
-                            echo $form->dropDownList($new_sub_item, 'ID_CENTRO_COSTO', CHtml::listData(CentroDeCostos::model()->findAll($criteria), 'ID_CENTRO_COSTO', 'NUMERO_CENTRO'), array(
+                            echo $form->dropDownList($new_sub_item, 'ID_CENTRO_COSTO', CHtml::listData(CentroDeCostos::model()->findAll($criteria), 'ID_CENTRO_COSTO', 'concatened'), array(
                                 'ajax' => array(
                                     'type' => 'POST',
                                     'url' => CController::createUrl('OrdenTrabajo/SelectCuentas'),
@@ -215,7 +215,7 @@
                         <td class="text-right"> <?= @$sub->iDSEC->SEC_NUMERO /*                 * *' ('.$sub->iDCCSECCION->SECCION_CC_DESCRIPCION.')' */ ?> </td>
                         <td class="text-center">
                             <?php
-                            if ($model->VOBO_JEFE_DPTO != 1):
+                            if (Yii::app()->user->A1() || $model->VOBO_JEFE_DPTO != 1):
                                 echo CHtml::link('<img src=' . '"' . Yii::app()->theme->baseUrl . '/img/small_icons/table_edit.png" title="Modificar" alt="Modificar"  width="20" />', array('insumosOt/update', 'id' => $sub->ID_INSUMOS_OT));
 
                                 echo " " . CHtml::link('<img src=' . '"' . Yii::app()->theme->baseUrl . '/img/small_icons/delete.png" title="Eliminar" alt="Eliminar"  width="20" />', $this->createUrl('insumosOt/delete', array('id' => $sub->ID_INSUMOS_OT)), array(
@@ -240,8 +240,8 @@
                     <td></td>
                     <td colspan="1" class="text-right"><b>Neto</b></td>
                     <td class="text-right">
-                        <b><?php echo $model->tipo_moneda->SIGNO_MONEDA ?></b>
-                        <?php $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat)) ?>
+                        <b><?= $model->tipo_moneda->SIGNO_MONEDA ?></b>
+                        <?= $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat)) ?>
                     </td>
                     <td></td>
                 </tr>
@@ -250,8 +250,8 @@
                         <td></td>
                         <td colspan="1" class="text-right"><b>IVA</b></td>
                         <td class="text-right">
-                            <b><?php echo $model->tipo_moneda->SIGNO_MONEDA ?></b>
-                            <?php $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat * 0.19)) ?>
+                            <b><?= $model->tipo_moneda->SIGNO_MONEDA ?></b>
+                            <?= $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat * 0.19)) ?>
                         </td>
                         <td></td>
                     </tr>
@@ -259,7 +259,7 @@
                         <td></td>
                         <td colspan="1" class="text-right"><b>Total</b></td>
                         <td class="text-right">
-                            <b><?php echo @$model->tipo_moneda->SIGNO_MONEDA ?></b>
+                            <b><?= $model->tipo_moneda->SIGNO_MONEDA ?></b>
                             <?= $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat * 1.19)) ?>            
                         </td>
                         <td></td>
@@ -269,7 +269,7 @@
                         <td></td>
                         <td colspan="1" class="text-right"><b>-10%</b></td>
                         <td class="text-right">
-                            <b><?php echo @$model->tipo_moneda->SIGNO_MONEDA ?></b>
+                            <b><?= $model->tipo_moneda->SIGNO_MONEDA ?></b>
                             <b><?= $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat * 0.1)) ?></b>
                             >
                         </td>
@@ -279,7 +279,7 @@
                         <td></td>
                         <td colspan="1" class="text-right"><b>Total</b></td>
                         <td class="text-right">
-                            <b><?php echo @$model->tipo_moneda->SIGNO_MONEDA ?></b>                 
+                            <b><?= $model->tipo_moneda->SIGNO_MONEDA ?></b>                 
                             <b><?= $this->getFormat($model->tipo_moneda->SIGNO_MONEDA, ($tot_contrat * 0.9)) ?></b>                
                         </td>
                         <td></td>

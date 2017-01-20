@@ -2,14 +2,14 @@
 /* @var $this CargosController */
 /* @var $model Cargos */
 
-$this->breadcrumbs=array(
-	//'Cargoses'=>array('index'),
-	'Administrar',
+$this->breadcrumbs = array(
+    //'Cargoses'=>array('index'),
+    'Administrar',
 );
 
-$this->menu=array(
-	//array('label'=>'Ver Cargos', 'url'=>array('index')),
-	array('label'=>'Crear Cargos', 'url'=>array('create')),
+$this->menu = array(
+    //array('label'=>'Ver Cargos', 'url'=>array('index')),
+    array('label' => 'Crear Cargos', 'url' => array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -28,13 +28,13 @@ $('.search-form form').submit(function(){
 
 <h2 class="text-center">Administrar Cargos</h2>
 <div id="statusMsg">
-	<?php if(Yii::app()->user->hasFlash('success')):?>
-	        <?php echo Yii::app()->user->getFlash('success'); ?>
-	<?php endif; ?>
-	 
-	<?php if(Yii::app()->user->hasFlash('error')){ ?>
-	        <?php echo Yii::app()->user->getFlash('error'); ?>
-	<?php } ?>
+    <?php if (Yii::app()->user->hasFlash('success')): ?>
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+    <?php endif; ?>
+
+    <?php if (Yii::app()->user->hasFlash('error')) { ?>
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    <?php } ?>
 </div>
 
 <!--
@@ -44,54 +44,57 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 </p>
 -->
 <!--<div class="search-form" style="display:none">
-<?php echo CHtml::link('Busqueda Avanzada','#',array('class'=>'search-button')); ?>
-<?php //$this->renderPartial('_search',array(
-	//'model'=>$model,
-//)); ?>
+<?php echo CHtml::link('Busqueda Avanzada', '#', array('class' => 'search-button')); ?>
+<?php
+//$this->renderPartial('_search',array(
+//'model'=>$model,
+//)); 
+?>
 </div>search-form -->
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'cargos-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
-	'columns'=>array(
-		array(	'header'=>'ID Cargo',
-						'name'=>'ID_CARGO',
-						'htmlOptions'=>array('width' =>	'10%'),
-			),
-//		array(
-//						'name' => 'ID_EMPRESA',
-//						'value' => '$data->iDEMPRESA->NOMBRE_EMPRESA',
-//			            'header'=>'Empresa',
-//			            'htmlOptions'=>array('width' =>	'23%'),
-//			            'filter'=> CHtml::listData(Empresa::model()->findAll(array('order'=>'NOMBRE_EMPRESA')),'ID_EMPRESA','NOMBRE_EMPRESA'),
-//			        ),
-
-		array(	
-						'header'=>'Dependencia',
-						'value'=>'@$data->cargos2->NOMBRE_CARGO',
-						'htmlOptions'=>array('width' =>	'15%'),
-						'filter'=> CHtml::listData(Cargos::model()->findAll(array('order'=>'NOMBRE_CARGO')),'DEPENDENCIA_CARGO','NOMBRE_CARGO'),
-			),
-
-		array(	'header'=>'Nombre',
-						'name'=>'NOMBRE_CARGO',
-						'htmlOptions'=>array('width' =>	'15%'),
-			),
-		array(	'header'=>'Descripcion',
-						'name'=>'DESCRIPCION_CARGO',
-						'htmlOptions'=>array('width' =>	'30%'),
-			),
-		array(
-			'class'=>'CButtonColumn',
-			'header'=>'Opciones',
-			'afterDelete'=>'function(link,success,data){ 
+<?php
+$this->widget('zii.widgets.grid.CGridView', array(
+    'id' => 'cargos-grid',
+    'dataProvider' => $model->search(),
+    'filter' => $model,
+    'columns' => array(
+        array('header' => 'ID Cargo',
+            'name' => 'ID_CARGO',
+            'htmlOptions' => array('width' => '10%'),
+        ),
+        array(
+            'name' => 'ID_EMPRESA',
+            'value' => '$data->iDEMPRESA->NOMBRE_EMPRESA',
+            'header' => 'Empresa',
+            'htmlOptions' => array('width' => '23%'),
+            'visible' => Yii::app()->user->allCompany(),
+            'filter' => CHtml::listData(Empresa::model()->findAll(array('order' => 'NOMBRE_EMPRESA')), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),
+        ),
+        array(
+            'header' => 'Dependencia',
+            'value' => '@$data->cargos2->NOMBRE_CARGO',
+            'htmlOptions' => array('width' => '15%'),
+            'filter' => CHtml::listData(Cargos::model()->findAll(array('order' => 'NOMBRE_CARGO')), 'DEPENDENCIA_CARGO', 'NOMBRE_CARGO'),
+        ),
+        array('header' => 'Nombre',
+            'name' => 'NOMBRE_CARGO',
+            'htmlOptions' => array('width' => '15%'),
+        ),
+        array('header' => 'Descripcion',
+            'name' => 'DESCRIPCION_CARGO',
+            'htmlOptions' => array('width' => '30%'),
+        ),
+        array(
+            'class' => 'CButtonColumn',
+            'header' => 'Opciones',
+            'afterDelete' => 'function(link,success,data){ 
 				if(success){
 					$("#statusMsg").html(data);
 					$("#statusMsg .alert-danger, .alert-success").animate({opacity: 1.0}, 3000).fadeOut("slow");
 				} 
 			}',
-			'htmlOptions'=>array('width' =>	'7%'),
-		),
-	),
-)); ?>
+            'htmlOptions' => array('width' => '7%'),
+        ),
+    ),
+));
+?>

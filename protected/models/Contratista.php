@@ -20,114 +20,134 @@
  * @property OrdenTrabajo[] $ordenTrabajos
  * @property RecepcionDocumentos[] $recepcionDocumentoses
  */
-class Contratista extends CActiveRecord
-{
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'contratista';
-	}
+class Contratista extends CActiveRecord {
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('ID_EMPRESA, NOMBRE_CONTRATISTA, RUT_CONTRATISTA', 'required'),
-			array('ID_EMPRESA, AUTORIZADO', 'numerical', 'integerOnly'=>true),
-			array('NOMBRE_CONTRATISTA, DIRECCION_CONTRATISTA, CIUDAD_CONTRATISTA, ENCARGADO', 'length', 'max'=>150),
-			array('RUT_CONTRATISTA', 'length', 'max'=>15),
-			array('TELEFONO_CONTRATISTA, GIRO_AREA', 'length', 'max'=>50),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('ID_CONTRATISTA, ID_EMPRESA, NOMBRE_CONTRATISTA, RUT_CONTRATISTA, DIRECCION_CONTRATISTA, CIUDAD_CONTRATISTA, TELEFONO_CONTRATISTA, GIRO_AREA, ENCARGADO, AUTORIZADO', 'safe', 'on'=>'search'),
-		);
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName() {
+        return 'contratista';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'empresa' => array(self::BELONGS_TO, 'Empresa', 'ID_EMPRESA'),
-			'orden_trabajo' => array(self::HAS_MANY, 'OrdenTrabajo', 'ID_CONTRATISTA'),
-			'recepcion_documentos' => array(self::HAS_MANY, 'RecepcionDocumentos', 'ID_CONTRATISTA'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules() {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('ID_EMPRESA, NOMBRE_CONTRATISTA, RUT_CONTRATISTA', 'required'),
+            array('ID_EMPRESA, AUTORIZADO', 'numerical', 'integerOnly' => true),
+            array('NOMBRE_CONTRATISTA, DIRECCION_CONTRATISTA, CIUDAD_CONTRATISTA, ENCARGADO', 'length', 'max' => 150),
+            array('RUT_CONTRATISTA', 'length', 'max' => 15),
+            array('RUT_CONTRATISTA', 'uniqueContratista'),
+            array('TELEFONO_CONTRATISTA, GIRO_AREA', 'length', 'max' => 50),
+            // The following rule is used by search().
+            // @todo Please remove those attributes that should not be searched.
+            array('ID_CONTRATISTA, ID_EMPRESA, NOMBRE_CONTRATISTA, RUT_CONTRATISTA, DIRECCION_CONTRATISTA, CIUDAD_CONTRATISTA, TELEFONO_CONTRATISTA, GIRO_AREA, ENCARGADO, AUTORIZADO', 'safe', 'on' => 'search'),
+        );
+    }
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'ID_CONTRATISTA' => 'Id Contratista',
-			'ID_EMPRESA' => 'Id Empresa',
-			'NOMBRE_CONTRATISTA' => 'Nombre Contratista',
-			'RUT_CONTRATISTA' => 'Rut Contratista',
-			'DIRECCION_CONTRATISTA' => 'Direccion Contratista',
-			'CIUDAD_CONTRATISTA' => 'Ciudad Contratista',
-			'TELEFONO_CONTRATISTA' => 'Telefono Contratista',
-			'GIRO_AREA' => 'Giro Area',
-			'ENCARGADO' => 'Encargado',
-			'AUTORIZADO' => 'Autorizado',
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations() {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'empresa' => array(self::BELONGS_TO, 'Empresa', 'ID_EMPRESA'),
+            'orden_trabajo' => array(self::HAS_MANY, 'OrdenTrabajo', 'ID_CONTRATISTA'),
+            'recepcion_documentos' => array(self::HAS_MANY, 'RecepcionDocumentos', 'ID_CONTRATISTA'),
+        );
+    }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels() {
+        return array(
+            'ID_CONTRATISTA' => 'Id Contratista',
+            'ID_EMPRESA' => 'Id Empresa',
+            'NOMBRE_CONTRATISTA' => 'Nombre Contratista',
+            'RUT_CONTRATISTA' => 'Rut Contratista',
+            'DIRECCION_CONTRATISTA' => 'Direccion Contratista',
+            'CIUDAD_CONTRATISTA' => 'Ciudad Contratista',
+            'TELEFONO_CONTRATISTA' => 'Telefono Contratista',
+            'GIRO_AREA' => 'Giro Area',
+            'ENCARGADO' => 'Encargado',
+            'AUTORIZADO' => 'Autorizado',
+        );
+    }
 
-		$criteria=new CDbCriteria;
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     *
+     * Typical usecase:
+     * - Initialize the model fields with values from filter form.
+     * - Execute this method to get CActiveDataProvider instance which will filter
+     * models according to data in model fields.
+     * - Pass data provider to CGridView, CListView or any similar widget.
+     *
+     * @return CActiveDataProvider the data provider that can return the models
+     * based on the search/filter conditions.
+     */
+    public function search() {
+        // @todo Please modify the following code to remove attributes that should not be searched.
 
-		$criteria->compare('ID_CONTRATISTA',$this->ID_CONTRATISTA);
-		$criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa') );
-		$criteria->compare('NOMBRE_CONTRATISTA',$this->NOMBRE_CONTRATISTA,true);
-		$criteria->compare('RUT_CONTRATISTA',$this->RUT_CONTRATISTA,true);
-		$criteria->compare('DIRECCION_CONTRATISTA',$this->DIRECCION_CONTRATISTA,true);
-		$criteria->compare('CIUDAD_CONTRATISTA',$this->CIUDAD_CONTRATISTA,true);
-		$criteria->compare('TELEFONO_CONTRATISTA',$this->TELEFONO_CONTRATISTA,true);
-		$criteria->compare('GIRO_AREA',$this->GIRO_AREA,true);
-		$criteria->compare('ENCARGADO',$this->ENCARGADO,true);
-		$criteria->compare('AUTORIZADO',$this->AUTORIZADO);
+        $criteria = new CDbCriteria;
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+        $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
+        if (!Yii::app()->user->allCompany())
+            $criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa'));
+        else
+            $criteria->compare('ID_EMPRESA', $this->ID_EMPRESA);
+        $criteria->compare('NOMBRE_CONTRATISTA', $this->NOMBRE_CONTRATISTA, true);
+        $criteria->compare('RUT_CONTRATISTA', $this->RUT_CONTRATISTA, true);
+        $criteria->compare('DIRECCION_CONTRATISTA', $this->DIRECCION_CONTRATISTA, true);
+        $criteria->compare('CIUDAD_CONTRATISTA', $this->CIUDAD_CONTRATISTA, true);
+        $criteria->compare('TELEFONO_CONTRATISTA', $this->TELEFONO_CONTRATISTA, true);
+        $criteria->compare('GIRO_AREA', $this->GIRO_AREA, true);
+        $criteria->compare('ENCARGADO', $this->ENCARGADO, true);
+        $criteria->compare('AUTORIZADO', $this->AUTORIZADO);
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return Contratista the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+        ));
+    }
 
-	public static function getContratistasAutorizados(){
-		return CHtml::listData(Contratista::model()->findAll('AUTORIZADO=1'), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA' );
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * Please note that you should have this exact method in all your CActiveRecord descendants!
+     * @param string $className active record class name.
+     * @return Contratista the static model class
+     */
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
+    }
+
+    public static function getContratistasAutorizados() {
+        return CHtml::listData(Contratista::model()->findAll('AUTORIZADO=1'), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA');
+    }
+
+    public function getConcatened() {
+        return $this->NOMBRE_CONTRATISTA . ' - ' . $this->RUT_CONTRATISTA;
+    }
+
+    public function getContratistas() {
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa');
+        return CHtml::listData(Contratista::model()->findAll($criteria), 'ID_CONTRATISTA', 'concatened');
+    }
+
+    public function uniqueContratista() {
+        $criteria = new CDbCriteria();
+        $ide=$this->ID_EMPRESA;
+        if (empty($this->ID_EMPRESA) || $this->ID_EMPRESA == '')
+                $ide = Yii::app()->getSession()->get('id_empresa');
+            
+        $criteria->condition = 'ID_EMPRESA=' . $ide. ' AND RUT_CONTRATISTA="' . $this->RUT_CONTRATISTA . '"';
+        if (count(Contratista::model()->findAll($criteria)) > 0)
+            $this->addError('RUT_CONTRATISTA', 'El Rut del contratista ya ha sido tomado');
+    }
+
 }

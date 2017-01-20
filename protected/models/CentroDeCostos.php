@@ -113,4 +113,8 @@ class CentroDeCostos extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+        public function getConcatened()
+        {
+                return $this->NUMERO_CENTRO.' - '.$this->NOMBRE_CENTRO_COSTO;
+        }
 }

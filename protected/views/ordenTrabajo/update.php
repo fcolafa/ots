@@ -16,7 +16,7 @@ $this->menu=array(
 );
 ?>
 
-<h2 class="text-center">Modificar Orden de Trabajo <?php echo $model->ID_OT." - ".$model->contratista->NOMBRE_CONTRATISTA; ?></h2>
+<h2 class="text-center">Modificar Orden de Trabajo N° <?php echo $model->NUMERO_OT." - ".$model->contratista->NOMBRE_CONTRATISTA; ?></h2>
 
 <?php //$this->renderPartial('_form', array('model'=>$model,'items'=>$items,'validateItems'=>$validateItems)); ?>
 

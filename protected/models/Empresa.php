@@ -131,5 +131,6 @@ class Empresa extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+        
 
 }

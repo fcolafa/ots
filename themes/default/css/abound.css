@@ -1,10 +1,13 @@
 body {
 
     font-size:12px;
-    padding-bottom: 40px;
+    font-family: "Roboto", Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+   
+    color: #333333;
+
 
 }
-.container-fluid{padding-top: 20px;}
 
 /*Nav bar*/
 .navbar .brand {
@@ -52,13 +55,32 @@ h1,h2,h3,h4, .portlet > .portlet-decoration, .sidebar-nav > ul > li > a, .navbar
 }
 /* Start Portlets*/
 .portlet{
+    width: 60%;
+    margin: 0 auto;
+
+    text-align: center;
     -webkit-box-shadow:#F9F9F9 0 1px 0 inset;
     border:1px solid #DDDDDD;
     border-radius:3px;
     box-shadow:#F9F9F9 0 1px 0 inset;
     margin-bottom:20px;
-    min-height:40px;
+    width: 320px;
+    min-height: 40px;
+    letter-spacing: -0.015em;
+    margin-bottom: 20px !important;
 
+}
+.panel {
+    width: 100%;
+    height: auto;
+
+
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
 .portlet-decoration{
@@ -622,6 +644,7 @@ input[type=radio] + label, input[type=checkbox] + label { display:inline !import
     padding:5px 10px;
 }
 .borde-azul{
+    background-color: #FFF;
     border-radius: 10px 10px 10px 10px;
     -moz-border-radius: 10px 10px 10px 10px;
     -webkit-border-radius: 10px 10px 10px 10px;
@@ -667,7 +690,7 @@ input[type=radio] + label, input[type=checkbox] + label { display:inline !import
     padding: 8px 11px;
     text-decoration: none;
 }
-.messageButtonb.blue{
+.blue{
     background: #f5f5f5;
     border-color: #dedede #d8d8d8 #d3d3d3;
     box-shadow: 0 1px 1px #eaeaea, inset 0 1px 0 #fbfbfb;
@@ -681,7 +704,7 @@ input[type=radio] + label, input[type=checkbox] + label { display:inline !import
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f0f0f0');
 }
 
-.messageButtonb.blue:hover{
+.blue:hover{
     background: #f4f4f4;
     border-color: #c7c7c7 #c3c3c3 #bebebe;
     box-shadow: 0 1px 1px #ebebeb, inset 0 1px 0 #f3f3f3;
@@ -748,11 +771,12 @@ div.form input.success,
 div.form textarea.success,
 div.form select.success
 {
-    background: #E6EFC2;
+    background: #C6D880;
     border-color: #C6D880;
 }
-
-
+.content-group {
+    margin-bottom: 20px !important;
+}
 div.form .errorSummary
 {
     border: 1px solid #C00;
@@ -830,7 +854,7 @@ div.wide.form .field_name_help
 .fechaconsult{
     float: right;
     font-size: 12px;
- 
+
 }
 .fecham {
     float: right;
@@ -839,7 +863,7 @@ div.wide.form .field_name_help
     font-family: "Times New Roman", Times, serif;
     font-weight:bold;
     border:1px solid;
-   
+
 }
 .mes, .año {
     font-size: 14px;
@@ -868,5 +892,73 @@ div.wide.form .field_name_help
 }
 .messages{
     padding-top: 50px;
-     text-align : justify;
+    text-align : justify;
+}
+.companyButton { /* clase general */
+    width: 100%;
+    border: 1px solid #dedede;
+    border-radius: 3px;
+    color: #555;
+    display: inline-block;
+    font: bold 12px/12px HelveticaNeue, Arial;
+    padding: 8px 11px;
+    text-decoration: none;
+}
+.notice-information{
+    font-size: 14px;
+
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: red;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+.fastview{
+  
+}
+
+.icon-edit{
+        width: 16px;
+        height: auto;
+}
+.icon-view{
+     width: 16px;
+     height: auto;
+}
+.icon-update{
+     width: 16px;
+     height: auto;
 }

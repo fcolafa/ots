@@ -45,6 +45,7 @@ class SiteController extends Controller {
         // $pres = $this->obtainPto();
         // $cc = $this->obtainCC();
         // $dolar = $this->obtainDolar();
+         
         if (Yii::app()->user->isGuest) {
             $this->redirect(array('site/login/'));
         }
@@ -67,6 +68,7 @@ class SiteController extends Controller {
      * Displays the contact page
      */
     public function actionLogin() {
+       
         $model = new LoginForm;
 
         // if it is ajax validation request
@@ -80,8 +82,10 @@ class SiteController extends Controller {
             $model->attributes = $_POST['LoginForm'];
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login())
-            //$this->redirect(Yii::app()->user->returnUrl);
-                $this->redirect(array('site/index/'));
+                if(isset(Yii::app()->user->returnUrl))
+                    $this->redirect(Yii::app()->user->returnUrl);
+                else
+                    $this->redirect(array('site/index/'));
         }
         if (!Yii::app()->user->isGuest) {
             $this->redirect(array('site/index/'));
@@ -198,5 +202,21 @@ class SiteController extends Controller {
         }
         return $newCC;
     }
+         public function actionDeleteOldFile($tempFolder=null,$token){
+            $cont=0;
+            if($token=="PDS4WaMD"){
+                if($tempFolder==null)
+                    $tempFolder=Yii::getPathOfAlias('webroot').'/archivos/temp/'; 
+            
+           $dir = opendir($tempFolder);
+                while($f = readdir($dir)){
+                if((time()-filemtime($tempFolder.$f) >= 3600*4*2) and !(is_dir($tempFolder.$f)))
+                    unlink($tempFolder.$f);
+                }
+            closedir($dir);
+            
+            }
+           
+        }
 
 }

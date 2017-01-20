@@ -8,7 +8,7 @@
  * @property string $USUARIO
  * @property string $IP_ADDRESS
  * @property string $FECHA_TRANSACCION
- * @property string $CONTOLADOR
+ * @property string $CONTROLADOR
  * @property string $ACCION
  * @property string $DETALLE
  */
@@ -31,11 +31,11 @@ class Transaccion extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('FECHA_TRANSACCION', 'required'),
-			array('USUARIO, IP_ADDRESS, CONTOLADOR, ACCION', 'length', 'max'=>100),
+			array('USUARIO, IP_ADDRESS, CONTROLADOR, ACCION', 'length', 'max'=>100),
 			array('DETALLE', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ID_TRANSACCION, USUARIO, IP_ADDRESS, FECHA_TRANSACCION, CONTOLADOR, ACCION, DETALLE', 'safe', 'on'=>'search'),
+			array('ID_TRANSACCION, USUARIO, IP_ADDRESS, FECHA_TRANSACCION, CONTROLADOR, ACCION, DETALLE', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,7 +60,7 @@ class Transaccion extends CActiveRecord
 			'USUARIO' => 'Usuario',
 			'IP_ADDRESS' => 'Ip Address',
 			'FECHA_TRANSACCION' => 'Fecha Transaccion',
-			'CONTOLADOR' => 'Contolador',
+			'CONTROLADOR' => 'Controlador',
 			'ACCION' => 'Accion',
 			'DETALLE' => 'Detalle',
 		);
@@ -88,7 +88,7 @@ class Transaccion extends CActiveRecord
 		$criteria->compare('USUARIO',$this->USUARIO,true);
 		$criteria->compare('IP_ADDRESS',$this->IP_ADDRESS,true);
 		$criteria->compare('FECHA_TRANSACCION',$this->FECHA_TRANSACCION,true);
-		$criteria->compare('CONTOLADOR',$this->CONTOLADOR,true);
+		$criteria->compare('CONTROLADOR',$this->CONTROLADOR,true);
 		$criteria->compare('ACCION',$this->ACCION,true);
 		$criteria->compare('DETALLE',$this->DETALLE,true);
 

@@ -7,6 +7,7 @@ class ApiController extends Controller
      * Key which has to be in HTTP USERNAME and PASSWORD headers 
      */
     Const APPLICATION_ID = 'ASCCPE';
+    private $_identity;
  
     /**
      * Default response format
@@ -18,19 +19,26 @@ class ApiController extends Controller
      */
     public function filters()
     {
-            return array();
+            return array(
+                /*'accessControl',
+                'postOnly + create',
+                'putOnly + update',
+                'deleteOnly + delete'*/
+            );
     }
  
     // Actions
     public function actionList()
     {
-       // $this->_checkAuth();
+        $user = $this->_checkAuth();
+        //$this->_sendResponse(200, "Model: ".print_r($user) );
+        
         switch($_GET['model'])
         {
             case 'OrdenTrabajo':
                 $criteria = new CDbCriteria();
-                if (Yii::app()->user->allCompany() != 1) {
-                    $idempresa = Yii::app()->getSession()->get('id_empresa');
+                if ($user['TODAS_LAS_EMPRESAS'] != 1) {
+                    $idempresa = $user['ID_EMPRESA'];
                     $condition = 't.ID_EMPRESA';
                     if (!empty($idempresa))
                         $condition.="=" . $idempresa;
@@ -39,22 +47,28 @@ class ApiController extends Controller
                     $condition.=' AND ';
                 } else
                     $condition = '';
-                $usuario = Personal::model()->findByPk(Yii::app()->user->id);
-                if (Yii::app()->user->ADM())
+                $usuario = Personal::model()->findByPk($user['ID_USUARIO']);
+                if ($user['COD_TIPO_USUARIO']=='ADM'){
                     $condition.='VOBO_ADMIN=0 AND RECHAZAR_OT <> 1';
-                elseif (Yii::app()->user->GOP())
+                    //$this->_sendResponse(200, "En ADM" );
+                } elseif ($user['COD_TIPO_USUARIO']=='GOP'){
                     $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
-                elseif (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
-                    //   die ($usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO);
+                    //$this->_sendResponse(200, "En GOP" );
+                }elseif ($user['COD_TIPO_USUARIO']=='JDP' && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
                     $criteria->with = array('creador');
                     $criteria->together = true;
                     $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO;
-                } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG())
-                    $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR=' . Yii::app()->user->id;
-                elseif (Yii::app()->user->GG())
+                    //$this->_sendResponse(200, "En JDP" );
+                } elseif ($user['COD_TIPO_USUARIO']=='JDP' || $user['COD_TIPO_USUARIO']=='LOG'){
+                    $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR=' . $user['ID_USUARIO'];
+                    //$this->_sendResponse(200, "En JDP LOG" );
+                } elseif ($user['COD_TIPO_USUARIO']=='GG'){
                     $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=0 AND RECHAZAR_OT <> 1";
-                elseif (Yii::app()->user->A1())
+                    //$this->_sendResponse(200, "En GG" );
+                } elseif ($user['COD_TIPO_USUARIO']=='A1'){
                     $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1';
+                    //$this->_sendResponse(200, "En A1" );
+                }
                 $criteria->condition = $condition;
                 $number = count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria), 'ID_OT', 'ID_OT'));
                 break;
@@ -67,15 +81,9 @@ class ApiController extends Controller
         }
         // Did we get some results?
         if($number==0) {
-            // No
             $this->_sendResponse(200, 
-                    sprintf('No items where found for model <b>%s</b>', $_GET['model']) );
+                    sprintf('No hay Ordenes de Trabajo') );
         }else{
-            // Prepare response
-            /*$rows = array();
-            foreach($models as $model)
-                $rows[] = $model->attributes;*/
-            // Send the response
             $this->_sendResponse(200, CJSON::encode($number));
         }
     }
@@ -176,23 +184,63 @@ class ApiController extends Controller
         return (isset($codes[$status])) ? $codes[$status] : '';
     }
 
+    public function actionAuth(){
+        $headers = apache_request_headers();
+        if(!(isset($headers['HTTP_X_USERNAME']) and isset($headers['HTTP_X_PASSWORD']))) {
+            // Error: Unauthorized
+            //$this->_sendResponse(401);
+            $this->_sendResponse(200, CJSON::encode("1"));
+        }
+        $username = $headers['HTTP_X_USERNAME'];
+        $password = $headers['HTTP_X_PASSWORD'];
+
+        $this->_identity=new UserIdentity($username,$password);
+        $this->_identity->authenticate();
+        if($this->_identity->errorCode===UserIdentity::ERROR_NONE)
+        {
+            $this->_sendResponse(200, CJSON::encode(1));
+        }else{
+            $this->_sendResponse(401);
+        }
+    }
+
     private function _checkAuth()
     {
         // Check if we have the USERNAME and PASSWORD HTTP headers set?
-        if(!(isset($_SERVER['HTTP_X_USERNAME']) and isset($_SERVER['HTTP_X_PASSWORD']))) {
+        $headers = apache_request_headers();
+        if(!(isset($headers['HTTP_X_USERNAME']) and isset($headers['HTTP_X_PASSWORD']))) {
             // Error: Unauthorized
             $this->_sendResponse(401);
         }
-        $username = $_SERVER['HTTP_X_USERNAME'];
-        $password = $_SERVER['HTTP_X_PASSWORD'];
+
+        $username = $headers['HTTP_X_USERNAME'];
+        $password = $headers['HTTP_X_PASSWORD'];
+        
+        //$this->_sendResponse(200, 'User: '.$username. " Pass: ".$password);
+        //exit;
         // Find the user
-        $user=User::model()->find('LOWER(username)=?',array(strtolower($username)));
-        if($user===null) {
-            // Error: Unauthorized
-            $this->_sendResponse(401, 'Error: User Name is invalid');
-        } else if(!$user->validatePassword($password)) {
-            // Error: Unauthorized
-            $this->_sendResponse(401, 'Error: User Password is invalid');
+        //$user=LoginForm::model()->find('LOWER(username)=?',array(strtolower($username)));
+        $this->_identity=new UserIdentity($username,$password);
+        $this->_identity->authenticate();
+        if($this->_identity->errorCode===UserIdentity::ERROR_NONE)
+        {
+            //$this->_sendResponse(200, 'Autenticado');
+            $user=Usuarios::model()->find("NOMBRE_USUARIO='".$username."'");
+            return $user;
+            /*if($user===null) {
+                // Error: Unauthorized
+                $this->_sendResponse(401, 'Error: User Name is invalid');
+            } else {
+                if(!$user->validatePassword($password)) {// Error: Unauthorized
+                    $this->_sendResponse(401, 'Error: User Password is invalid');
+                }else{
+                    $this->_sendResponse(200, 'Model: '.print_r($user));
+                    //return $user;
+                    exit;
+                }
+            }*/
+        }else{
+            $this->_sendResponse(401);
         }
     }
 }

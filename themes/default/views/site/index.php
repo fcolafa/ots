@@ -36,8 +36,12 @@ $variable = Yii::app()->user->A1();
     
     <div id="msg_warnning" class="alert alert-warning">
         <h2> Novedades:</h2>
-        <li>Se ha implementado un modulo de ticket de soporte, mediante el cual pueden informar al equipo de desarrollo acerca de cualquier incidencia encontrada en el sistema y adicionalmente hacer seguimiento a estas.</li>
-        <li>para mas informacion: <?php echo CHtml::link('Manual',array('manual/')); ?></li></div>
+        <ul class="notice-information">
+        <li>Se ha implementado un modulo de ticket de soporte, mediante el cual pueden informar al equipo de desarrollo acerca de cualquier incidencia encontrada en el sistema y adicionalmente hacer seguimiento a estas. Para mas informacion: <?php echo CHtml::link('Manual',array('manual/')); ?></li>
+        <li>Se les recuerda a los usuarios que al momento de adjuntar una cotizacion, deben asegurarse que el nombre del archivo no contenga ningun caracter extraño <b>("ª\!@·$~%¬&/()=")</b>, ya que dichos caracteres provocan que el archivo subido no quede adjunto, debido a que el navegador lo reconoce como comandos. </li>
+        <li>Ahora al momento de añadir centro de costos en una orden de trabajo, se podra ver el nombre o descripcion de los centros de costos, cuentas, subsecciones y secciones respectivamente al lado de su número.</li>
+        <li>Se volvio habilitar en la grilla de ordenes de trabajo la aprobacion multiple de Ordenes de trabajo, solo basta que seleccionen las ordenes de trabajo que desee, y aprete el boton "Aprobar Orden(es) de Trabajo(s)".</li>
+        </ul>
     </div>
     
     <div class="container-fluid" valign="center"  style="padding-top:0%;">
@@ -82,6 +86,7 @@ $variable = Yii::app()->user->A1();
             </div>-->
         </div>
     </div>
-</div><!--/row-->
+</div>
+
 
 

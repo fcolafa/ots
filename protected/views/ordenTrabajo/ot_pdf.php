@@ -6,7 +6,7 @@
 						<td width="40%">
 							<h5><?=$model->empresa->NOMBRE_EMPRESA ?></h5>
 						</td>
-						<td rowspan="3"><h3 class="text-center"> ORDEN DE TRABAJO N° <?php echo $model->ID_OT; ?></h3></td>
+						<td rowspan="3"><h3 class="text-center"> ORDEN DE TRABAJO N° <?php echo $model->NUMERO_OT; ?></h3></td>
 					</tr>
 					<tr>
 						<td><h6> RUT : 
@@ -44,7 +44,7 @@
 					<td><h6> Reparación </h6></td><td>:</td><td class="table-bordered text-center"><?php if ($model->ID_TIPO_OT == 5) echo "X";?></td>
 				</tr>
 				<tr>
-					<td><h5></h5></td><td></td>
+					<td><h5> Fecha OT </h5></td><td>: <?=Yii::app()->dateFormatter->format("d MMMM y",strtotime($model->FECHA_OT)) ?></td>
 					<td><h6> Arriendo </h6></td><td>:</td><td class="table-bordered text-center"><?php if ($model->ID_TIPO_OT == 6) echo "X";?></td>
 				</tr>
 			</table>
@@ -86,7 +86,7 @@
 					<th width="7%" class="bordered"> C. C.</th>
 					<th width="9%" class="bordered"> C. C. C.</th>
 					<th width="9%" class="bordered"> S. C. C.</th>
-					<th width="7%" class="bordered"> Sección</th>
+					<th width="7%" class="bordered"> S. E. C.</th>
 				<tr>
 			</thead>
 			<tbody>
@@ -147,21 +147,8 @@
 
 			</table>
 			<br>
-			<table width="800px">
-				<tr>
-                                    <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° Jefe Depto.<br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO)?></td>
-                                        <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
-				</tr>
-				<tr>
-					<td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP)?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG)?></td>
-				</tr>
-				<tr>
-					<td width='20%' class="bordered h7 text-center"> V°B° Jefe Administrativo</td><td width='20%' class="bordered h7 text-center">'V°B° Gerente Planta</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Zonal</td>
-				</tr>
-				<tr>
-					<td width='20%' class="bordered h7 text-center"> Monto hasta USD 2.500</td><td width='40%' class="bordered h7 text-center" colspan="2">Monto sobre USD 2.500</td>
-				</tr>
-			</table>	
+			
+                        <?= $this->getFirmas($model);?>
 	</div>
 
 

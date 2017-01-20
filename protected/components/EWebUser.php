@@ -45,10 +45,10 @@ class EWebUser extends CWebUser{
            return $user->COD_TIPO_USUARIO==LevelLookUp::A1;
         return false;
     }
-    function PR(){
+    function OP(){
         $user = $this->loadUser();
         if ($user)
-           return $user->COD_TIPO_USUARIO==LevelLookUp::PR;
+           return $user->COD_TIPO_USUARIO==LevelLookUp::OP;
         return false;
     }
 

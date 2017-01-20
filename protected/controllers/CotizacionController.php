@@ -41,7 +41,7 @@ class CotizacionController extends Controller
 			//CRU
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update','admin','index','view','approveCot'),
-				//'expression'=>'$user->OP1() || $user->F2() || $user->M2()',
+				'users'=>array('@'),
 			),
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions

@@ -104,4 +104,8 @@ class Sec extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+         public function getConcatened()
+        {
+                return $this->SEC_NUMERO.' - '.$this->SEC_DESCRIPCION;
+        }
 }

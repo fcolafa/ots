@@ -49,11 +49,13 @@
 			</div>
 
 			<div class="row">
+                            <?php if (Yii::app()->user->allCompany()) { ?>
 				<div class="span3">
 					<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
 					<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
 					<?php echo $form->error($model,'ID_EMPRESA'); ?>
 				</div> 
+                            <?php }?>
 				<div class="span4">
 					<?php echo $form->labelEx($model,'ENCARGADO'); ?>
 					<?php echo $form->textField($model,'ENCARGADO',array('class'=>'span12', 'maxlength'=>150)); ?>

@@ -30,6 +30,7 @@ class Personal extends CActiveRecord
 	 */
         public $_company;
         public $_firma;
+        public $_sendmail;
         
 	public function tableName()
 	{
@@ -48,7 +49,7 @@ class Personal extends CActiveRecord
 			array('APRUEBA_DOCS', 'required' ,'on'=>'update'),
                         array('RUT_PERSONA','unique'),
                         array('EMAIL','unique'),
-			array('ID_EMPRESA, ID_CARGO, ID_DEPARTAMENTO, ES_USUARIO, APRUEBA_DOCS', 'numerical', 'integerOnly'=>true),
+			array('_sendmail, ID_EMPRESA, ID_CARGO, ID_DEPARTAMENTO, ES_USUARIO, APRUEBA_DOCS', 'numerical', 'integerOnly'=>true),
 			array('RUT_PERSONA', 'length', 'max'=>15),
 			array('NOMBRE_PERSONA, APELLIDO_PERSONA, EMAIL', 'length', 'max'=>50),
 			array('TELEFONO', 'length', 'max'=>20),
@@ -56,7 +57,7 @@ class Personal extends CActiveRecord
                         array('URL_FIRMA', 'length', 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('URL_FIRMA, _firma, _company, ID_PERSONA, ID_EMPRESA, RUT_PERSONA, NOMBRE_PERSONA, APELLIDO_PERSONA, TELEFONO, EMAIL, ID_CARGO, ID_DEPARTAMENTO, ES_SUPERVISOR, ES_USUARIO, APRUEBA_DOCS, ESTADO_TRABAJADOR', 'safe', 'on'=>'search'),
+			array('_sendmail, URL_FIRMA, _firma, _company, ID_PERSONA, ID_EMPRESA, RUT_PERSONA, NOMBRE_PERSONA, APELLIDO_PERSONA, TELEFONO, EMAIL, ID_CARGO, ID_DEPARTAMENTO, ES_SUPERVISOR, ES_USUARIO, APRUEBA_DOCS, ESTADO_TRABAJADOR', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -98,6 +99,7 @@ class Personal extends CActiveRecord
                         '_company'=>'Empresa',
                         'URL_FIRMA' => 'Url Firma',
                         '_firma' => 'Firma',
+                        '_sendmail'=>'Enviar Datos por Correo electronico?',
 		);
 	}
 
@@ -120,7 +122,11 @@ class Personal extends CActiveRecord
 		$criteria=new CDbCriteria;
                 
 		$criteria->compare('ID_PERSONA',$this->ID_PERSONA);
-		$criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa') );
+                if(!Yii::app()->user->A1())
+                    $criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa') );
+                else
+                    $criteria->compare('ID_EMPRESA',$this->ID_EMPRESA );
+                
 		$criteria->compare('RUT_PERSONA',$this->RUT_PERSONA,true);
 		$criteria->compare('NOMBRE_PERSONA',$this->NOMBRE_PERSONA,true);
 		$criteria->compare('APELLIDO_PERSONA',$this->APELLIDO_PERSONA,true);
@@ -157,6 +163,10 @@ class Personal extends CActiveRecord
 	public static function getPersonal(){
                 $criteria=new CDbCriteria();
                 $criteria->condition="ID_EMPRESA=".Yii::app()->getSession()->get('id_empresa');
-		return CHtml::listData(Personal::model()->findAll($criteria), 'ID_PERSONA', 'NOMBRE_PERSONA' );
+		return CHtml::listData(Personal::model()->findAll($criteria), 'ID_PERSONA', 'concatened' );
 	}
+        public function getConcatened()
+        {
+                return $this->NOMBRE_PERSONA.' '.$this->APELLIDO_PERSONA;
+        }
 }

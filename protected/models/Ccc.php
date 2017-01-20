@@ -107,4 +107,8 @@ class Ccc extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+         public function getConcatened()
+        {
+                return $this->NUMERO_CUENTA.' - '.$this->NOMBRE_CUENTA;
+        }
 }

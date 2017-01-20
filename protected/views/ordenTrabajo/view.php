@@ -4,7 +4,7 @@
 
 $this->breadcrumbs = array(
     'Orden Trabajos' => array('index'),
-    $model->ID_OT,
+    $model->NUMERO_OT,
 );
 
 $this->menu = array(
@@ -35,7 +35,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
                 <td rowspan="4">
         <center>
             <h3 class="text-center"> 
-                ORDEN DE TRABAJO N° : <?php echo $model->ID_OT; ?>	
+                ORDEN DE TRABAJO N° : <?php echo $model->NUMERO_OT; ?>	
             </h3>
         </center>
         </td>
@@ -143,7 +143,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
             <th width="5%" class="bordered"> C. C.</th>
             <th width="9%" class="bordered"> C. C. C.</th>
             <th width="7%" class="bordered"> S. C. C.</th>
-            <th width="7%" class="bordered"> Sección</th>
+            <th width="7%" class="bordered"> S. E. C.</th>
         <tr>
             </thead>
         <tbody>
@@ -212,22 +212,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
         <?php endif; ?>
     </table>
     <br>
-    <table width="100%">
-        <tr>
-            <td width='40%' class="bordered h7 text-center" valign="top" rowspan="4">V°B° Jefe Depto. <br> <?php echo $this->getFirma($model->USUARIO_VOBO_JDPTO) ?></td>
-            <td class="bordered h7" colspan="3" width='60%'>Autorizado por:</td>
-
-        </tr>
-        <tr>
-            <td width='20%' class="bordered"> <?php echo $this->getFirma($model->USUARIO_VOBO_ADMIN) ?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GOP) ?></td><td width='20%' class="bordered"><?php echo $this->getFirma($model->USUARIO_VOBO_GG) ?></td>
-        </tr>
-        <tr>
-            <td width='20%' class="bordered h7 text-center"> V°B° Jefe Administrativo</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Planta</td><td width='20%' class="bordered h7 text-center">V°B° Gerente Zonal</td>
-        </tr>
-        <tr>
-            <td width='20%' class="bordered h7 text-center"> Monto hasta USD 2.500</td><td width='40%' class="bordered h7 text-center" colspan="2">Monto sobre USD 2.500</td>
-        </tr>
-    </table>
+    <?php $this->getFirmas($model); ?>
     <?php if ($model->RECHAZAR_OT == 1) { ?>
         <h3>Observaciones:</h3>
         <?php
@@ -255,7 +240,21 @@ endif;
 ?>
 
 <?php
-if (Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG() || Yii::app()->user->LOG() || Yii::app()->user->A1()) {
+   if(Yii::app()->user->OP()&& $model->VOBO_JEFE_DPTO!=1){
+                $form = $this->beginWidget('CActiveForm', array(
+                'id' => 'ticket-form',
+                'enableAjaxValidation' => false,
+                'htmlOptions' => array('enctype' => 'multipart/form-data'),
+            ));
+            ?>
+<br>
+            <?php echo $form->labelEx($model, 'ASIGNADO'); ?>
+            <?php echo $form->dropDownList($model, 'ASIGNADO', $this->getAsignado()); ?>
+            <?php echo $form->error($model, 'ASIGNADO', array('empty'=>'Seleccionar Usuario')) ?>
+            <?php echo CHtml::submitButton('Enviar', array('name'=>'send','class' => 'btn btn-success')); ?>
+            <?php $this->endWidget();
+        }
+if(Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG() || Yii::app()->user->LOG() || Yii::app()->user->A1()) {
 
     if ($model->RECHAZAR_OT == 0 && $model->VOBO_GERENTE_GRAL != 1) {
 
@@ -263,11 +262,11 @@ if (Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP(
             $texto = "Enviar Orden de Trabajo";
         else
             $texto = 'Aprobar Orden de Trabajo';
-
+        
         echo CHtml::link('<div  class="btn btn-success">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span>' . $texto . '</h4>
 			</div>', array('OrdenTrabajo/aprobarOtView', 'id' => $model->ID_OT), array('confirm' => 'Desea Aprobar Ot?'));
-
+     
         if (!Yii::app()->user->LOG()) {
             echo CHtml::link('<div  class="btn btn-danger">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span> Rechazar Orden de Trabajo</h4>
@@ -279,9 +278,10 @@ if (Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP(
 			</div>', array('OrdenTrabajo/reaprobarOtView', 'id' => $model->ID_OT), array('confirm' => 'Confirma que se hicieron las modificaciones pertinentes para reaprobar la Orden de trabajo?'));
     }
 
-    echo '<h4>Cotizaciones:</h4>';
-    echo $model->getCotFile();
+    
 }
+echo '<h4>Cotizaciones:</h4>';
+    echo $model->getCotFile();
 ?>
 <br>
 <?php

@@ -9,6 +9,7 @@ class LevelLookUp{
       const A1="A1"; //Jefe Departamento
       const PR="PR";
       const LOG="LOG";
+      const OP="OP";
       // For CGridView, CListView Purposes
 
       public static function getLabel( $level ){
@@ -27,6 +28,8 @@ class LevelLookUp{
              return 'PR';
           if($level == self::LOG)
              return 'LOG';
+          if($level == self::OP)
+             return 'OP';
           return false;
 
       }
@@ -43,6 +46,7 @@ class LevelLookUp{
                 self::A1=>'A1',
                 self::PR=>'PR',
                 self::LOG=>'LOG',
+                self::OP=>'OP',
           ); 
 
     }

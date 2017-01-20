@@ -90,7 +90,10 @@ class Cargos extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('ID_CARGO',$this->ID_CARGO);
-		$criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa') );
+                if(!Yii::app()->user->allCompany())
+                    $criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa') );
+                else
+                    $criteria->compare('ID_EMPRESA',$this->ID_EMPRESA);
 		$criteria->compare('DEPENDENCIA_CARGO',$this->DEPENDENCIA_CARGO);
 		$criteria->compare('NOMBRE_CARGO',$this->NOMBRE_CARGO,true);
 		$criteria->compare('DESCRIPCION_CARGO',$this->DESCRIPCION_CARGO,true);

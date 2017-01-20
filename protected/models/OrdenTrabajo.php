@@ -54,7 +54,13 @@ class OrdenTrabajo extends CActiveRecord {
      * @return string the associated database table name
      */
     public $_cot = array();
-    public $_empresa;
+    public $_contratista;
+    public $_rutcontratista;
+    public $_departamento;
+    public $fullname;
+    public $lastname;
+    public $total;
+    public $insumos;
 
     public function tableName() {
         return 'orden_trabajo';
@@ -68,14 +74,16 @@ class OrdenTrabajo extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('ID_EMPRESA, ID_CONTRATISTA, ID_DEPARTAMENTO, ID_TIPO_OT, FECHA_EJECUCION, FECHA_OT, ID_TIPO_MONEDA, VALOR_MONEDA, APLICA_IVA', 'required'),
-            array('APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SUPERVISOR, ID_DEPARTAMENTO, ID_TIPO_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL, RECHAZAR_OT', 'numerical', 'integerOnly' => true),
+            array('ASIGNADO, NUMERO_OT, APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SUPERVISOR, ID_DEPARTAMENTO, ID_TIPO_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL, RECHAZAR_OT', 'numerical', 'integerOnly' => true),
             array('SOLICITANTE', 'length', 'max' => 250),
+            array('ASIGNADO', 'required', 'on' => 'send'),
             array('_cot', 'validFile'),
+            array('insumos','getInsumos'),
             array('FECHA_EJECUCION, FECHA_OT', 'formateaFecha'),
             array('_empresa,FECHA_EJECUCION, DESCRIPCION_OT, FECHA_OT, MOTIVO_RECHAZO, RECHAZAR_OT, MOTIVO_RECHAZO', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('_empresa, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
+            array('insumos,_contratista, total, fullname, lastname, NUMERO_OT, _rutcontratista, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
         );
     }
 
@@ -97,16 +105,31 @@ class OrdenTrabajo extends CActiveRecord {
             'tipo_de_ot' => array(self::BELONGS_TO, 'TipoDeOT', 'ID_TIPO_OT'),
             'tipo_moneda' => array(self::BELONGS_TO, 'TipoMoneda', 'ID_TIPO_MONEDA'),
             'creador' => array(self::BELONGS_TO, 'Personal', 'USUARIO_CREADOR'),
-            'solicitante'=>array(self::BELONGS_TO, 'Personal', 'SOLICITANTE'),
+            'solicitante' => array(self::BELONGS_TO, 'Personal', 'SOLICITANTE'),
         );
     }
 
     /**
      * @return array customized attribute labels (name=>label)
      */
-    public function attributeLabels() {
+    public function attributeLabels($id = null) {
+        $name = '';
+        if ($id == null)
+            $id = Yii::app()->getSession()->get('id_empresa');
+        switch ($id):
+            case 1:
+                $name = 'V°B° Gerente Planta';
+                break;
+            case 2:
+                $name = "SubGerente";
+                break;
+            case 3:
+                $name = "V°B° Gerente Operaciones";
+                break;
+        endswitch;
         return array(
-            'ID_OT' => 'N° OT',
+            'ID_OT' => 'ID OT',
+            'NUMERO_OT' => 'N° OT',
             'ID_EMPRESA' => 'Empresa',
             'ID_TIPO_MONEDA' => 'Id Tipo Moneda',
             'APLICA_IVA' => 'Aplica IVA',
@@ -120,11 +143,15 @@ class OrdenTrabajo extends CActiveRecord {
             'FECHA_OT' => 'Fecha OT',
             'VOBO_JEFE_DPTO' => 'V°B° Jefe Depto.',
             'VOBO_ADMIN' => 'V°B° Jefe Administrativo',
-            'VOBO_GERENTE_OP' => 'V°B° Gerente Planta',
+            'VOBO_GERENTE_OP' => $name,
             'VOBO_GERENTE_GRAL' => 'V°B° Gerente Zonal',
             'RECHAZAR_OT' => 'Rechazar OT',
             'MOTIVO_RECHAZO' => 'Motivo Rechazo',
             'APROBADO_I25' => 'por definir Aprobado cuando es inferior a 2500 USS',
+            '_rutcontratista' => 'Rut Contratista',
+            'fullname' => 'Nombre Solicitante',
+            'lastname' => 'Apellido Solicitante',
+            'ASIGNADO' => 'Usuario Asignado',
         );
     }
 
@@ -144,8 +171,11 @@ class OrdenTrabajo extends CActiveRecord {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
-        $criteria->order = 'ID_OT DESC';
+        $criteria->with = array('contratista', 'creador', 'solicitante');
+        $criteria->together = true;
+        $criteria->order = 'NUMERO_OT DESC';
         $criteria->compare('ID_OT', $this->ID_OT);
+        $criteria->compare('NUMERO_OT', $this->NUMERO_OT);
         $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
         $criteria->compare('SOLICITANTE', $this->SOLICITANTE, true);
         $criteria->compare('SUPERVISOR', $this->SUPERVISOR);
@@ -158,44 +188,54 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('VOBO_JEFE_DPTO', $this->VOBO_JEFE_DPTO);
         $criteria->compare('VOBO_GERENTE_GRAL', $this->VOBO_GERENTE_GRAL);
         $criteria->compare('VOBO_GERENTE_OP', $this->VOBO_GERENTE_OP);
+        $criteria->compare('contratista.RUT_CONTRATISTA', $this->_rutcontratista, true);
+        $criteria->compare('contratista.NOMBRE_CONTRATISTA', $this->_contratista, true);
+        $criteria->compare('solicitante.NOMBRE_PERSONA', $this->fullname, true);
+        $criteria->compare('solicitante.APELLIDO_PERSONA', $this->lastname, true);
 
         $usuario = Personal::model()->findByPk(Yii::app()->user->id);
-
-        if (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
-            $criteria->with = array('creador');
-            $criteria->together = true;
-            $criteria->condition = 't.ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa') . ' AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO;
-        } else {
-            $criteria->condition = 'ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa') . ' AND USUARIO_CREADOR=' . Yii::app()->user->id;
-        }
-        if (Yii::app()->user->ADM()) {
-            $criteria->compare('VOBO_JEFE_DPTO', 1);
+        if (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística' && Yii::app()->getSession()->get('id_empresa') == 1) {
+            //  $criteria->addCondition(  't.ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa') . ' AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO);
+            // $criteria->compare('t.ID_EMPRESA',Yii::app()->getSession()->get('id_empresa'));
+         
+            $criteria->compare('creador.ID_DEPARTAMENTO', 5);
+        } elseif (Yii::app()->user->JDP() && Yii::app()->getSession()->get('id_empresa') == 3) {
+             $criteria->addCondition( 'ASIGNADO='. Yii::app()->user->id .' OR t.USUARIO_CREADOR=' . Yii::app()->user->id);
+           
         } elseif (Yii::app()->user->GOP()) {
-            $criteria->compare('VOBO_JEFE_DPTO', 1);
-            $criteria->compare('VOBO_ADMIN', 1);
-        } elseif (Yii::app()->user->GG()) {
-            $criteria->compare('VOBO_JEFE_DPTO', 1);
-            $criteria->compare('VOBO_ADMIN', 1);
-            $criteria->compare('VOBO_GERENTE_OP', 1);
+            if (Yii::app()->getSession()->get('id_empresa') == 1)
+                $criteria->addCondition(' (VOBO_ADMIN=1 AND VOBO_JEFE_DPTO=1) OR t.USUARIO_CREADOR=' . Yii::app()->user->id);
+            else
+                $criteria->addCondition(' VOBO_JEFE_DPTO=1 OR t.USUARIO_CREADOR=' . Yii::app()->user->id);
+        }else {
+            // $criteria->condition = 't.ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa') . ' AND t.USUARIO_CREADOR=' . Yii::app()->user->id;
+
+            $criteria->compare('t.USUARIO_CREADOR', Yii::app()->user->id);
         }
-
-
+        $criteria->compare('t.ID_EMPRESA', Yii::app()->getSession()->get('id_empresa'));
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
     }
 
-    public function searchAllcompany() {
+    public function searchAllcompany($id = null) {
         // @todo Please modify the following code to remove attributes that should not be searched.
         $criteria = new CDbCriteria;
-        $criteria->with = array('empresa');
+        $criteria->with = array('contratista', 'solicitante');
+
         $criteria->together = true;
-        $criteria->order = 'ID_OT DESC, t.ID_EMPRESA ASC';
+        if ($id != null)
+            $criteria->condition = "t.ID_EMPRESA=" . $id;
+
+
+        $criteria->order = 'NUMERO_OT DESC, t.ID_EMPRESA ASC';
+        $criteria->compare('lower(solicitante.NOMBRE_PERSONA)', $this->fullname, true);
+        $criteria->compare('lower(solicitante.APELLIDO_PERSONA)', $this->lastname, true);
         $criteria->compare('ID_OT', $this->ID_OT);
+        $criteria->compare('NUMERO_OT', $this->NUMERO_OT);
         $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
-        $criteria->compare('SOLICITANTE', $this->SOLICITANTE, true);
         $criteria->compare('SUPERVISOR', $this->SUPERVISOR);
-        $criteria->compare('ID_DEPARTAMENTO', $this->ID_DEPARTAMENTO);
+        $criteria->compare('t.ID_DEPARTAMENTO', $this->ID_DEPARTAMENTO);
         $criteria->compare('FECHA_EJECUCION', $this->FECHA_EJECUCION, true);
         $criteria->compare('ID_TIPO_OT', $this->ID_TIPO_OT);
         $criteria->compare('DESCRIPCION_OT', $this->DESCRIPCION_OT, true);
@@ -204,16 +244,11 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('VOBO_JEFE_DPTO', $this->VOBO_JEFE_DPTO);
         $criteria->compare('VOBO_GERENTE_GRAL', $this->VOBO_GERENTE_GRAL);
         $criteria->compare('VOBO_GERENTE_OP', $this->VOBO_GERENTE_OP);
-        $criteria->compare('empresa.NOMBRE_EMPRESA', $this->_empresa, true);
+        $criteria->compare('total', $this->total);
+        $criteria->compare('contratista.RUT_CONTRATISTA', $this->_rutcontratista, true);
 
-        //si la empresa es la Portada
-        //
-                //
-		
-			if (Yii::app()->user->GOP()) {
-            $criteria->compare('VOBO_JEFE_DPTO', 1);
-            $criteria->compare('VOBO_ADMIN', 1);
-        } elseif (Yii::app()->user->GG()) {
+
+        if (Yii::app()->user->GG()) {
             $criteria->compare('VOBO_JEFE_DPTO', 1);
             $criteria->compare('VOBO_ADMIN', 1);
             $criteria->compare('VOBO_GERENTE_OP', 1);
@@ -225,7 +260,7 @@ class OrdenTrabajo extends CActiveRecord {
         ));
     }
 
-    public function getNumberOTP() {
+    public function getNumberOTP($ide = null) {
         if (!Yii::app()->user->isGuest) {
             $criteria = new CDbCriteria();
             if (Yii::app()->user->allCompany() != 1) {
@@ -236,57 +271,82 @@ class OrdenTrabajo extends CActiveRecord {
                 else
                     $condition.=' IS NOT NULL';
                 $condition.=' AND ';
-            } else
+            } else {
                 $condition = '';
+                if ($ide != null) {
+                    $condition.='t.ID_EMPRESA=' . $ide . ' AND ';
+                }
+            }
             $usuario = Personal::model()->findByPk(Yii::app()->user->id);
             if (Yii::app()->user->ADM())
                 $condition.='VOBO_ADMIN=0 AND RECHAZAR_OT <> 1';
             elseif (Yii::app()->user->GOP())
-                $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
-            elseif (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
+                if ($idempresa == 1 || $ide == 1)
+                    $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
+                else {
+                    $condition.="VOBO_JEFE_DPTO=1 AND VOBO_GERENTE_OP=0 AND RECHAZAR_OT <> 1";
+                } elseif (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
                 //   die ($usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO);
                 $criteria->with = array('creador');
                 $criteria->together = true;
                 $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO;
-            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG())
-                $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR=' . Yii::app()->user->id;
+            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG() || Yii::app()->user->OP()) {
+                if ($ide == 3 || $idempresa == 3)
+                    $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  (ASIGNADO=' . Yii::app()->user->id. ' OR USUARIO_CREADOR=' . Yii::app()->user->id.')';
+                else
+                    $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR=' . Yii::app()->user->id;
+             
+            }
             elseif (Yii::app()->user->GG())
                 $condition.="VOBO_GERENTE_OP=1 AND VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_GRAL=0 AND RECHAZAR_OT <> 1";
             elseif (Yii::app()->user->A1())
                 $condition.='VOBO_JEFE_DPTO=0 AND RECHAZAR_OT <> 1';
+
             $criteria->condition = $condition;
             $number = count(CHtml::listData(OrdenTrabajo::model()->findAll($criteria), 'ID_OT', 'ID_OT'));
             return $number;
         }
     }
 
-    public function getNumberOTA() {
+    public function getNumberOTA($ide = null) {
 
         if (!Yii::app()->user->isGuest) {
             $criteria = new CDbCriteria();
+
             if (Yii::app()->user->allCompany() != 1) {
                 $condition = "";
-                $idempresa = Yii::app()->getSession()->get('id_empresa');
 
+                $idempresa = Yii::app()->getSession()->get('id_empresa');
                 $condition = 't.ID_EMPRESA';
                 if (!empty($idempresa))
                     $condition.="=" . $idempresa;
                 else
                     $condition.=' IS NOT NULL ';
                 $condition.=' AND ';
-            } else
-                $condition = '';
+            } else {
+
+                $condition = ' ';
+
+                // die ($usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO);
+                if ($ide != null) {
+                    $condition.='t.ID_EMPRESA=' . $ide . ' AND ';
+                }
+            }
             $usuario = Personal::model()->findByPk(Yii::app()->user->id);
-            // die ($usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO);
             if (Yii::app()->user->ADM())
                 $condition.='VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT <> 1';
-            elseif (Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
+            elseif (@$idempresa == 1 && Yii::app()->user->JDP() && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística') {
                 //   die ($usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO);
                 $criteria->with = array('creador');
                 $criteria->together = true;
                 $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1 AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO;
-            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG())
-                $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1 AND  USUARIO_CREADOR=' . Yii::app()->user->id;
+            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG() || Yii::app()->user->OP()) {
+                $condition.='VOBO_JEFE_DPTO=1 AND RECHAZAR_OT <> 1 AND (USUARIO_CREADOR=' . Yii::app()->user->id;
+                if (Yii::app()->user->JDP() && $idempresa == 3)
+                    $condition.=' OR ASIGNADO=' . Yii::app()->user->id . ')';
+                else
+                    $condition.=')';
+            }
             elseif (Yii::app()->user->GOP())
                 $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND VOBO_GERENTE_OP=1 AND RECHAZAR_OT <> 1";
             elseif (Yii::app()->user->GG())
@@ -301,20 +361,28 @@ class OrdenTrabajo extends CActiveRecord {
         }
     }
 
-    public function getNumberOTR() {
+    public function getNumberOTR($ide = null) {
         if (!Yii::app()->user->isGuest) {
             $criteria = new CDbCriteria();
             if (Yii::app()->user->allCompany() != 1) {
                 $condition = "";
-                $idempresa = Yii::app()->getSession()->get('id_empresa');
+                if ($ide != null)
+                    $idempresa = $ide;
+                else
+                    $idempresa = Yii::app()->getSession()->get('id_empresa');
                 $condition = 't.ID_EMPRESA';
                 if (!empty($idempresa))
                     $condition.="=" . $idempresa;
                 else
                     $condition.=' IS NOT NULL ';
                 $condition.=' AND ';
-            } else
+            } else {
+
                 $condition = '';
+                if ($ide != null) {
+                    $condition.='t.ID_EMPRESA=' . $ide . ' AND ';
+                }
+            }
             $usuario = Personal::model()->findByPk(Yii::app()->user->id);
             if (Yii::app()->user->ADM())
                 $condition.='RECHAZAR_OT=1';
@@ -325,8 +393,13 @@ class OrdenTrabajo extends CActiveRecord {
                 $criteria->with = array('creador');
                 $criteria->together = true;
                 $condition.='RECHAZAR_OT = 1 AND creador.ID_DEPARTAMENTO=' . $usuario->ID_DEPARTAMENTO;
-            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG())
-                $condition.='RECHAZAR_OT = 1 AND  USUARIO_CREADOR=' . Yii::app()->user->id;
+            } elseif (Yii::app()->user->JDP() || Yii::app()->user->LOG() || Yii::app()->user->OP()) {
+                $condition.='RECHAZAR_OT = 1 AND  (USUARIO_CREADOR=' . Yii::app()->user->id;
+                if (Yii::app()->user->JDP() && $idempresa == 3)
+                    $condition.=' OR ASIGNADO=' . Yii::app()->user->id . ')';
+                  else
+                    $condition.=')';
+            }
             elseif (Yii::app()->user->GOP())
                 $condition.="VOBO_JEFE_DPTO=1 AND VOBO_ADMIN=1 AND RECHAZAR_OT = 1";
             elseif (Yii::app()->user->GG())
@@ -342,6 +415,33 @@ class OrdenTrabajo extends CActiveRecord {
         $this->FECHA_EJECUCION = Yii::app()->dateFormatter->format('yyyy-MM-dd', $this->FECHA_EJECUCION);
         $this->FECHA_OT = Yii::app()->dateFormatter->format('yyyy-MM-dd', $this->FECHA_OT);
     }
+    public function getTotal(){
+        $criteria=new CDbCriteria();
+        $criteria->condition="ID_OT=".$this->ID_OT;
+        $insumos=  InsumosOT::model()->findAll($criteria);
+        $suma=0;
+        foreach($insumos as $i){
+            $suma+=$i->COSTO_CONTRATISTA;
+        }
+        if($this->APLICA_IVA==1)
+            $suma*=1.19;
+        elseif($this->APLICA_IVA==3)
+            $suma*=0.9;
+        $this->total=$suma;
+        switch ($this->tipo_moneda->TIPO_MONEDA) {
+            case 'PESOS CL':
+                return number_format($suma, 0, ',', '.');
+                break;
+            case 'USD':
+                return number_format($suma, 2, '.', ' ');
+                break;
+            default:
+                return number_format($suma, 2, ',', '.');
+        }
+        
+        return $suma;
+    }
+    
 
     /**
      * Returns the static model of the specified AR class.
@@ -354,7 +454,7 @@ class OrdenTrabajo extends CActiveRecord {
     }
 
     public static function getTax() {
-        return array('1' => 'Afecto a IVA', '2' => 'Exento','3'=>'Boleta Honorario (-10%)');
+        return array('1' => 'Afecto a IVA', '2' => 'Exento', '3' => 'Boleta Honorario (-10%)');
     }
 
     public function validFile($model, $attribute) {
@@ -397,4 +497,7 @@ class OrdenTrabajo extends CActiveRecord {
             return "../themes/default/img/icons/pending.png";
     }
 
+    public function getFullName() {
+        return @$this->solicitante->NOMBRE_PERSONA . " " . @$this->solicitante->APELLIDO_PERSONA;
+    }
 }

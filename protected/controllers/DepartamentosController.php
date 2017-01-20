@@ -29,11 +29,11 @@ class DepartamentosController extends Controller
 		return array(
 			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
 			array('allow',
-				'actions'=>array('listarDepartamento','getDepartamentos'),
-				'expression'=>'$user->ADM()||$user->JDP()|| $user->GOP()|| $user->GG()||$user->LOG()',
+				'actions'=>array('listarDepartamento','getDepartamentos','getDepartamentos2'),
+				'expression'=>'$user->ADM()||$user->JDP()|| $user->GOP()|| $user->GG()||$user->LOG()||$user->OP()',
 				),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view','listarDepartamento','getDepartamentos'),
+				'actions'=>array('create','update','admin','delete','index','view','listarDepartamento','getDepartamentos','getDepartamentos2'),
 				'expression'=>'$user->A1()',
 			),
 
@@ -198,6 +198,18 @@ class DepartamentosController extends Controller
 		$persona = Personal::model()->findByPk($id_solicitante);
 		$lista = Departamentos::model()->findAll('ID_DEPARTAMENTO=:id_dep',
 				array(':id_dep'=>$persona->ID_DEPARTAMENTO));
+		$lista = CHtml::listData($lista,'ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO');
+
+		foreach ($lista as $valor => $descripcion) {
+			echo CHtml::tag('option', array('value'=>$valor), CHtml::encode($descripcion), true);
+		}
+	}
+	public function actionGetDepartamentos2()
+	{
+		$idep = $_POST['Personal']['ID_EMPRESA'];
+                $criteria=new CDbCriteria();
+                $criteria->condition='ID_EMPRESA='.$idep;
+		$lista = Departamentos::model()->findAll($criteria);
 		$lista = CHtml::listData($lista,'ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO');
 
 		foreach ($lista as $valor => $descripcion) {

@@ -20,7 +20,7 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-            <?php if(Yii::app()->user->allCompany()){ ?>
+            <?php if(Yii::app()->user->allCompany() && Yii::app()->user->A1()){ ?>
 		<div class="span3">
 			<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
 			<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>

@@ -37,7 +37,7 @@ class PersonalController extends Controller
 				'expression'=>'$user->A1()',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('viewPersonal','updatePersonal'),
+				'actions'=>array('viewPersonal','updatePersonal','getSolicitantes'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -81,7 +81,11 @@ class PersonalController extends Controller
 		if(isset($_POST['Personal']) )
 		{
 			$model->attributes=$_POST['Personal'];
+                        
                         $model->_firma=CUploadedFile::getInstance($model,'_firma');
+                        if(isset($_POST['Personal']['_sendmail']))
+                            $model->_sendmail=$_POST['Personal']['_sendmail'];
+                       
                         if(isset($_POST['Personal']['_firma']))
                             $model->_firma=$_POST['Personal']['_firma'];
                         $valid = $model->validate();
@@ -129,11 +133,10 @@ class PersonalController extends Controller
                                         $usuario->FECHA_CREACION_USUARIO= date("y/m/d H:i:s");
                                         $usuario->PRIMER_LOGIN=1;
 					$usuario->ID_EMPRESA = $model->ID_EMPRESA;
-					if($usuario->save()){
+					if($usuario->save()&& $model->_sendmail==1)
                                             $this->sendMail($usuario,$pass,$model->EMAIL);
-                                       
-                                       
-                                        }
+
+                                        
                                 }
                                     $this->redirect(array('view','id'=>$model->ID_PERSONA));
                                 
@@ -406,10 +409,10 @@ class PersonalController extends Controller
                 $mail=Yii::app()->Smtpmail;
                 $mail->SMTPDebug = 2;
                 $mail->CharSet = 'UTF-8';
-                $mail->SetFrom('desarollo@pcgeek.cl', 'Sistema Aprobación de Documentos');
+                $mail->SetFrom('desarrollo@pcgeek.cl', 'Sistema Aprobación de Documentos');
                 $mail->Subject = 'Datos de Cuenta';
                 $mail->MsgHTML(Yii::app()->controller->renderPartial('body', array('model'=>$model,'pass'=>$pass,'email'=>$email),true));
-                $mail->AddAddress($email, 'Test');
+                $mail->AddAddress($email, 'datos');
                 if(!$mail->Send()) {
                     Yii::app()->user->setFlash('error',Yii::t('validation','Error al enviar correo Electronico'));
                 }else {
@@ -441,5 +444,16 @@ class PersonalController extends Controller
                 echo $result;
                 Yii::app()->end();
             }
+        public function actionGetSolicitantes()
+	{
+		$id_emp = $_POST['OrdenTrabajo']['ID_EMPRESA'];
+                $criteria=new CDbCriteria();
+                $criteria->condition="ID_EMPRESA=".$id_emp;
+		$persona = Personal::model()->findAll($criteria);
+		$persona=  CHtml::listData($persona, 'ID_PERSONA', 'concatened');
+		foreach ($persona as $valor => $descripcion) {
+			echo CHtml::tag('option', array('value'=>$valor), CHtml::encode($descripcion), true);
+		}
+	}
 }
  

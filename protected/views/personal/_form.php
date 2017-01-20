@@ -8,6 +8,7 @@
 <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/js/Validates.js');?>
 
 <script type="text/javascript">
+     
 	$( document ).ready(function() {
 		//$('#formApruebaDocs').hide();
 		if ( !$('.checkUsuario').is(':checked') ) {
@@ -35,6 +36,24 @@
 	        	$('#formDocumentacion').show("fast");
 	        }
 		});
+                
+                      $('#Personal_ID_EMPRESA').change(function () {
+            var id = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: "<?php echo $model->isNewRecord?"../Cargos/GetCargos":"../../Cargos/GetCargos"; ?>",
+                data: {'id_emp': id},
+                beforeSend: function (xhr) {
+                    if (xhr && xhr.overrideMimeType) {
+                        xhr.overrideMimeType('application/json;charset=utf-8');
+                    }
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $('#Personal_ID_CARGO').html(data);
+                }
+            });
+        });
 	});
 </script>
 
@@ -100,22 +119,48 @@
 		
 	</div>
 
+
 	<div class="row">
 	<div class="span3">
 		<?php echo $form->labelEx($model,'ID_EMPRESA'); ?>
-		<?php echo $form->dropDownList($model,'ID_EMPRESA', array(''=>'-Seleccione Empresa-')+CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),array('id'=>'cb_empresas', 'class'=>'span12', 'maxlength'=>80)); ?>
+		<?php echo $form->dropDownList($model,'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'),
+                       array(
+                            'class' => 'span12',
+                            'empty' => 'Indicar Empresa',
+                                            'maxlength'=>80,
+                        'ajax' => array(
+                            'type' => 'POST',
+                            'url' => CController::createUrl('departamentos/getDepartamentos2'),
+                            'update' => '#' . CHtml::activeId($model, 'ID_DEPARTAMENTO'),
+            ))); ?>
 		<?php echo $form->error($model,'ID_EMPRESA'); ?>
 	</div>
 		
+            
+                 <?php
+                 $lista_dep = array();
+                 $lista_cargos= array();
+            if(isset($model->ID_EMPRESA)){
+                $id_emp = intval($model->ID_EMPRESA);
+                $lista_cargos = CHtml::listData(Cargos::model()->findAllByAttributes(array('ID_EMPRESA' => $id_emp)), 'ID_CARGO', 'NOMBRE_CARGO');
+            }
+                
+            if (isset($model->ID_DEPARTAMENTO)) {
+                $id_dep = intval($model->ID_DEPARTAMENTO);
+                $lista_dep = CHtml::listData(Departamentos::model()->findAllByAttributes(array('ID_DEPARTAMENTO' => $id_dep)), 'ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO');
+                
+            }
+
+        ?>
 	<div class="span4">
 		<?php echo $form->labelEx($model,'ID_DEPARTAMENTO'); ?>
-		<?php echo $form->dropDownList($model,'ID_DEPARTAMENTO', array(''=>'-Seleccione Departamento-')+CHtml::listData(Departamentos::model()->findAll(), 'ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO'),array('id'=>'cb_departamentos', 'class'=>'span12', 'maxlength'=>80)); ?>
+		<?php echo $form->dropDownList($model,'ID_DEPARTAMENTO',$lista_dep,array( 'class'=>'span12', 'maxlength'=>80)); ?>
 		<?php echo $form->error($model,'ID_DEPARTAMENTO'); ?>
 	</div>
 		
 	<div class="span4">
 		<?php echo $form->labelEx($model,'ID_CARGO'); ?>
-		<?php echo $form->dropDownList($model,'ID_CARGO', array(''=>'-Seleccione Cargo-')+CHtml::listData(Cargos::model()->findAll(), 'ID_CARGO', 'NOMBRE_CARGO'),array('id'=>'cb_cargos', 'class'=>'span12', 'maxlength'=>80)); ?>
+		<?php echo $form->dropDownList($model,'ID_CARGO',$lista_cargos, array( 'class'=>'span12', 'maxlength'=>80)); ?>
 		<?php echo $form->error($model,'ID_CARGO'); ?>
 	</div>
 	</div>
@@ -138,7 +183,20 @@
 		<div class="span3">
 			<?php echo $form->checkBox($model,'ES_USUARIO', array('class'=>'checkUsuario')); ?>
 		</div>
+           
 	</div>
+         <div class="row">
+             
+                <div class="span3">
+                        <?php echo $form->labelEx($model,'_sendmail'); ?>
+                    
+                </div>
+                <div class="span3">
+                        
+                        <?php echo $form->checkbox($model,'_sendmail'); ?>
+                     
+                </div>
+            </div>
         <div id="formUsuario" class="row">
 		<fieldset>
 			<legend>Datos Usuario</legend>
@@ -291,8 +349,10 @@
 		<?php echo $form->error($model,'_firma'); ?>
               
         
-                
+               
+              
 	</div>	
+         
 	<?php if(!empty($model->URL_FIRMA)){ ?>
         <div class="row">
         <?php echo CHtml::image(Yii::app()->request->baseUrl.'/archivos/firmas/'.$model->URL_FIRMA,"_firma",array("width"=>200)); }?> 

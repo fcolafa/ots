@@ -35,7 +35,7 @@ class InsumosOtController extends Controller
 			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('update','delete','listarSubItems'),
-				'expression'=>'$user->A1() || $user->JDP() || $user->ADM()|| $user->LOG()',
+				'expression'=>'$user->A1() || $user->JDP() || $user->ADM()|| $user->LOG()|| $user->GOP()||$user->OP()',
 			),
 
 			array('deny',  // deny all users

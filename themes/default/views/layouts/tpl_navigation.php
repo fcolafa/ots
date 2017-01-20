@@ -10,7 +10,7 @@
 
                 <!-- Be sure to leave the brand out there if you want it shown -->
 
-                <a class="brand"> <Big><Big> Sistema de Aprobación de Documentos </big></big>  </a>
+            
 
                 <div aling="center" class="offset3" >
                     <!--<img  width="80" src="<?php echo Yii::app()->baseUrl . "/images/logoastilleros.jpg" ?>" /> -->
@@ -26,6 +26,7 @@
 
 <!-- aquí esta el menú que se está utilizando -->
 <div class="subnav navbar navbar-fixed-top">
+    <?php if(!Yii::app()->user->isGuest):?>
     <div class="navbar-inner">
         <div class="container">
             <div class="nav-collapse">
@@ -38,6 +39,7 @@
                     'items' => array(
                         array('label' => 'Inicio', 'url' => array('/site/index'), 'visible' => !Yii::app()->user->isGuest),
                         array('label' => 'Manual', 'url' => array('/manual/index'), 'visible' => !Yii::app()->user->isGuest),
+                        array('label' => 'Centro de Costos', 'url' => array('centroDeCostos/admin'),'visible' => Yii::app()->user->ADM()|| Yii::app()->user->A1()),
                         //menú de Ingreso de Documentos
                         array('label' => 'Documentos <span class="caret"></span>', 'url' => '#', 'visible' => !Yii::app()->user->isGuest, 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
                             'items' => array(
@@ -46,7 +48,7 @@
                             )),
                         array('label' => 'Tickets <span class="badge badge-success">'.Ticket::model()->getNumberTC().'</span><span class="badge badge-important">' . Ticket::model()->getNumberTP() . '</span>', 'url' => array('/ticket/admin'), 'visible' => !Yii::app()->user->isGuest),
                            
-                        array('label' => 'Contratistas <span class="caret"></span>', 'url' => '#', 'visible' => Yii::app()->user->A1() || Yii::app()->user->JDP(), 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
+                        array('label' => 'Contratistas <span class="caret"></span>', 'url' => '#', 'visible' => Yii::app()->user->ADM() || Yii::app()->user->A1() || Yii::app()->user->JDP()||Yii::app()->user->OP()|| Yii::app()->user->LOG(), 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
                             'items' => array(
                                 array('label' => 'Gestionar Contratistas', 'url' => array('contratista/admin')),
                                 array('label' => 'Recepción Docs. Contratistas', 'visible' => Yii::app()->user->A1(), 'url' => array('recepcionDocumentos/admin')), //'visible'=>Yii::app()->user->A1()),
@@ -65,7 +67,7 @@
                                 array('label' => 'Tipos de OT', 'url' => array('tipoDeOt/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG()),
                                 array('label' => 'Tipos Usuarios', 'url' => array('tipoUsuario/admin')), //'visible'=>Yii::app()->user->A1()),
                             )),
-                        array('label' => 'Acceder', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
+                        array('label' => 'Acceder', 'url' => array('/site/login'), 'visible' => false),
                         array('label' => Yii::app()->user->name . '<span class="caret"></span>', 'url' => '#', 'visible' => !Yii::app()->user->isGuest, 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
                             'items' => array(
                                 // array('label'=>'Ordenes de Trabajo <span class="badge badge-success">'. OrdenTrabajo::model()->getNumberOTA().'</span> <span class="badge badge-warning">'.  OrdenTrabajo::model()->getNumberOTP() .'</span>', 'url'=>array('ordenTrabajo/admin')), //'visible'=>Yii::app()->user->A1()||Yii::app()->user->GE()||Yii::app()->user->JA()||Yii::app()->user->JP()||Yii::app()->user->SG() ),
@@ -85,4 +87,6 @@
             </div>
         </div>
         <!--</div> -->
+    </div>
+    <?php endif; ?>
     </div>

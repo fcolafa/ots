@@ -55,14 +55,13 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'filter'=>$model,
 	'columns'=>array(
 		'ID_PERSONA',
-//		array(
-//                    'name' => 'ID_EMPRESA',
-//                    'value' => '$data->iDEMPRESA->NOMBRE_EMPRESA',
-//                    'header'=>'Empresa',
-//                    'filter'=>  CHtml::activeTextField($model, '_company'),
-//                                    
-//			            //'filter'=> CHtml::listData(Empresa::model()->findAll(array('order'=>'ID_EMPRESA')),'ID_EMPRESA','NOMBRE_EMPRESA'),
-//			        ),
+		array(
+                    'name' => 'ID_EMPRESA',
+                    'value' => '$data->iDEMPRESA->NOMBRE_EMPRESA',
+                    'header'=>'Empresa',
+                    'visible'=>  Yii::app()->user->A1(),
+                    'filter'=> CHtml::listData(Empresa::model()->findAll(array('order'=>'ID_EMPRESA')),'ID_EMPRESA','NOMBRE_EMPRESA'),
+                ),
 		'RUT_PERSONA',
 		'NOMBRE_PERSONA',
 		'APELLIDO_PERSONA',

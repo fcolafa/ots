@@ -26,25 +26,25 @@ class Controller extends CController {
     public $logMessage = NULL;
     public $writeLog = false;
 
-    /* protected function afterAction() {
+//    protected function afterAction() {
+//
+//        if ($this->writeLog) {
+//            $model = new Transaccion;
+//            $model->USUARIO = Yii::app()->user->name;
+//            $model->IP_ADDRESS = $_SERVER['REMOTE_ADDR'];
+//            $model->FECHA_TRANSACCION = date("Y-m-d H:i:s");
+//            $model->CONTROLADOR = $this->getId();
+//            $model->ACCION = $this->getAction()->getId();
+//            $model->DETALLE = $this->logMessage;
+//            $model->save();
+//        }
+//    }
 
-      if ($this->writeLog) {
-      $model = new Transaccion;
-      $model->USUARIO = Yii::app()->user->name;
-      $model->IP_ADDRESS = $_SERVER['REMOTE_ADDR'];
-      $model->FECHA_TRANSACCION = date("Y-m-d H:i:s");
-      $model->CONTOLADOR = $this->getId();
-      $model->ACCION = $this->getAction()->getId();
-      $model->DETALLE = $this->logMessage;
-      $model->save();
-      }
-      } */
-
-   public function init(){
+    public function init() {
         // register class paths for extension captcha extended
-        Yii::$classMap = array_merge( Yii::$classMap, array(
-            'CaptchaExtendedAction' => Yii::getPathOfAlias('ext.captchaExtended').DIRECTORY_SEPARATOR.'CaptchaExtendedAction.php',
-            'CaptchaExtendedValidator' => Yii::getPathOfAlias('ext.captchaExtended').DIRECTORY_SEPARATOR.'CaptchaExtendedValidator.php'
+        Yii::$classMap = array_merge(Yii::$classMap, array(
+            'CaptchaExtendedAction' => Yii::getPathOfAlias('ext.captchaExtended') . DIRECTORY_SEPARATOR . 'CaptchaExtendedAction.php',
+            'CaptchaExtendedValidator' => Yii::getPathOfAlias('ext.captchaExtended') . DIRECTORY_SEPARATOR . 'CaptchaExtendedValidator.php'
         ));
     }
 

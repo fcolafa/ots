@@ -2,6 +2,7 @@
 $baseUrl = Yii::app()->theme->baseUrl;
 $cs = Yii::app()->getClientScript();
 $cs->registerScriptFile($baseUrl . '/js/addCotFile.js');
+$cs->registerScriptFile($baseUrl . '/js/drowpdown.js');
 ?>
 
 
@@ -62,6 +63,25 @@ if ($model->_cot) {
             });
         });
 
+        // CController::createUrl('contratista/getContratistas'),
+        $('#OrdenTrabajo_ID_EMPRESA').change(function () {
+            var id = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: '../Contratista/getContratistas',
+                data: {'id_emp': id},
+                beforeSend: function (xhr) {
+                    if (xhr && xhr.overrideMimeType) {
+                        xhr.overrideMimeType('application/json;charset=utf-8');
+                    }
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $('#OrdenTrabajo_ID_CONTRATISTA').html(data);
+                }
+            });
+        });
+
         $('#cb_tipo_moneda').change(function () {
             if ($('#cb_tipo_moneda').val() == 1) {
                 $('#tb_valor_moneda').val("1");
@@ -112,6 +132,7 @@ if ($model->_cot) {
     ?>
 
     <div class="row">
+    <div id="test"></div>
         <div class="row">Campos con <span class="required">*</span> son obligatorios.</div>
         <br>
         <div class="span5 alert-success" style="padding: 5px 10px;"><strong>
@@ -147,54 +168,86 @@ if ($model->_cot) {
             ?>
         </div>				
     </div>
-            <?php if (Yii::app()->user->allCompany()) { ?>
+    <?php if (Yii::app()->user->allCompany()) { ?>
         <div class="row">
 
             <div class="span3">
-        <?php echo $form->labelEx($model, 'ID_EMPRESA'); ?>
-        <?php echo $form->dropDownList($model, 'ID_EMPRESA', array('' => 'Indicar Empresa') + CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('class' => 'span12')); ?>
-    <?php echo $form->error($model, 'ID_EMPRESA'); ?>
+                <?php echo $form->labelEx($model, 'ID_EMPRESA'); ?>
+                <?php // echo $form->dropDownList($model, 'ID_EMPRESA', array('' => 'Indicar Empresa') + CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('class' => 'span12')); ?>
+                <?php echo $form->error($model, 'ID_EMPRESA'); ?>
             </div>
         </div>
-            <?php } ?>
+
+
+        <?php
+        echo $form->dropDownList($model, 'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array(
+            'class' => 'span12',
+            'empty' => 'Indicar Empresa',
+            /*'ajax' =>array(
+                'type' => 'POST',
+                'url' => CController::createUrl('contratista/getContratistas'),
+                'update' => '#' . CHtml::activeId($model, 'ID_CONTRATISTA'),
+            ),*/
+            'ajax' => array(
+                'type' => 'POST',
+                'url' => CController::createUrl('personal/getSolicitantes'),
+                'update' => '#' . CHtml::activeId($model, 'SOLICITANTE') . ',#' . CHtml::activeId($model, 'SUPERVISOR'),
+            ),
+        ));
+    }
+    ?>
     <hr>
     <div class="row">
         <div class="span3">
-            <?php echo $form->labelEx($model, 'APLICA_IVA'); ?>
-            <?php echo $form->dropDownList($model, 'APLICA_IVA', OrdenTrabajo::getTax()); ?>
-            <?php echo $form->error($model, 'APLICA_IVA'); ?>
+    <?php echo $form->labelEx($model, 'APLICA_IVA'); ?>
+<?php echo $form->dropDownList($model, 'APLICA_IVA', OrdenTrabajo::getTax()); ?>
+<?php echo $form->error($model, 'APLICA_IVA'); ?>
         </div>
         <div class="span3">
             <?php echo $form->labelEx($model, 'ID_TIPO_MONEDA'); ?>
             <?php echo $form->dropDownList($model, 'ID_TIPO_MONEDA', TipoMoneda::getTiposMoneda(), array('id' => 'cb_tipo_moneda')); ?>
-            <?php echo $form->error($model, 'ID_TIPO_MONEDA'); ?>
+<?php echo $form->error($model, 'ID_TIPO_MONEDA'); ?>
         </div>
         <div class="span3">
             <?php echo $form->labelEx($model, 'VALOR_MONEDA'); ?>
             <?php echo $form->textField($model, 'VALOR_MONEDA', array('maxlength' => 13, 'class' => 'span12', 'id' => 'tb_valor_moneda')); ?>
-            <?php echo $form->error($model, 'VALOR_MONEDA'); ?>
+<?php echo $form->error($model, 'VALOR_MONEDA'); ?>
         </div>
         <div class="span2">
-<?php echo $form->labelEx($model, 'ID_TIPO_OT'); ?>
-<?php echo $form->dropDownList($model, 'ID_TIPO_OT', array('' => 'Tipo de OT') + CHtml::listData(TipoDeOT::model()->findAll(array('order' => 'NOMBRE_TIPO_OT DESC')), 'ID_TIPO_OT', 'NOMBRE_TIPO_OT'), array('class' => 'span12')); ?>
+            <?php echo $form->labelEx($model, 'ID_TIPO_OT'); ?>
+            <?php echo $form->dropDownList($model, 'ID_TIPO_OT', array('' => 'Tipo de OT') + CHtml::listData(TipoDeOT::model()->findAll(array('order' => 'NOMBRE_TIPO_OT DESC')), 'ID_TIPO_OT', 'NOMBRE_TIPO_OT'), array('class' => 'span12')); ?>
 <?php echo $form->error($model, 'ID_TIPO_OT'); ?>
         </div>
     </div>
     <hr>	
     <div class="row">
-        <!--			<div class="span3">
-            <?php // echo $form->labelEx($model,'ID_EMPRESA');  ?>
-            <?php //echo $form->dropDownList($model,'ID_EMPRESA', CHtml::listData(Empresa::model()->findAll(), 'ID_EMPRESA', 'NOMBRE_EMPRESA'), array('empty'=> 'Indicar Empresa','id'=>'cb_empresaPres', 'class'=>'span12' )); ?>
-            <?php // echo $form->error($model,'ID_EMPRESA'); ?>
-                                </div>-->
+
+<?php
+$supervisor = array();
+$solicitantes = array();
+$contratistas = array();
+if (isset($model->ID_EMPRESA)) {
+    $idemp = intval($model->ID_EMPRESA);
+    $solicitantes = CHtml::listData(Personal::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp)), 'ID_PERSONA', 'concatened');
+    $contratistas = CHtml::listData(Contratista::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp)), 'ID_CONTRATISTA', 'concatened');
+    $supervisor = $solicitantes;
+} else
+if (!Yii::app()->user->allcompany()) {
+    $solicitantes = Personal::getPersonal();
+    $supervisor = $this->getSupervisor();
+    $contratistas = Contratista::model()->getContratistas();
+}
+?>
+
         <div class="span3">
-            <?php echo $form->labelEx($model, 'ID_CONTRATISTA'); ?>
-            <?php echo $form->dropDownList($model, 'ID_CONTRATISTA', array('' => 'Indicar Contratista') + CHtml::listData(Contratista::model()->findAll(), 'ID_CONTRATISTA', 'NOMBRE_CONTRATISTA'), array('class' => 'span12')); ?>
-            <?php echo $form->error($model, 'ID_CONTRATISTA'); ?>
+        <?php echo $form->labelEx($model, 'ID_CONTRATISTA'); ?>
+        <?php echo $form->dropDownList($model, 'ID_CONTRATISTA', $contratistas, array('empty' => 'Indicar Contratista', 'class' => 'span12')); ?>
+<?php echo $form->error($model, 'ID_CONTRATISTA'); ?>
         </div>
+
         <div class="span3">
-<?php echo $form->labelEx($model, 'SUPERVISOR'); ?>
-<?php echo $form->dropDownList($model, 'SUPERVISOR', $this->getSupervisor(), array('empty' => 'Indicar Supervisor', 'class' => 'span12')); ?>
+            <?php echo $form->labelEx($model, 'SUPERVISOR'); ?>
+<?php echo $form->dropDownList($model, 'SUPERVISOR', $supervisor, array('empty' => 'Indicar Supervisor', 'class' => 'span12')); ?>
 <?php echo $form->error($model, 'SUPERVISOR'); ?>
         </div>
 
@@ -202,18 +255,18 @@ if ($model->_cot) {
 
     <div class="row">
         <div class="span3">
-            <?php echo $form->labelEx($model, 'SOLICITANTE'); ?>
-            <?php
-            echo $form->dropDownList($model, 'SOLICITANTE', Personal::getPersonal(), array(
-                'empty' => 'Indicar Solicitante',
-                'ajax' => array(
-                    'type' => 'POST',
-                    'url' => CController::createUrl('departamentos/getDepartamentos'),
-                    'update' => '#' . CHtml::activeId($model, 'ID_DEPARTAMENTO'),
-                ),
-                    )
-            );
-            ?>
+<?php echo $form->labelEx($model, 'SOLICITANTE'); ?>
+<?php
+echo $form->dropDownList($model, 'SOLICITANTE', $solicitantes, array(
+    'empty' => 'Indicar Solicitante',
+    'ajax' => array(
+        'type' => 'POST',
+        'url' => CController::createUrl('departamentos/getDepartamentos'),
+        'update' => '#' . CHtml::activeId($model, 'ID_DEPARTAMENTO'),
+    ),
+        )
+);
+?>
             <?php echo $form->error($model, 'SOLICITANTE'); ?>
         </div>
         <div class="span3">
@@ -262,51 +315,51 @@ if ($model->_cot) {
         <div class="span12">
 <?php echo $form->labelEx($model, 'DESCRIPCION_OT'); ?>
 <?php echo $form->textArea($model, 'DESCRIPCION_OT', array('class' => 'span12')); ?>
-    <?php echo $form->error($model, 'DESCRIPCION_OT'); ?>
+<?php echo $form->error($model, 'DESCRIPCION_OT'); ?>
         </div>
     </div>
 
     <div class="row" id="reportarerror"></div>
 
-            <?php if ($model->isNewRecord == false) { ?>
+<?php if ($model->isNewRecord == false) { ?>
         <br><br>
         <div class="row">
             <div class="span3">
-                <?php
-                if (Yii::app()->user->A1() || Yii::app()->user->GG()) {
-                    echo $form->labelEx($model, 'VOBO_GERENTE_GRAL');
-                    echo $form->checkBox($model, 'VOBO_GERENTE_GRAL');
-                    if ($model->VOBO_GERENTE_GRAL)
-                        echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Gerente General ');
-                    else
-                        echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
-                    echo $form->error($model, 'VOBO_GERENTE_GRAL');
-                } elseif (Yii::app()->user->A1() || Yii::app()->user->GOP()) {
-                    echo $form->labelEx($model, 'VOBO_GERENTE_OP');
-                    echo $form->checkBox($model, 'VOBO_GERENTE_OP');
-                    if ($model->VOBO_GERENTE_OP)
-                        echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Gerente Operaciones ');
-                    else
-                        echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
-                    echo $form->error($model, 'VOBO_GERENTE_OP');
-                } elseif (Yii::app()->user->A1() || Yii::app()->user->ADM()) {
-                    echo $form->labelEx($model, 'VOBO_ADMIN');
-                    echo $form->checkBox($model, 'VOBO_ADMIN');
-                    if ($model->VOBO_ADMIN)
-                        echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Administrador ');
-                    else
-                        echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
-                    echo $form->error($model, 'VOBO_ADMIN');
-                } elseif (Yii::app()->user->A1() || Yii::app()->user->JDP()) {
-                    echo $form->labelEx($model, 'VOBO_JEFE_DPTO');
-                    echo $form->checkBox($model, 'VOBO_JEFE_DPTO');
-                    if ($model->VOBO_JEFE_DPTO)
-                        echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Jefe de Departamento ');
-                    else
-                        echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
-                    echo $form->error($model, 'VOBO_JEFE_DPTO');
-                }
-                ?>
+        <?php
+        if (Yii::app()->user->A1() || Yii::app()->user->GG()) {
+            echo $form->labelEx($model, 'VOBO_GERENTE_GRAL');
+            echo $form->checkBox($model, 'VOBO_GERENTE_GRAL');
+            if ($model->VOBO_GERENTE_GRAL)
+                echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Gerente General ');
+            else
+                echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
+            echo $form->error($model, 'VOBO_GERENTE_GRAL');
+        } elseif (Yii::app()->user->A1() || Yii::app()->user->GOP()) {
+            echo $form->labelEx($model, 'VOBO_GERENTE_OP');
+            echo $form->checkBox($model, 'VOBO_GERENTE_OP');
+            if ($model->VOBO_GERENTE_OP)
+                echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Gerente Operaciones ');
+            else
+                echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
+            echo $form->error($model, 'VOBO_GERENTE_OP');
+        } elseif (Yii::app()->user->A1() || Yii::app()->user->ADM()) {
+            echo $form->labelEx($model, 'VOBO_ADMIN');
+            echo $form->checkBox($model, 'VOBO_ADMIN');
+            if ($model->VOBO_ADMIN)
+                echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Administrador ');
+            else
+                echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
+            echo $form->error($model, 'VOBO_ADMIN');
+        } elseif (Yii::app()->user->A1() || Yii::app()->user->JDP()) {
+            echo $form->labelEx($model, 'VOBO_JEFE_DPTO');
+            echo $form->checkBox($model, 'VOBO_JEFE_DPTO');
+            if ($model->VOBO_JEFE_DPTO)
+                echo $form->label($model, ' &nbsp;&nbsp; Vo.Bo. Jefe de Departamento ');
+            else
+                echo $form->label($model, ' &nbsp;&nbsp; Pendiente de Validacion');
+            echo $form->error($model, 'VOBO_JEFE_DPTO');
+        }
+        ?>
             </div>
 
             <div class="span2">
@@ -316,10 +369,10 @@ if ($model->_cot) {
                 ?>	
             </div>
             <div id="motivo_rechazo" class="span7">
-    <?php
-    echo $form->labelEx($model, 'MOTIVO_RECHAZO');
-    echo $form->textField($model, 'MOTIVO_RECHAZO', array('maxlength' => 50, 'class' => 'span12'));
-    ?>	
+                <?php
+                echo $form->labelEx($model, 'MOTIVO_RECHAZO');
+                echo $form->textField($model, 'MOTIVO_RECHAZO', array('maxlength' => 50, 'class' => 'span12'));
+                ?>	
             </div>
 
 
@@ -339,29 +392,29 @@ if ($model->_cot) {
                             </tbody>           
                     </table>
     <div class="row">
-        <?php
-        $this->widget('ext.EFineUploader.EFineUploader', array(
-            'id' => 'cotizacion',
-            'config' => array(
-                'autoUpload' => true,
-                'multiple' => true,
-                'request' => array(
-                    'endpoint' => $this->createUrl('ordenTrabajo/upload'),
-                    'params' => array('YII_CSRF_TOKEN' => Yii::app()->request->csrfToken),
-                ),
-                'retry' => array('enableAuto' => true, 'preventRetryResponseProperty' => true),
-                'chunking' => array('enable' => true, 'partSize' => 100), //bytes
-                'callbacks' => array(
-                //'onComplete'=>"js:function(id, name, response){ $('li.qq-upload-success').remove(); }",
-                //'onError'=>"js:function(id, name, errorReason){ }",
-                ),
-                'validation' => array(
-                    'allowedExtensions' => array('pdf', 'jpg', 'jpeg', 'png'),
-                    'sizeLimit' => 5 * 1024 * 1024, //maximum file size in bytes
-                //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
-                ),
-                'callbacks' => array(
-                    'onComplete' => "js:function(id, name, response){
+<?php
+$this->widget('ext.EFineUploader.EFineUploader', array(
+    'id' => 'cotizacion',
+    'config' => array(
+        'autoUpload' => true,
+        'multiple' => true,
+        'request' => array(
+            'endpoint' => $this->createUrl('ordenTrabajo/upload'),
+            'params' => array('YII_CSRF_TOKEN' => Yii::app()->request->csrfToken),
+        ),
+        'retry' => array('enableAuto' => true, 'preventRetryResponseProperty' => true),
+        'chunking' => array('enable' => true, 'partSize' => 100), //bytes
+        'callbacks' => array(
+        //'onComplete'=>"js:function(id, name, response){ $('li.qq-upload-success').remove(); }",
+        //'onError'=>"js:function(id, name, errorReason){ }",
+        ),
+        'validation' => array(
+            'allowedExtensions' => array('pdf', 'jpg', 'jpeg', 'png'),
+            'sizeLimit' => 5 * 1024 * 1024, //maximum file size in bytes
+        //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
+        ),
+        'callbacks' => array(
+            'onComplete' => "js:function(id, name, response){
               var valid=true;
 
              $('#OrdenTrabajo__cot').append(new Option(response.filename, response.filename, true, true));          
@@ -369,12 +422,12 @@ if ($model->_cot) {
              indexcot=indexcot+1; 
          
            }",
-                    'onError' => "js:function(id, name, errorReason){ }",
-                    'onValidateBatch' => "js:function(fileOrBlobData) {}", // because of crash
-                ),
-            )
-        ));
-        ?>
+            'onError' => "js:function(id, name, errorReason){ }",
+            'onValidateBatch' => "js:function(fileOrBlobData) {}", // because of crash
+        ),
+    )
+));
+?>
     </div>
     <div class="row" style="display: none">		
         <?php echo $form->dropdownlist($model, '_cot', $model->_cot, array('multiple' => 'multiple')); ?>
@@ -382,11 +435,11 @@ if ($model->_cot) {
 
     <div class="row">
         <div class="span3" style="margin-top: 25px;">
-    <?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Guardar', array('class' => 'offset1 btn btn-success', 'name' => 'submit_ot')); ?>		
+<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Guardar', array('class' => 'offset1 btn btn-success', 'name' => 'submit_ot')); ?>		
         </div>	
     </div>
 
-<?php $this->endWidget(); ?>
+            <?php $this->endWidget(); ?>
 
 </div><!-- form -->
 

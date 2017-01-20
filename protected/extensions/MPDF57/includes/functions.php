@@ -188,19 +188,19 @@ if(!function_exists('strcode2utf')){
 
 	if ($lo) { $lo = 1; } else { $lo = 0; }
 
-	$str = preg_replace_callback('/\&\#([0-9]+)\;/me', "code2utf('\\1',{$lo})",
-		function($matches){
-			return $this->check_module($matches[1], $matches[2]);
-		},
-		$str
-	);
-
-	$str = preg_replace_callback('/\&\#x([0-9a-fA-F]+)\;/me', "codeHex2utf('\\1',{$lo})",
-		function($matches){
-			return $this->check_module($matches[1], $matches[2]);
-		},
-		$str
-	);
+//	$str = preg_replace_callback('/\&\#([0-9]+)\;/me', "code2utf('\\1',{$lo})",
+//		function($matches){
+//			return $this->check_module($matches[1], $matches[2]);
+//		},
+//		$str
+//	);
+//
+//	$str = preg_replace_callback('/\&\#x([0-9a-fA-F]+)\;/me', "codeHex2utf('\\1',{$lo})",
+//		function($matches){
+//			return $this->check_module($matches[1], $matches[2]);
+//		},
+//		$str
+//	);
 
 	return $str;
 

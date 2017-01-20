@@ -5,11 +5,10 @@
 <table>
     <thead></thead>
     <tbody>
-        <tr><td>Nombre de Usuario:</td>  <td><?php echo $model->NOMBRE_USUARIO?></td> </tr>
-     
-        <tr><td>Email</td><td><?php echo $model->EMAIL_USUARIO ?></td></tr>
-        <tr><td>Contraseña</td>  <td><?php echo $pass ?></td></tr>
+        <tr><td>Nombre de Usuario:</td>  <td><b><?php echo $model->NOMBRE_USUARIO?></b></td> </tr> 
+        <tr><td>Contraseña</td>  <td><b><?php echo $pass ?></b></td></tr>
         <tr><td>Fecha de Creacion</td>  <td><?php echo $model->FECHA_CREACION_USUARIO ?></td></tr>
+        
     </tbody>
         
 </table>
