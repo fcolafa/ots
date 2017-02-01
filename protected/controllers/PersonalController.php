@@ -448,7 +448,10 @@ class PersonalController extends Controller
 	{
 		$id_emp = $_POST['OrdenTrabajo']['ID_EMPRESA'];
                 $criteria=new CDbCriteria();
-                $criteria->condition="ID_EMPRESA=".$id_emp;
+                $criteria->with=array('iDUSUARIO');
+                $criteria->together=true;
+                $criteria->condition="t.ID_EMPRESA=".$id_emp.' OR (iDUSUARIO.TODAS_LAS_EMPRESAS=1 AND iDUSUARIO.COD_TIPO_USUARIO="ADM")';
+                $criteria->order='NOMBRE_PERSONA ASC, APELLIDO_PERSONA ASC';
 		$persona = Personal::model()->findAll($criteria);
 		$persona=  CHtml::listData($persona, 'ID_PERSONA', 'concatened');
 		foreach ($persona as $valor => $descripcion) {

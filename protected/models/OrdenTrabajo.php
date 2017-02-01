@@ -60,7 +60,6 @@ class OrdenTrabajo extends CActiveRecord {
     public $fullname;
     public $lastname;
     public $total;
-    public $insumos;
 
     public function tableName() {
         return 'orden_trabajo';
@@ -78,12 +77,11 @@ class OrdenTrabajo extends CActiveRecord {
             array('SOLICITANTE', 'length', 'max' => 250),
             array('ASIGNADO', 'required', 'on' => 'send'),
             array('_cot', 'validFile'),
-            array('insumos','getInsumos'),
             array('FECHA_EJECUCION, FECHA_OT', 'formateaFecha'),
             array('_empresa,FECHA_EJECUCION, DESCRIPCION_OT, FECHA_OT, MOTIVO_RECHAZO, RECHAZAR_OT, MOTIVO_RECHAZO', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('insumos,_contratista, total, fullname, lastname, NUMERO_OT, _rutcontratista, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
+            array('_contratista, total, fullname, lastname, NUMERO_OT, _rutcontratista, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
         );
     }
 
@@ -176,7 +174,6 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->order = 'NUMERO_OT DESC';
         $criteria->compare('ID_OT', $this->ID_OT);
         $criteria->compare('NUMERO_OT', $this->NUMERO_OT);
-        $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
         $criteria->compare('SOLICITANTE', $this->SOLICITANTE, true);
         $criteria->compare('SUPERVISOR', $this->SUPERVISOR);
         $criteria->compare('ID_DEPARTAMENTO', $this->ID_DEPARTAMENTO);
@@ -246,6 +243,7 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('VOBO_GERENTE_OP', $this->VOBO_GERENTE_OP);
         $criteria->compare('total', $this->total);
         $criteria->compare('contratista.RUT_CONTRATISTA', $this->_rutcontratista, true);
+        $criteria->compare('contratista.NOMBRE_CONTRATISTA', $this->_contratista, true);
 
 
         if (Yii::app()->user->GG()) {
@@ -441,7 +439,6 @@ class OrdenTrabajo extends CActiveRecord {
         
         return $suma;
     }
-    
 
     /**
      * Returns the static model of the specified AR class.
@@ -500,4 +497,5 @@ class OrdenTrabajo extends CActiveRecord {
     public function getFullName() {
         return @$this->solicitante->NOMBRE_PERSONA . " " . @$this->solicitante->APELLIDO_PERSONA;
     }
+
 }

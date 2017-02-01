@@ -163,6 +163,7 @@ class Personal extends CActiveRecord
 	public static function getPersonal(){
                 $criteria=new CDbCriteria();
                 $criteria->condition="ID_EMPRESA=".Yii::app()->getSession()->get('id_empresa');
+                $criteria->order='NOMBRE_PERSONA ASC, APELLIDO_PERSONA ASC';
 		return CHtml::listData(Personal::model()->findAll($criteria), 'ID_PERSONA', 'concatened' );
 	}
         public function getConcatened()

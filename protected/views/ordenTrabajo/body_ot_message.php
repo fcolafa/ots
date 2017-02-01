@@ -4,8 +4,7 @@
 <h1> <?php echo $subject ?></h1>
 <br>
 <div>
-<p><?php echo $content ?></p>
-<p>
+<p><?php echo $content ?>. 
     <?php 
     $server=$_SERVER["SERVER_NAME"];
     if($server=='localhost')

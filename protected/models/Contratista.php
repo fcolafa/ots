@@ -136,16 +136,17 @@ class Contratista extends CActiveRecord {
     public function getContratistas() {
         $criteria = new CDbCriteria();
         $criteria->condition = 'ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa');
+        $criteria->order = 'NOMBRE_CONTRATISTA ASC';
         return CHtml::listData(Contratista::model()->findAll($criteria), 'ID_CONTRATISTA', 'concatened');
     }
 
     public function uniqueContratista() {
         $criteria = new CDbCriteria();
-        $ide=$this->ID_EMPRESA;
+        $ide = $this->ID_EMPRESA;
         if (empty($this->ID_EMPRESA) || $this->ID_EMPRESA == '')
-                $ide = Yii::app()->getSession()->get('id_empresa');
-            
-        $criteria->condition = 'ID_EMPRESA=' . $ide. ' AND RUT_CONTRATISTA="' . $this->RUT_CONTRATISTA . '"';
+            $ide = Yii::app()->getSession()->get('id_empresa');
+
+        $criteria->condition = 'ID_EMPRESA=' . $ide . ' AND RUT_CONTRATISTA="' . $this->RUT_CONTRATISTA . '"';
         if (count(Contratista::model()->findAll($criteria)) > 0)
             $this->addError('RUT_CONTRATISTA', 'El Rut del contratista ya ha sido tomado');
     }

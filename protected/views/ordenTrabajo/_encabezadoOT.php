@@ -228,8 +228,8 @@ $solicitantes = array();
 $contratistas = array();
 if (isset($model->ID_EMPRESA)) {
     $idemp = intval($model->ID_EMPRESA);
-    $solicitantes = CHtml::listData(Personal::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp)), 'ID_PERSONA', 'concatened');
-    $contratistas = CHtml::listData(Contratista::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp)), 'ID_CONTRATISTA', 'concatened');
+    $solicitantes = CHtml::listData(Personal::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp),array('order'=>'NOMBRE_PERSONA ASC, APELLIDO_PERSONA ASC')), 'ID_PERSONA', 'concatened');
+    $contratistas = CHtml::listData(Contratista::model()->findAllByAttributes(array('ID_EMPRESA' => $idemp),array('order'=>'NOMBRE_CONTRATISTA ASC')), 'ID_CONTRATISTA', 'concatened');
     $supervisor = $solicitantes;
 } else
 if (!Yii::app()->user->allcompany()) {

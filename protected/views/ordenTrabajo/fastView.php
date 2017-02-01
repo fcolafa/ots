@@ -1,4 +1,36 @@
 <?php
+	  $baseUrl = Yii::app()->theme->baseUrl; 
+	  $cs = Yii::app()->getClientScript();
+	  Yii::app()->clientScript->registerCoreScript('jquery');
+	?>
+    <!-- Fav and Touch and touch icons -->
+    <link rel="shortcut icon" href="<?php echo $baseUrl;?>/img/icons/logoastilleros.jpg">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?php echo $baseUrl;?>/img/icons/logoastilleros.jpg">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo $baseUrl;?>/img/icons/logoastilleros.jpg">
+    <link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl;?>/img/icons/logoastilleros.jpg">
+	<?php  
+	  $cs->registerCssFile($baseUrl.'/css/bootstrap.min.css');
+	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
+	  $cs->registerCssFile($baseUrl.'/css/abound.css');
+	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
+	  ?>
+      <!-- styles for style switcher -->
+      	<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl;?>/css/style-green.css" />
+	  <?php
+	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.sparkline.js');
+	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.min.js');
+	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.pie.min.js');
+	  $cs->registerScriptFile($baseUrl.'/js/charts.js');
+	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.knob.js');
+	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.masonry.min.js');
+	  $cs->registerScriptFile($baseUrl.'/js/styleswitcher.js');
+
+    $cs->registerScriptFile($baseUrl.'/js/jquery-1.12.1.min.js');
+    $cs->registerScriptFile($baseUrl.'/js/bootstrap.min.js');
+    
+	?>
+
+<?php
 /* @var $this OrdenTrabajoController */
 /* @var $model OrdenTrabajo */
 
@@ -201,6 +233,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
             </tr>
         <?php endif; ?>
     </table>
+      <?php $this->getFirmas($model); ?>
     <br>
     <?php //$this->getFirmas($model); ?>
     <?php if ($model->RECHAZAR_OT == 1) { ?>

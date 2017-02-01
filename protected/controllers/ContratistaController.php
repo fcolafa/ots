@@ -182,6 +182,7 @@ class ContratistaController extends Controller {
         $id_emp = $_POST['id_emp'];
         $criteria = new CDbCriteria();
         $criteria->condition = "ID_EMPRESA=" . $id_emp;
+        $criteria->order='NOMBRE_CONTRATISTA ASC';
         $contratistas = Contratista::model()->findAll($criteria);
         $contratistas = CHtml::listData($contratistas, 'ID_CONTRATISTA', 'concatened');
         $t = '';
