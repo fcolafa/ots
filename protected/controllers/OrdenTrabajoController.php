@@ -27,15 +27,19 @@ class OrdenTrabajoController extends Controller {
         return array(
             //R
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('view', 'admin', 'SelectCuentas', 'selectSubCentros', 'selectSecciones', 'viewAllInsumos', 'viewallticket','FastView'),
+                'actions' => array('viewPDF', 'view', 'admin', 'SelectCuentas', 'selectSubCentros', 'selectSecciones', 'viewAllInsumos', 'viewallticket', 'FastView', 'test'),
                 'users' => array('@')
             //grupo 
             //'expression'=>'$user->U2()',
             ),
             //CRUD todos los permisos otorgados a las cuentas indicadas
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'viewPDF', 'viewOt', 'delete', 'aprobarOt', 'CambiarPendiente', 'aprobarOtView', 'Upload', 'rechazarOtView', 'reaprobarOtView'),
+                'actions' => array('create', 'update', 'admin', 'viewOt', 'delete', 'aprobarOt', 'CambiarPendiente', 'aprobarOtView', 'Upload', 'rechazarOtView', 'reaprobarOtView'),
                 'expression' => '$user->A1()|| $user->ADM() || $user->GG() || $user->GOP() || $user->JDP() || $user->LOG()|| $user->OP()',
+            ),
+            array('allow', // allow authenticated user to perform 'create' and 'update' actions
+               
+                'expression' => '$user->A1()',
             ),
             array('deny', // deny all users
                 'users' => array('*'),
@@ -55,6 +59,18 @@ class OrdenTrabajoController extends Controller {
         echo CHtml::tag('option', array('value' => ''), 'Seleccione', true);
         foreach ($lista as $valor => $descripcion) {
             echo CHtml::tag('option', array('value' => $valor), CHtml::encode($descripcion), true);
+        }
+    }
+
+    public function actionSetStatus() {
+
+        $ots=  OrdenTrabajo::model()->findAll();
+        foreach($ots as $ot){
+            if($ot->VOBO_GERENTE_GRAL==1 && $ot->RECHAZAR_OT!=1)
+                $ot->ESTADO_OT=1;
+            elseif($ot->RECHAZAR_OT==1)
+                $ot->ESTADO_OT=2;
+            $ot->save();
         }
     }
 
@@ -96,10 +112,10 @@ class OrdenTrabajoController extends Controller {
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
-    public function actionFastView($id){
+    public function actionFastView($id) {
         $model = $this->loadModel($id);
-          $error = false;
-         if ((Yii::app()->user->OP() || Yii::app()->user->LOG()) && $model->USUARIO_CREADOR != Yii::app()->user->id)
+        $error = false;
+        if ((Yii::app()->user->OP()) && $model->USUARIO_CREADOR != Yii::app()->user->id)
             $error = true;
 
         $usuario = Personal::model()->findByPk($model->USUARIO_CREADOR);
@@ -118,8 +134,9 @@ class OrdenTrabajoController extends Controller {
         if ($error)
             throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción...');
         $sub_items = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'CAST(NUMERO_SUB_ITEM AS DECIMAL) ASC'));
-        $this->renderPartial('fastView',array('id' => $id,'model'=>$model,'sub_items' => $sub_items),false, true);
+        $this->renderPartial('fastView', array('id' => $id, 'model' => $model, 'sub_items' => $sub_items), false, true);
     }
+
     public function actionView($id) {
         $model = $this->loadModel($id);
         $error = false;
@@ -130,7 +147,7 @@ class OrdenTrabajoController extends Controller {
                 $this->sendMail($model, 'Orden de Trabajo requiere aprobacion', 'body_ot_message', 'op', 'La orden de trabajo cuyo Nº es ' . $model->NUMERO_OT . ' requiere de su aprobacion');
             }
         }
-        if ((Yii::app()->user->OP() || Yii::app()->user->LOG()) && $model->USUARIO_CREADOR != Yii::app()->user->id)
+        if ((Yii::app()->user->OP()) && $model->USUARIO_CREADOR != Yii::app()->user->id)
             $error = true;
 
         $usuario = Personal::model()->findByPk($model->USUARIO_CREADOR);
@@ -161,12 +178,13 @@ class OrdenTrabajoController extends Controller {
             throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
         Yii::import('ext.MPDF57.mpdf', true);
         $detalle = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'CAST(NUMERO_SUB_ITEM AS DECIMAL) ASC'));
-        //$this->render('ot_pdf',array('model' => $this->loadModel($id),'detalle' => $detalle));
         $mpdf = new mpdf();
-        //die(Yii::app()->Theme->BAs);
-        //$stylesheet = file_get_contents(Yii::app()->Theme->BaseUrl.'/css/abound.css'); // external css
         $mpdf->WriteHTML($this->renderPartial('ot_pdf', array('model' => $model, 'detalle' => $detalle), true));
         $mpdf->Output();
+    }
+
+    public function actionTest() {
+        
     }
 
     public function actionNumOt() {
@@ -234,7 +252,7 @@ class OrdenTrabajoController extends Controller {
                         if (file_exists($tempFolder . $file)) {
                             $cotfile = new Cotizacion;
                             $cotfile->ID_OT = $model->ID_OT;
-                            $cotfile->NOMBRE_ARCHIVO = $file;
+                            $cotfile->NOMBRE_ARCHIVO = utf8_decode($file);
                             $cotfile->save();
                             copy($tempFolder . $cotfile->NOMBRE_ARCHIVO, $folder . "/" . $cotfile->NOMBRE_ARCHIVO);
                         }
@@ -545,6 +563,7 @@ class OrdenTrabajoController extends Controller {
         if (isset($_POST['OrdenTrabajo'])) {
             $model->attributes = $_POST['OrdenTrabajo'];
             $model->RECHAZAR_OT = 1;
+            $model->ESTADO_OT = 2;
             $model->USUARIO_RECHAZA = Yii::app()->user->getState('identificador');
             $nombre = '';
             if (!empty($model->USUARIO_RECHAZA)) {
@@ -566,6 +585,7 @@ class OrdenTrabajoController extends Controller {
             $persona = Personal::model()->findByPK($model->USUARIO_RECHAZA);
             $nombre = ' y que habia sido rechazada por ' . $persona->NOMBRE_PERSONA . ' ' . $persona->APELLIDO_PERSONA;
         }
+        $model->ESTADO_OT = 0;
         $model->RECHAZAR_OT = 0;
         $model->USUARIO_RECHAZA = Yii::app()->user->getState('identificador');
         $model->MOTIVO_RECHAZO = '';
@@ -583,14 +603,17 @@ class OrdenTrabajoController extends Controller {
     }
 
     public function actionAprobarOtView($id) {
-        
+
         $model = OrdenTrabajo::model()->findByPk($id);
-        if ($model) {
+        if (!empty($model)) {
             if (Yii::app()->user->JDP() && $model->VOBO_JEFE_DPTO != 1 && Yii::app()->getSession()->get('id_empresa') == $model->ID_EMPRESA) {
-                $model->VOBO_JEFE_DPTO = 1;
-                $model->FECHA_VOBO_JDPTO = date("y-m-d H:i:s");
                 $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
-                $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                $model->FECHA_VOBO_JDPTO = date("y-m-d H:i:s");
+                $model->VOBO_JEFE_DPTO = 1;
+                if ($model->ID_EMPRESA == 1)
+                    $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                else
+                    $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
             } elseif (Yii::app()->user->ADM() && $model->RECHAZAR_OT == 0 && $model->VOBO_ADMIN != 1) {
 
                 if ($model->VOBO_JEFE_DPTO != 1) {
@@ -606,7 +629,7 @@ class OrdenTrabajoController extends Controller {
                 $model->VOBO_ADMIN = 1;
                 $model->FECHA_VOBO_ADMIN = date("y-m-d H:i:s");
                 $model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
-                if($model->ID_EMPRESA==1)
+                if ($model->ID_EMPRESA == 1)
                     $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                 else
                     $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
@@ -619,16 +642,16 @@ class OrdenTrabajoController extends Controller {
                 $model->VOBO_GERENTE_OP = 1;
                 $model->FECHA_VOBO_GOP = date("y-m-d H:i:s");
                 $model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
-                if($model->ID_EMPRESA==1)
+                if ($model->ID_EMPRESA == 1)
                     $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                 else
                     $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
-                
-                } elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN == 1 && $model->VOBO_GERENTE_GRAL != 1) {
+            } elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN == 1 && $model->VOBO_GERENTE_GRAL != 1) {
                 $model->VOBO_GERENTE_GRAL = 1;
                 $model->FECHA_VOBO_GG = date("y-m-d H:i:s");
                 $model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
                 $model->APROBADO_I25 = 1;
+                $model->ESTADO_OT = 1;
                 $this->sendMail($model, 'Orden de Trabajo Aprobada totalmente', 'body_ot_message', 'success', 'Se ha aprobado completamente la orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
             } elseif (Yii::app()->user->LOG() && $model->RECHAZAR_OT == 0 && $model->VOBO_JEFE_DPTO != 1) {
 
@@ -640,23 +663,26 @@ class OrdenTrabajoController extends Controller {
     }
 
     public function actionAprobarOT() {
-        $ids='';
-        if(!empty($_POST['theIds1']))
-        $ids.=','.$_POST['theIds1'];
-        if(!empty($_POST['theIds2']))
-         $ids.=','.$_POST['theIds2'];;
-        if(!empty($_POST['theIds3']))
-        $ids.=','.$_POST['theIds3'];
+        $ids = '';
+        if (!empty($_POST['theIds1']))
+            $ids.=',' . $_POST['theIds1'];
+        if (!empty($_POST['theIds2']))
+            $ids.=',' . $_POST['theIds2'];;
+        if (!empty($_POST['theIds3']))
+            $ids.=',' . $_POST['theIds3'];
         $orden = explode(',', $ids);
         if (!empty($orden)) {
             foreach ($orden as $ot) {
-                  $model = OrdenTrabajo::model()->findByPk($ot);
+                $model = OrdenTrabajo::model()->findByPk($ot);
                 if ($model) {
                     if (Yii::app()->user->JDP() && $model->VOBO_JEFE_DPTO != 1 && Yii::app()->getSession()->get('id_empresa') == $model->ID_EMPRESA) {
                         $model->VOBO_JEFE_DPTO = 1;
                         $model->FECHA_VOBO_JDPTO = date("y-m-d H:i:s");
                         $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
-                        $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        if ($model->ID_EMPRESA == 1)
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        else
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                     } elseif (Yii::app()->user->ADM() && $model->RECHAZAR_OT == 0 && $model->VOBO_ADMIN != 1) {
 
                         if ($model->VOBO_JEFE_DPTO != 1) {
@@ -672,7 +698,10 @@ class OrdenTrabajoController extends Controller {
                         $model->VOBO_ADMIN = 1;
                         $model->FECHA_VOBO_ADMIN = date("y-m-d H:i:s");
                         $model->USUARIO_VOBO_ADMIN = Yii::app()->user->getState('idUsuario');
-                        $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        if ($model->ID_EMPRESA == 1)
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gop', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        else
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                     } elseif (Yii::app()->getSession()->get('id_empresa') == $model->ID_EMPRESA && Yii::app()->user->GOP() && $model->VOBO_GERENTE_OP != 1 && (($model->ID_EMPRESA == 1 && $model->VOBO_ADMIN == 1) || $model->ID_EMPRESA != 1)) {
                         if ($model->ID_EMPRESA != 1 && $model->VOBO_JEFE_DPTO != 1) {
                             $model->VOBO_JEFE_DPTO = 1;
@@ -682,22 +711,24 @@ class OrdenTrabajoController extends Controller {
                         $model->VOBO_GERENTE_OP = 1;
                         $model->FECHA_VOBO_GOP = date("y-m-d H:i:s");
                         $model->USUARIO_VOBO_GOP = Yii::app()->user->getState('idUsuario');
-                        $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        if ($model->ID_EMPRESA == 1)
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        else
+                            $this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'adm', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
+                        //$this->sendMail($model, 'Orden de Trabajo Aprobada', 'body_ot_message', 'gg', 'Se ha aprobado una orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                     } elseif (Yii::app()->user->GG() && $model->VOBO_ADMIN == 1 && $model->VOBO_GERENTE_GRAL != 1) {
                         $model->VOBO_GERENTE_GRAL = 1;
                         $model->FECHA_VOBO_GG = date("y-m-d H:i:s");
                         $model->USUARIO_VOBO_GG = Yii::app()->user->getState('idUsuario');
                         $model->APROBADO_I25 = 1;
+                        $model->ESTADO_OT = 1;
                         $this->sendMail($model, 'Orden de Trabajo Aprobada totalmente', 'body_ot_message', 'success', 'Se ha aprobado completamente la orden de trabajo cuyo Nº es ' . $model->NUMERO_OT);
                     } elseif (Yii::app()->user->LOG() && $model->RECHAZAR_OT == 0 && $model->VOBO_JEFE_DPTO != 1) {
-
                         $this->sendMail($model, 'Orden de Trabajo requiere aprobacion', 'body_ot_message', 'log', 'La orden de trabajo cuyo Nº es ' . $model->NUMERO_OT . ' requiere de su aprobacion');
                     }
-                  
+                    $model->save();
                 }
-                $model->save();
             }
-              
         }
         $this->redirect(array('admin'));
     }
@@ -725,6 +756,7 @@ class OrdenTrabajoController extends Controller {
                     $model->FECHA_VOBO_GG = NULL;
                     $model->USUARIO_VOBO_GG = NULL;
                     $model->APROBADO_I25 = 0;
+                    $model->ESTADO_OT = 0;
                 }
 //      Yii::app()->user->setFlash('error',Yii::t('validation','Can not delete this item because it have elements asociated it'));
 //                    $manifest->delete();
@@ -795,7 +827,7 @@ class OrdenTrabajoController extends Controller {
         $criteria->condition = "ES_SUPERVISOR=1 AND ID_EMPRESA =" . Yii::app()->getSession()->get('id_empresa');
         $criteria->order = 'NOMBRE_PERSONA ASC, APELLIDO_PERSONA  ASC';
         $personal = Personal::model()->findAll($criteria);
- 
+
         $supervisor = array();
         foreach ($personal as $persona) {
             $usuario = Usuarios::model()->findByPK($persona->ID_PERSONA);
@@ -828,6 +860,7 @@ class OrdenTrabajoController extends Controller {
         $uploader->sizeLimit = 5 * 1024 * 1024; //maximum file size in bytes
         $uploader->chunksFolder = $tempFolder;
         $result = $uploader->handleUpload($tempFolder);
+
         $result['filename'] = $uploader->getUploadName();
         $result['folder'] = $tempFolder;
         $uploadedFile = $tempFolder . $result['filename'];
@@ -865,13 +898,13 @@ class OrdenTrabajoController extends Controller {
             $criteria = new CDbCriteria();
             switch ($type) {
                 case 'adm':
-                    $criteria->condition = "COD_TIPO_USUARIO='ADM' AND (TODAS_LAS_EMPRESAS==1 OR ID_EMPRESA=".$model->ID_EMPRESA.")";
+                    $criteria->condition = "COD_TIPO_USUARIO='ADM' AND (TODAS_LAS_EMPRESAS=1 OR ID_EMPRESA=" . $model->ID_EMPRESA . ")";
                     break;
                 case 'gop':
-                    $criteria->condition = "COD_TIPO_USUARIO='GOP' AND (TODAS_LAS_EMPRESAS==1 OR ID_EMPRESA=".$model->ID_EMPRESA.")";
+                    $criteria->condition = "COD_TIPO_USUARIO='GOP' AND (TODAS_LAS_EMPRESAS=1 OR ID_EMPRESA=" . $model->ID_EMPRESA . ")";
                     break;
                 case 'gg':
-                    $criteria->condition = "COD_TIPO_USUARIO='GG' AND (TODAS_LAS_EMPRESAS==1 OR ID_EMPRESA=".$model->ID_EMPRESA.")";
+                    $criteria->condition = "COD_TIPO_USUARIO='GG' AND (TODAS_LAS_EMPRESAS=1 OR ID_EMPRESA=" . $model->ID_EMPRESA . ")";
                     break;
                 case 'log':
                     $criteria->with = array('iDPERSONA.iDDEPARTAMENTO');
@@ -882,11 +915,22 @@ class OrdenTrabajoController extends Controller {
             $users = Usuarios::model()->findAll($criteria);
             foreach ($users as $u) {
                 $personal = Personal::model()->findByPk($u->ID_PERSONA);
-                if(!empty($personal->EMAIL))
+                if (!empty($personal->EMAIL))
                     $mail->AddAddress($personal->EMAIL, $subject);
             }
         }elseif ($type == 'success' || $type == 'reject' || $type == 'jdp') {
             $personal = Personal::model()->findByPk($model->USUARIO_CREADOR);
+            if ($type == 'success') {
+                $otacriteria = new CDbCriteria();
+                $otacriteria->condition = "COD_TIPO_USUARIO='OTA' AND ID_EMPRESA=" . $model->ID_EMPRESA;
+                $otauser = Usuarios::model()->findAll($otacriteria);
+                foreach ($otauser as $ota) {
+                    $otapersonal = Personal::model()->findByPk($ota->ID_PERSONA);
+                    if (!empty($otapersonal->EMAIL))
+                        $mail->AddAddress($otapersonal->EMAIL, $subject);
+                }
+            }
+
             $mail->AddAddress($personal->EMAIL, $subject);
         }
         if (!$mail->Send())
@@ -973,8 +1017,7 @@ class OrdenTrabajoController extends Controller {
     }
 
     public function actionviewAllInsumos($id) {
-        echo "paser por aqui";
-        die("Pase por aqui");
+
         $criteria = new CDbCriteria();
         $criteria->condition = "ID_OT=" . $id;
         $insumos = InsumosOT::model()->findAll($criteria);

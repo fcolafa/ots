@@ -1,5 +1,5 @@
 	<footer>
-            <div class="footer text-muted text-center">
+                <div class="footer text-muted text-center">
                         © 2016. Sistema desarrollado por <a href="http://www.pcgeek.cl/" target="_blank">PcGeek </a>
                 </div>
 		  <!--

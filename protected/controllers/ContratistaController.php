@@ -75,11 +75,11 @@ class ContratistaController extends Controller {
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-        
+
         if (isset($_POST['Contratista'])) {
             $model->attributes = $_POST['Contratista'];
-            $model->NOMBRE_CONTRATISTA = ucwords(strtolower($model->NOMBRE_CONTRATISTA));
-            $model->CIUDAD_CONTRATISTA = ucwords(strtolower($model->CIUDAD_CONTRATISTA));
+            $model->NOMBRE_CONTRATISTA = mb_convert_case($model->NOMBRE_CONTRATISTA, MB_CASE_TITLE, "UTF-8");
+            $model->CIUDAD_CONTRATISTA = mb_convert_case($model->CIUDAD_CONTRATISTA, MB_CASE_TITLE, "UTF-8");
             if (empty($model->ID_EMPRESA) || $model->ID_EMPRESA == '')
                 $model->ID_EMPRESA = Yii::app()->getSession()->get('id_empresa');
             if ($model->save())
@@ -104,8 +104,8 @@ class ContratistaController extends Controller {
 
         if (isset($_POST['Contratista'])) {
             $model->attributes = $_POST['Contratista'];
-            $model->NOMBRE_CONTRATISTA = ucwords(strtolower($model->NOMBRE_CONTRATISTA));
-            $model->CIUDAD_CONTRATISTA = ucwords(strtolower($model->CIUDAD_CONTRATISTA));
+            $model->NOMBRE_CONTRATISTA = mb_convert_case($model->NOMBRE_CONTRATISTA, MB_CASE_TITLE, "UTF-8");
+            $model->CIUDAD_CONTRATISTA = mb_convert_case($model->CIUDAD_CONTRATISTA, MB_CASE_TITLE, "UTF-8");
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->ID_CONTRATISTA));
         }
@@ -182,7 +182,8 @@ class ContratistaController extends Controller {
         $id_emp = $_POST['id_emp'];
         $criteria = new CDbCriteria();
         $criteria->condition = "ID_EMPRESA=" . $id_emp;
-        $criteria->order='NOMBRE_CONTRATISTA ASC';
+        $criteria->order = 'NOMBRE_CONTRATISTA ASC';
+        $criteria->addCondition('ID_CONTRATISTA<>105');
         $contratistas = Contratista::model()->findAll($criteria);
         $contratistas = CHtml::listData($contratistas, 'ID_CONTRATISTA', 'concatened');
         $t = '';

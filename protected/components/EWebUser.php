@@ -51,6 +51,12 @@ class EWebUser extends CWebUser{
            return $user->COD_TIPO_USUARIO==LevelLookUp::OP;
         return false;
     }
+    function OTA(){
+        $user = $this->loadUser();
+        if ($user)
+           return $user->COD_TIPO_USUARIO==LevelLookUp::OTA;
+        return false;
+    }
 
     // Load user model.
 

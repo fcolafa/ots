@@ -95,7 +95,7 @@ class Contratista extends CActiveRecord {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
-
+        $criteria->addCondition('ID_CONTRATISTA<>105');
         $criteria->compare('ID_CONTRATISTA', $this->ID_CONTRATISTA);
         if (!Yii::app()->user->allCompany())
             $criteria->compare('ID_EMPRESA', Yii::app()->getSession()->get('id_empresa'));
@@ -136,6 +136,7 @@ class Contratista extends CActiveRecord {
     public function getContratistas() {
         $criteria = new CDbCriteria();
         $criteria->condition = 'ID_EMPRESA=' . Yii::app()->getSession()->get('id_empresa');
+        $criteria->addCondition('ID_CONTRATISTA<>105');
         $criteria->order = 'NOMBRE_CONTRATISTA ASC';
         return CHtml::listData(Contratista::model()->findAll($criteria), 'ID_CONTRATISTA', 'concatened');
     }

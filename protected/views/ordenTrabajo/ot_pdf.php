@@ -78,7 +78,11 @@
 						<center>DISTRIBUCION DE COSTOS</center>
 					</th>
 				</tr>
-				<tr>
+			
+			</thead>
+                        </table>
+                                <table>
+                                    	<tr>
 					<th width="5%" class="bordered"> N°</th>
 					<th width="44%" class="bordered"> Descripción</th>
 					<th width="12%" class="text-right bordered"> Valor Total</th>
@@ -88,26 +92,23 @@
 					<th width="9%" class="bordered"> S. C. C.</th>
 					<th width="7%" class="bordered"> S. E. C.</th>
 				<tr>
-			</thead>
-			<tbody>
 				<?php // inicializo los acumuladores
 				$tot_contrat = 0; 
-
-				foreach ($detalle as $sub): 	?>
+				foreach ($detalle as $sub){	?>
 						<tr>
 							<td class="bordered"> <?=$sub->NUMERO_SUB_ITEM?> </td>
 							<td class="bordered"> <?=$sub->NOMBRE_SUB_ITEM?> </td>
 							<td class="text-right bordered"> <?=$this->getFormat($model->tipo_moneda->TIPO_MONEDA, $sub->COSTO_CONTRATISTA) ?> </td>
 							<td class="text-right bordered"> <?=$sub->NRO_COTIZACION ?> </td>
-							<td class="text-right bordered"> <?=$sub->centroCosto->NUMERO_CENTRO ?> </td>
-							<td class="text-right bordered"> <?=$sub->iDCCC->NUMERO_CUENTA ?> </td>
-							<td class="text-right bordered"> <?=$sub->iDSCC->SCC_NUMERO ?> </td>
-							<td class="text-right bordered"> <?=$sub->iDSEC->SEC_NUMERO ?> </td>
+							<td class="text-right bordered"> <?=@$sub->centroCosto->NUMERO_CENTRO ?> </td>
+							<td class="text-right bordered"> <?=@$sub->iDCCC->NUMERO_CUENTA ?> </td>
+							<td class="text-right bordered"> <?=@$sub->iDSCC->SCC_NUMERO ?> </td>
+							<td class="text-right bordered"> <?=@$sub->iDSEC->SEC_NUMERO ?> </td>
 						</tr>
 					<?php $tot_contrat += $sub->COSTO_CONTRATISTA; 
-				endforeach; ?>
-			</tbody>
-		</table>
+                                } ?>
+			
+                    </table>
 				<br>
 			<table width="800px">
 				<tr>

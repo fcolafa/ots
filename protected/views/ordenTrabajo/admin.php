@@ -34,7 +34,7 @@
 	
 </script>
 
-
+<!--
  <div id="msg_warnning" class="alert alert-warning">
         <h2> Modificaciones:</h2>
         <ul class="notice-information">
@@ -42,6 +42,7 @@
         </ul>
         <img src="<?=  Yii::app()->theme->baseUrl?>/img/icons/cambios2.png" style="width:50%;">
     </div>
+-->
 <?php
 	//$meses = array(1=>'Enero',2=>'Febrero',3=>'Marzo',4=>'Abril',5=>'Mayo',6=>'Junio',7=>'Julio',8=>'Agosto',9=>'Septiembre',10=>'Octubre',11=>'Noviembre',12=>'Diciembre');
 	
@@ -192,12 +193,13 @@
 			),
 			array(
                                 'header'=>'Estado Orden de trabajo ',
-				'name'=>'RECHAZAR_OT',
-				'value'=>'$data->getImage($data->RECHAZAR_OT, $data->VOBO_GERENTE_GRAL)',
+				'name'=>'ESTADO_OT',
                                 'type'=>'image',
-                                'filter'=>false,
+				'value'=>'$data->getStatusImage($data->ESTADO_OT)',
+                                'filter'=>array(1=>'Aprobado',2=>'Rechazado',0=>'Pendiente'),
                         	'htmlOptions'=>array('align'=>'center','width' =>'5%'),
 			),
+                    
 			array(
                                 'header'=>'Total',
 				'name'=>'total',
@@ -239,7 +241,7 @@
                                                     'options'=>array( 'class'=>'icon-edit' ,'title'=>"Vista Rapida" ),
                                                     'imageUrl'=>Yii::app()->theme->baseUrl.'/img/icons/fastview.png',
                                                     'url'=>'$this->grid->controller->createUrl("fastView", array("id"=>$data->primaryKey,"asDialog"=>1,"gridId"=>$this->grid->id))',
-                                                            'click'=>'function(){$("#cru-frame").attr("src",$(this).attr("href")); $("#cru-dialog").dialog("open");  return false;}',)
+                                                    'click'=>'function(){$("#cru-frame").attr("src",$(this).attr("href")); $("#cru-dialog").dialog("open");  return false;}',)
                                             
                                             ),
 					'htmlOptions'=>array('width' =>	'10%', 'class'=>'text-center'),
@@ -250,7 +252,7 @@
         }
    
 
-    if(!Yii::app()->user->LOG()&&!Yii::app()->user->OP()){
+    if(Yii::app()->user->A1()||Yii::app()->user->ADM()||Yii::app()->user->GG()){
     echo CHtml::ajaxLink("Aprobar Orden(es) de Trabajo(s)", $this->createUrl('ordenTrabajo/aprobarOT'), array(
         "type" => "post",
         "data" => 'js:{'

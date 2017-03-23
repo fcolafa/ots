@@ -10,6 +10,7 @@ class LevelLookUp{
       const PR="PR";
       const LOG="LOG";
       const OP="OP";
+      const OTA="OTA";
       // For CGridView, CListView Purposes
 
       public static function getLabel( $level ){
@@ -30,6 +31,8 @@ class LevelLookUp{
              return 'LOG';
           if($level == self::OP)
              return 'OP';
+          if($level == self::OTA)
+             return 'OTA';
           return false;
 
       }
@@ -47,6 +50,7 @@ class LevelLookUp{
                 self::PR=>'PR',
                 self::LOG=>'LOG',
                 self::OP=>'OP',
+                self::OTA=>'OTA',
           ); 
 
     }

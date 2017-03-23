@@ -67,7 +67,7 @@ if ($model->VOBO_GERENTE_GRAL == 1)
                 <td width="40%"><b>Señor (es) : </b>
                     <?= $model->contratista->NOMBRE_CONTRATISTA ?>
                 </td>
-                <td width="30%"><b>Fecha OT : </b>
+                <td width="30%"><b>Fecha creación : </b>
                     <?= Yii::app()->dateFormatter->format("d MMMM y",strtotime($model->FECHA_OT)) ?>
                 </td>
                 <td width="30%"></td>

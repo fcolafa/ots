@@ -126,9 +126,7 @@ class UsuariosController extends Controller
                            if($isUpdate && !empty($model->CONTRASENA) && !empty($model->_RPT_CONTRASENA )){
                                 $model->CONTRASENA = md5($model->CONTRASENA);
                                 $model->_RPT_CONTRASENA = md5($model->_RPT_CONTRASENA);
-                       
                         }
-			
 			if($model->save()){
                              if($isUpdate){
                                     $model->CONTRASENA = '';
