@@ -39,6 +39,7 @@ class InsumosOT extends CActiveRecord
                         array('COSTO_CONTRATISTA','onlyPoints'),
 			array('COSTO_CONTRATISTA', 'length', 'max'=>10),
 			array('NRO_COTIZACION', 'length', 'max'=>50),
+                        array('ID_CCC, ID_SEC, ID_SCC, ID_INSUMOS_OT, ID_OT, NUMERO_SUB_ITEM, NOMBRE_SUB_ITEM, COSTO_CONTRATISTA, NRO_COTIZACION', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('ID_CCC, ID_SEC, ID_SCC, ID_INSUMOS_OT, ID_OT, NUMERO_SUB_ITEM, NOMBRE_SUB_ITEM, COSTO_CONTRATISTA, NRO_COTIZACION', 'safe', 'on'=>'search'),
@@ -102,7 +103,6 @@ class InsumosOT extends CActiveRecord
 		$criteria->compare('COSTO_CONTRATISTA',$this->COSTO_CONTRATISTA,true);
 		$criteria->compare('NRO_COTIZACION',$this->NRO_COTIZACION,true);
                 $criteria->compare('ID_CENTRO_COSTO',$this->ID_CENTRO_COSTO);
-		
 		$criteria->compare('ID_SUB_CENTRO_COSTO',$this->ID_SUB_CENTRO_COSTO);
 
 		return new CActiveDataProvider($this, array(

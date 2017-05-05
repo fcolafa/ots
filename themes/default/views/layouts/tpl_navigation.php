@@ -39,6 +39,15 @@
                     'items' => array(
                         array('label' => 'Inicio', 'url' => array('/site/index'), 'visible' => !Yii::app()->user->isGuest),
                         array('label' => 'Manual', 'url' => array('/manual/index'), 'visible' => !Yii::app()->user->isGuest),
+
+                        array('label' => 'Mantenciones <span class="caret"></span>', 'url' => '#', 'visible' => Yii::app()->user->ADM() || Yii::app()->user->A1() || Yii::app()->user->JDP(), 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),
+                            'items' => array(
+                                array('label' => 'Ver Equipos', 'url' => array('equipo/admin')),
+                                array('label' => 'Crear Equipos', 'url' => array('equipo/create')),
+                                array('label' => 'Registrar Horómetros', 'url' => array('registroHorometro/create')),
+                                array('label' => 'Registrar Mantenciones', 'url' => array('registroMantencion/create')),
+                            )),
+
                         array('label' => 'Centro de Costos', 'url' => array('centroDeCostos/admin'),'visible' => Yii::app()->user->ADM()|| Yii::app()->user->A1()),
                         //menú de Ingreso de Documentos
                         array('label' => 'Documentos <span class="caret"></span>', 'url' => '#', 'visible' => !Yii::app()->user->isGuest, 'itemOptions' => array('class' => 'dropdown', 'tabindex' => "-1"), 'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => "dropdown"),

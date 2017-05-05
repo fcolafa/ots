@@ -132,5 +132,17 @@ class Usuarios extends CActiveRecord
                 if (md5($this->_PASSANTIGUA)!=$user->CONTRASENA)
                      $this->addError($attribute, Yii::t('validation','Contraseña Incorrecta'));
         }   
-	
+	static function GetID($id_personal){
+            $criteria=new CDbCriteria();
+            $criteria->condition='ID_PERSONA='.$id_personal;
+            $user=  Usuarios::model()->find($criteria);
+            return $user->ID_USUARIO;
+        }
+        static function getCompany($id_personal){
+            $criteria=new CDbCriteria();
+            $criteria->condition='ID_PERSONA='.$id_personal;
+            $user=  Usuarios::model()->find($criteria);
+            return $user->ID_EMPRESA;
+        }
+      
 }

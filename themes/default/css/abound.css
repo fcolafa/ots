@@ -960,3 +960,13 @@ div.wide.form .field_name_help
      width: 16px;
      height: auto;
 }
+.span2 .report{
+   position: fixed;
+ 
+}
+.red{
+    color: red;
+    background: #FEE;
+    border-color: #C00;
+}
+

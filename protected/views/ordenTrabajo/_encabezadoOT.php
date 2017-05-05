@@ -410,7 +410,7 @@ $this->widget('ext.EFineUploader.EFineUploader', array(
         ),
         'validation' => array(
             'allowedExtensions' => array('pdf', 'jpg', 'jpeg', 'png'),
-            'sizeLimit' => 5 * 1024 * 1024, //maximum file size in bytes
+            'sizeLimit' => 7 * 1024 * 1024, //maximum file size in bytes
         //  'minSizeLimit'=>0*1024*1024,// minimum file size in bytes
         ),
         'callbacks' => array(

@@ -9,7 +9,7 @@ $this->breadcrumbs = array(
 
 $this->menu = array(
     //array('label'=>'Ver Orden de Trabajo', 'url'=>array('index')),
-    array('label' => 'Exportar a PDF', 'url' => array('viewPDF', 'id' => $model->ID_OT), 'visible' => $model->APROBADO_I25 == 1 ? 1 : 0, 'linkOptions' => array('target' => '_blank')),
+    array('label' => 'Exportar a PDF', 'url' => array('viewPDF', 'id' => $model->ID_OT)),
     array('label' => 'Crear Orden de Trabajo', 'url' => array('create'), 'visible' => !Yii::app()->user->GG()),
     array('label' => 'Actualizar Orden de Trabajo', 'url' => array('update', 'id' => $model->ID_OT), 'visible' => $model->VOBO_GERENTE_GRAL != 1),
     //array('label'=>'Borrar Orden de Trabajo', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID_OT),'confirm'=>'está usted seguro que desea eliminar del sistema este elemento?')),
@@ -256,20 +256,20 @@ endif;
         }
 if(Yii::app()->user->ADM() || Yii::app()->user->JDP() || Yii::app()->user->GOP() || Yii::app()->user->GG() || Yii::app()->user->LOG() || Yii::app()->user->A1()) {
 
-    if ($model->RECHAZAR_OT == 0 && $model->VOBO_GERENTE_GRAL != 1) {
+    if ($model->RECHAZAR_OT == 0) {
 
         if (Yii::app()->user->LOG())
             $texto = "Enviar Orden de Trabajo";
         else
             $texto = 'Aprobar Orden de Trabajo';
-        
+        if($model->VOBO_GERENTE_GRAL != 1){
         echo CHtml::link('<div  class="btn btn-success">
 		    	<h4> <span class="glyphicon glyphicon-ok"></span>' . $texto . '</h4>
 			</div>', array('OrdenTrabajo/aprobarOtView', 'id' => $model->ID_OT), array('confirm' => 'Desea Aprobar Ot?'));
-     
+        }
         if (!Yii::app()->user->LOG()) {
             echo CHtml::link('<div  class="btn btn-danger">
-		    	<h4> <span class="glyphicon glyphicon-ok"></span> Rechazar Orden de Trabajo</h4>
+		    	<h4> <span class="glyphicon glyphicon-ok"></span> Anular Orden de Trabajo</h4>
 			</div>', array('OrdenTrabajo/rechazarOtView', 'id' => $model->ID_OT), array('confirm' => 'Esta seguro que desea rechazar la Orden de trabajo?'));
         }
     } elseif ($model->RECHAZAR_OT == 1) {

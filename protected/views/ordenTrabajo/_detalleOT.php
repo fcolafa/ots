@@ -59,7 +59,7 @@
 
         <table id="tabla_items" width='100%' class='table table-condensed table-hover'>
             <thead class='borde-azul'>
-                <?php if ($model->VOBO_JEFE_DPTO != 1 || $model->VOBO_ADMIN != 1 || $model->VOBO_GERENTE_OP != 1 || $model->VOBO_GERENTE_GRAL != 1) { ?>
+                <?php if (Yii::app()->user->A1()||($model->VOBO_ADMIN != 1 || $model->VOBO_GERENTE_OP != 1 || $model->VOBO_GERENTE_GRAL != 1)) { ?>
                     <tr class='primary'> 
                         <th colspan='19'>Agregar Detalle</th> 
                     </tr>

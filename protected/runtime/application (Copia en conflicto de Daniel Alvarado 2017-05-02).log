@@ -1,0 +1,347 @@
+2017/04/28 10:59:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/img/icons/logoastilleros.png"' in D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/img/icons/logoastilleros.png
+HTTP_REFERER=http://localhost/ots/
+---
+2017/04/28 10:59:57 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 13:12:01 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/img/icons/logoastilleros.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/img/icons/logoastilleros.png
+---
+2017/04/28 13:13:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 13:13:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 13:26:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 13:27:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/css/images/icon_plus.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/css/images/icon_plus.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/acordeon.css
+---
+2017/04/28 13:27:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/css/images/icon_minus.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/css/images/icon_minus.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/acordeon.css
+---
+2017/04/28 13:27:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 13:27:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:11 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:17 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:19 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:23 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/css/images/icon_plus.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/css/images/icon_plus.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/acordeon.css
+---
+2017/04/28 16:13:30 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:13:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 16:14:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/js/drowpdown.js"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/js/drowpdown.js
+HTTP_REFERER=http://localhost/ots/ordenTrabajo/create
+---
+2017/04/28 17:47:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/css/images/icon_plus.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/css/images/icon_plus.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/acordeon.css
+---
+2017/04/28 17:47:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 17:51:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 17:51:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 17:51:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 17:51:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 18:20:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 18:20:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 18:21:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/js/drowpdown.js"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/js/drowpdown.js
+HTTP_REFERER=http://localhost/ots/ordenTrabajo/create
+---
+2017/04/28 18:44:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 18:44:38 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/js/drowpdown.js"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/js/drowpdown.js
+HTTP_REFERER=http://localhost/ots/ordenTrabajo/create
+---
+2017/04/28 18:57:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/images/el_bg.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/images/el_bg.png
+HTTP_REFERER=http://localhost/ots/themes/default/css/tables.css
+---
+2017/04/28 18:57:49 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/js/drowpdown.js"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/themes/default/js/drowpdown.js
+HTTP_REFERER=http://localhost/ots/ordenTrabajo/update/1054
+---
+2017/04/28 18:58:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "archivos/firmas/56.png"' in D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('archivos/firmas...')
+#1 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 D:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/archivos/firmas/56.png
+HTTP_REFERER=http://localhost/ots/ordenTrabajo/1054
+---
+2017/05/01 23:43:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/img/icons/logoastilleros.png"' in I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/WEB/themes/default/img/icons/logoastilleros.png
+---
+2017/05/01 23:46:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/img/icons/logoastilleros.png"' in I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/WEB/themes/default/img/icons/logoastilleros.png
+---
+2017/05/01 23:46:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'No es posible resolver la solicitud "themes/default/img/icons/logoastilleros.png"' in I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php:286
+Stack trace:
+#0 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/default/...')
+#1 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 I:\dalvarado\Dropbox\Proyecto OTs\SISTEMA _WEB\WEB\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/ots/WEB/themes/default/img/icons/logoastilleros.png
+---

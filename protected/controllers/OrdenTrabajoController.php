@@ -38,7 +38,6 @@ class OrdenTrabajoController extends Controller {
                 'expression' => '$user->A1()|| $user->ADM() || $user->GG() || $user->GOP() || $user->JDP() || $user->LOG()|| $user->OP()',
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-               
                 'expression' => '$user->A1()',
             ),
             array('deny', // deny all users
@@ -64,12 +63,14 @@ class OrdenTrabajoController extends Controller {
 
     public function actionSetStatus() {
 
-        $ots=  OrdenTrabajo::model()->findAll();
-        foreach($ots as $ot){
-            if($ot->VOBO_GERENTE_GRAL==1 && $ot->RECHAZAR_OT!=1)
-                $ot->ESTADO_OT=1;
-            elseif($ot->RECHAZAR_OT==1)
-                $ot->ESTADO_OT=2;
+        $ots = OrdenTrabajo::model()->findAll();
+        foreach ($ots as $ot) {
+            if ($ot->VOBO_GERENTE_GRAL == 1 && $ot->RECHAZAR_OT != 1)
+                $ot->ESTADO_OT = 1;
+            elseif ($ot->RECHAZAR_OT == 1)
+                $ot->ESTADO_OT = 2;
+            else
+                $ot->ESTADO_OT = 0;
             $ot->save();
         }
     }
@@ -174,11 +175,16 @@ class OrdenTrabajoController extends Controller {
 
     public function actionViewPDF($id) {
         $model = $this->loadModel($id);
-        if ($model->VOBO_ADMIN != 1 || $model->VOBO_JEFE_DPTO != 1 || $model->VOBO_GERENTE_OP != 1 || $model->VOBO_GERENTE_GRAL != 1)
-            throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
         Yii::import('ext.MPDF57.mpdf', true);
         $detalle = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'CAST(NUMERO_SUB_ITEM AS DECIMAL) ASC'));
         $mpdf = new mpdf();
+        if ($model->VOBO_ADMIN != 1 || $model->VOBO_JEFE_DPTO != 1 || $model->VOBO_GERENTE_OP != 1 || $model->VOBO_GERENTE_GRAL != 1) {
+            if ($model->RECHAZAR_OT == 1)
+                $mpdf->SetWatermarkText('Documento Rechazado');
+            else
+                $mpdf->SetWatermarkText('documento pendiente de aprobación');
+            $mpdf->showWatermarkText = true;
+        }
         $mpdf->WriteHTML($this->renderPartial('ot_pdf', array('model' => $model, 'detalle' => $detalle), true));
         $mpdf->Output();
     }
@@ -238,6 +244,8 @@ class OrdenTrabajoController extends Controller {
             $correlativo->NUMERO_CORRELATIVO++;
             $model->FECHA_OT = date('y-m-d');
             $model->USUARIO_CREADOR = Yii::app()->user->getState('identificador');
+            if ($model->USUARIO_CREADOR == 61)
+                $model->VOBO_JEFE_DPTO = 61;
             $model->APROBADO_I25 = 0;
             if (isset($_POST['OrdenTrabajo']['_cot']))
                 $model->_cot = $_POST['OrdenTrabajo']['_cot'];
@@ -278,14 +286,14 @@ class OrdenTrabajoController extends Controller {
     public function actionUpdate($id) {
 
         $model = $this->loadModel($id);
-        if (!Yii::app()->user->A1() && ($model->VOBO_ADMIN == 1 || $model->VOBO_JEFE_DPTO == 1 || $model->VOBO_GERENTE_OP == 1 || $model->VOBO_GERENTE_GRAL == 1))
+        if (!Yii::app()->user->A1() && ($model->VOBO_ADMIN == 1 || $model->VOBO_GERENTE_OP == 1 || $model->VOBO_GERENTE_GRAL == 1))
             throw new CHttpException(300, 'no se puede modificar debido que la orden de trabajo esta en proceso de aprobacion');
 
         if (!Yii::app()->user->A1() && (Yii::app()->user->JDP() && $model->USUARIO_CREADOR != Yii::app()->user->id))
             throw new CHttpException(404, 'Usted no esta autorizado para realizar esta acción.');
 
         $new_sub_item = new InsumosOT;
-        $sub_items = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'NUMERO_SUB_ITEM'));
+        $sub_items = InsumosOT::model()->findAll(array('condition' => 'ID_OT=' . $id, 'order' => 'CAST(NUMERO_SUB_ITEM AS DECIMAL) ASC'));
 
 
         $newfile = array();
@@ -568,7 +576,7 @@ class OrdenTrabajoController extends Controller {
             $nombre = '';
             if (!empty($model->USUARIO_RECHAZA)) {
                 $persona = Personal::model()->findByPK($model->USUARIO_RECHAZA);
-                $nombre = ' y ha sido rechazada por ' . $persona->NOMBRE_PERSONA . ' ' . $persona->APELLIDO_PERSONA;
+                $nombre = ' y ha sido anulada por ' . $persona->NOMBRE_PERSONA . ' ' . $persona->APELLIDO_PERSONA;
             }
             if ($model->save()) {
                 $this->sendMail($model, 'Orden de Trabajo Rechazada', 'body_ot_message', 'reject', 'Se ha rechazado la orden de trabajo cuyo Nº es ' . $model->ID_OT . $nombre);
@@ -605,9 +613,11 @@ class OrdenTrabajoController extends Controller {
     public function actionAprobarOtView($id) {
 
         $model = OrdenTrabajo::model()->findByPk($id);
+
         if (!empty($model)) {
             if (Yii::app()->user->JDP() && $model->VOBO_JEFE_DPTO != 1 && Yii::app()->getSession()->get('id_empresa') == $model->ID_EMPRESA) {
-                $model->USUARIO_VOBO_JDPTO = Yii::app()->user->getState('idUsuario');
+
+                $model->USUARIO_VOBO_JDPTO = Usuarios::model()->GetID(Yii::app()->user->id);
                 $model->FECHA_VOBO_JDPTO = date("y-m-d H:i:s");
                 $model->VOBO_JEFE_DPTO = 1;
                 if ($model->ID_EMPRESA == 1)
@@ -857,7 +867,7 @@ class OrdenTrabajoController extends Controller {
         Yii::import("ext.EFineUploader.qqFileUploader");
         $uploader = new qqFileUploader();
         $uploader->allowedExtensions = array('pdf', 'jpg', 'jpeg', 'png');
-        $uploader->sizeLimit = 5 * 1024 * 1024; //maximum file size in bytes
+        $uploader->sizeLimit = 7 * 1024 * 1024; //maximum file size in bytes
         $uploader->chunksFolder = $tempFolder;
         $result = $uploader->handleUpload($tempFolder);
 

@@ -31,8 +31,12 @@ class CentroDeCostosController extends Controller {
                 'expression' => '$user->A1()||$user->ADM()',
             ),
             array('allow',
-                    'actions'=> array('addScc'),
-                    'expression' => '$user->A1()',
+                'actions' => array('GetCentroDeCostos'),
+                'users' => array('@'),
+            ),
+            array('allow',
+                'actions' => array('*'),
+                'expression' => '$user->A1()',
             ),
             array('deny', // deny all users
                 'users' => array('*'),
@@ -88,7 +92,7 @@ class CentroDeCostosController extends Controller {
                         $scc->ID_CCC = $cc->ID_CCC;
                         $scc->save(false);
                     }
-                    
+
 //                        $secciones = [
 //                        10 => 'Generales',
 //                        20 => 'Estructuras',
@@ -111,45 +115,43 @@ class CentroDeCostosController extends Controller {
                 Auditoria::model()->registrarAccion('', $model->ID_CENTRO_COSTO, $model->NOMBRE_CENTRO_COSTO);
                 $this->redirect(array('view', 'id' => $model->ID_CENTRO_COSTO));
             }
-
-
         }
 
-            $this->render('create', array(
-                'model' => $model,
-            ));
-        
+        $this->render('create', array(
+            'model' => $model,
+        ));
     }
-    public function actionAddScc(){
-        $criteria=new CDbCriteria();
-        $criteria->condition="NUMERO_CENTRO <> '45' AND NUMERO_CENTRO <> '48' AND ID_EMPRESA=2";
-        $centrosc=  CentroDeCostos::model()->findAll($criteria);
-        foreach ($centrosc as $cc){
-            $cri2=new CDbCriteria();
-            $cri2->condition="ID_CENTRO_COSTO=".$cc->ID_CENTRO_COSTO;
-            $cc=Ccc::model()->findAll($cri2);
-            foreach($cc as $cuentas){      
-                    $secciones = [
-                        10 => 'Generales',
-                        20 => 'Estructuras',
-                        30 => 'Piping',
-                        40 => 'Electricidad y Electrónica',
-                        50 => 'Carpintería',
-                        60 => 'Mecánica y Propulsión',
-                        70 => 'Miscelaneos',
-                        80 => 'Pinturas',
-                        90 => 'Maniobras',
-                    ];
-                        $cri3=new CDbCriteria();
-                        $cri3->condition='ID_CCC='.$cuentas->ID_CCC;
-                        //Scc::model()->deleteAll($cri3);                
-                    foreach ($secciones as $key => $value) {
-                        $scc = new Scc;
-                        $scc->SCC_NUMERO = $key;
-                        $scc->SCC_DESCRIPCION = $value;
-                        $scc->ID_CCC = $cuentas->ID_CCC;
-                        $scc->save(false);
-                    }  
+
+    public function actionAddScc() {
+        $criteria = new CDbCriteria();
+        $criteria->condition = "NUMERO_CENTRO <> '45' AND NUMERO_CENTRO <> '48' AND ID_EMPRESA=2";
+        $centrosc = CentroDeCostos::model()->findAll($criteria);
+        foreach ($centrosc as $cc) {
+            $cri2 = new CDbCriteria();
+            $cri2->condition = "ID_CENTRO_COSTO=" . $cc->ID_CENTRO_COSTO;
+            $cc = Ccc::model()->findAll($cri2);
+            foreach ($cc as $cuentas) {
+                $secciones = [
+                    10 => 'Generales',
+                    20 => 'Estructuras',
+                    30 => 'Piping',
+                    40 => 'Electricidad y Electrónica',
+                    50 => 'Carpintería',
+                    60 => 'Mecánica y Propulsión',
+                    70 => 'Miscelaneos',
+                    80 => 'Pinturas',
+                    90 => 'Maniobras',
+                ];
+                $cri3 = new CDbCriteria();
+                $cri3->condition = 'ID_CCC=' . $cuentas->ID_CCC;
+                //Scc::model()->deleteAll($cri3);                
+                foreach ($secciones as $key => $value) {
+                    $scc = new Scc;
+                    $scc->SCC_NUMERO = $key;
+                    $scc->SCC_DESCRIPCION = $value;
+                    $scc->ID_CCC = $cuentas->ID_CCC;
+                    $scc->save(false);
+                }
             }
         }
         echo "Centros de costos modificados";
@@ -257,6 +259,24 @@ class CentroDeCostosController extends Controller {
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
+    }
+
+    public function actionGetCentroDeCostos() {
+        //$id_emp = $_POST['OrdenTrabajo']['ID_EMPRESA'];
+        $id_emp = $_POST['id_emp'];
+        $criteria = new CDbCriteria();
+        $criteria->condition = "ID_EMPRESA=" . $id_emp;
+        $criteria->order = 'NUMERO_CENTRO ASC';
+        $cc = CentroDeCostos::model()->findAll($criteria);
+        $cc = CHtml::listData($cc, 'ID_CENTRO_COSTO', 'concatened');
+        $t = '';
+        $t.='<option value="0">Seleccionar todos</option>';
+        foreach ($cc as $valor => $descripcion) {
+            $t.='<option value="' . $valor . '">' . $descripcion . '</option>';
+            //echo CHtml::tag('option', array('value'=>$valor), CHtml::encode($descripcion), true);
+        }
+        //print_r($contratistas);
+        echo CJSON::encode($t);
     }
 
 }

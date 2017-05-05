@@ -5,6 +5,11 @@
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
+         
+         'catchAllRequest'=>array(
+         'offline/index',
+         'otherParams'=>'value',
+    ),
     'theme' => 'default',
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Aprobacion de documentos',
@@ -15,6 +20,7 @@ return array(
     'preload' => array('log'),
     // autoloading model and component classes
     'import' => array(
+        'application.extensions.phpexcel.*',
         'application.models.*',
         'application.components.*',
         'application.helpers.*',
