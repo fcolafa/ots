@@ -69,7 +69,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
                     array(
                         'name'=>'DEBAJA',
                         'value'=>'$data->DEBAJA==1?"eliminado":"activo"',
-                        'filter'=>''
+                        'filter'=>array(0=>'Activo',1=>'eliminado'),
                         'visible'=>'Yii::app()->user->A1()',
                     ),
 		/*
