@@ -74,15 +74,15 @@ class OrdenTrabajo extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('ID_EMPRESA, ID_CONTRATISTA, ID_DEPARTAMENTO, ID_TIPO_OT, FECHA_EJECUCION, FECHA_OT, ID_TIPO_MONEDA, VALOR_MONEDA, APLICA_IVA', 'required'),
-            array('ESTADO_OT, ASIGNADO, NUMERO_OT, APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SUPERVISOR, ID_DEPARTAMENTO, ID_TIPO_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL, RECHAZAR_OT', 'numerical', 'integerOnly' => true),
+            array('ELIMINADO, ESTADO_OT, ASIGNADO, NUMERO_OT, APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SUPERVISOR, ID_DEPARTAMENTO, ID_TIPO_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL, RECHAZAR_OT', 'numerical', 'integerOnly' => true),
             array('SOLICITANTE', 'length', 'max' => 250),
             array('ASIGNADO', 'required', 'on' => 'send'),
             array('_cot', 'validFile'),
             array('FECHA_EJECUCION, FECHA_OT', 'formateaFecha'),
-            array('status_empresa,FECHA_EJECUCION, DESCRIPCION_OT, FECHA_OT, MOTIVO_RECHAZO, RECHAZAR_OT, MOTIVO_RECHAZO', 'safe'),
+            array('status_empresa,FECHA_EJECUCION, DESCRIPCION_OT, FECHA_OT, MOTIVO_RECHAZO, RECHAZAR_OT, MOTIVO_RECHAZO, ELIMINADO', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('ESTADO_OT,_contratista, total, fullname, lastname, NUMERO_OT, _rutcontratista, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
+            array('ELIMINADO, ESTADO_OT,_contratista, total, fullname, lastname, NUMERO_OT, _rutcontratista, _cot ,APROBADO_I25, ID_OT, ID_EMPRESA, ID_CONTRATISTA, SOLICITANTE, SUPERVISOR, ID_DEPARTAMENTO, FECHA_EJECUCION, ID_TIPO_OT, DESCRIPCION_OT, FECHA_OT, VOBO_JEFE_DPTO, VOBO_ADMIN, VOBO_GERENTE_OP, VOBO_GERENTE_GRAL', 'safe', 'on' => 'search'),
         );
     }
 
@@ -151,6 +151,7 @@ class OrdenTrabajo extends CActiveRecord {
             'fullname' => 'Nombre Solicitante',
             'lastname' => 'Apellido Solicitante',
             'ASIGNADO' => 'Usuario Asignado',
+            'ELIMINADO' => 'Eliminado?',
         );
     }
 
@@ -183,6 +184,7 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('DESCRIPCION_OT', $this->DESCRIPCION_OT, true);
         $criteria->compare('FECHA_OT', $this->FECHA_OT, true);
         $criteria->compare('ESTADO_OT', $this->ESTADO_OT);
+        $criteria->compare('ELIMINADO', 0);
         $criteria->compare('VOBO_ADMIN', $this->VOBO_ADMIN);
         $criteria->compare('VOBO_JEFE_DPTO', $this->VOBO_JEFE_DPTO);
         $criteria->compare('VOBO_GERENTE_GRAL', $this->VOBO_GERENTE_GRAL);
@@ -191,7 +193,8 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('contratista.NOMBRE_CONTRATISTA', $this->_contratista, true);
         $criteria->compare('solicitante.NOMBRE_PERSONA', $this->fullname, true);
         $criteria->compare('solicitante.APELLIDO_PERSONA', $this->lastname, true);
-      
+       
+        
         
         $usuario = Personal::model()->findByPk(Yii::app()->user->id);
         if ((Yii::app()->user->LOG() || Yii::app()->user->JDP()) && $usuario->iDDEPARTAMENTO->NOMBRE_DEPARTAMENTO == 'Logística' && Yii::app()->getSession()->get('id_empresa') == 1) {
@@ -214,6 +217,7 @@ class OrdenTrabajo extends CActiveRecord {
             $criteria->compare('t.USUARIO_CREADOR', Yii::app()->user->id);
         }
         $criteria->compare('t.ID_EMPRESA', Yii::app()->getSession()->get('id_empresa'));
+       // $criteria->limit=100;
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
@@ -245,18 +249,19 @@ class OrdenTrabajo extends CActiveRecord {
         $criteria->compare('VOBO_JEFE_DPTO', $this->VOBO_JEFE_DPTO);
         $criteria->compare('VOBO_GERENTE_GRAL', $this->VOBO_GERENTE_GRAL);
         $criteria->compare('VOBO_GERENTE_OP', $this->VOBO_GERENTE_OP);
+        $criteria->compare('ELIMINADO', 0);
         $criteria->compare('total', $this->total);
         $criteria->compare('contratista.RUT_CONTRATISTA', $this->_rutcontratista, true);
         $criteria->compare('contratista.NOMBRE_CONTRATISTA', $this->_contratista, true);
         $criteria->compare('ESTADO_OT', $this->ESTADO_OT);
-
+        $criteria->limit='40';
         if (Yii::app()->user->GG()) {
             $criteria->compare('VOBO_JEFE_DPTO', 1);
             $criteria->compare('VOBO_ADMIN', 1);
             $criteria->compare('VOBO_GERENTE_OP', 1);
         }
 
-
+      //  $criteria->limit=100;
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));

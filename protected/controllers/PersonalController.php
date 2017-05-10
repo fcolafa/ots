@@ -314,37 +314,42 @@ class PersonalController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$user_creador = OrdenTrabajo::model()->findByAttributes(array('USUARIO_CREADOR'=>$id));
-		$solicitante = OrdenTrabajo::model()->findByAttributes(array('SOLICITANTE'=>$id));
-		$supervisor = OrdenTrabajo::model()->findByAttributes(array('SUPERVISOR'=>$id));
-		$usuario = Usuarios::model()->findByAttributes(array('ID_PERSONA'=>$id));
+//		$user_creador = OrdenTrabajo::model()->findByAttributes(array('USUARIO_CREADOR'=>$id));
+//		$solicitante = OrdenTrabajo::model()->findByAttributes(array('SOLICITANTE'=>$id));
+//		$supervisor = OrdenTrabajo::model()->findByAttributes(array('SUPERVISOR'=>$id));
+//		$usuario = Usuarios::model()->findByAttributes(array('ID_PERSONA'=>$id));
+//
+//		$msg ="No se pudo eliminar ya que está se encuentra como ";
+//
+//		if (count($user_creador) > 0) {
+//			$msg.= "creador de una Ot ";
+//		}elseif (count($solicitante) > 0) {
+//			$msg.= "solicitante de una Ot ";
+//		}elseif (count($supervisor) > 0) {
+//			$msg.= "supervisor de una Ot";
+//		}elseif (count($usuario) > 0){
+//			$msg.= "usuario en el sistema";
+//		}
+//		
+//		try{
+//			$this->loadModel($id)->delete();
+//			Auditoria::model()->registrarAccion('', $model->ID_PERSONA , "Se elimina persona ".$model->NOMBRE_PERSONA);
+//			if(!isset($_GET['ajax']))
+//		        Yii::app()->user->setFlash('success','Persona eliminada correctamente');
+//		    else
+//		        echo "<div class='alert alert-success'>Persona eliminada correctamente</div>";
+//		}catch(CDbException $e){
+//		    if(!isset($_GET['ajax']))
+//		        Yii::app()->user->setFlash('error',$msg);
+//		    else
+//		        echo "<div class='alert alert-danger'>".$msg."</div>";
+//		}
 
-		$msg ="No se pudo eliminar ya que está se encuentra como ";
-
-		if (count($user_creador) > 0) {
-			$msg.= "creador de una Ot ";
-		}elseif (count($solicitante) > 0) {
-			$msg.= "solicitante de una Ot ";
-		}elseif (count($supervisor) > 0) {
-			$msg.= "supervisor de una Ot";
-		}elseif (count($usuario) > 0){
-			$msg.= "usuario en el sistema";
-		}
-		
-		try{
-			$this->loadModel($id)->delete();
-			Auditoria::model()->registrarAccion('', $model->ID_PERSONA , "Se elimina persona ".$model->NOMBRE_PERSONA);
-			if(!isset($_GET['ajax']))
-		        Yii::app()->user->setFlash('success','Persona eliminada correctamente');
-		    else
-		        echo "<div class='alert alert-success'>Persona eliminada correctamente</div>";
-		}catch(CDbException $e){
-		    if(!isset($_GET['ajax']))
-		        Yii::app()->user->setFlash('error',$msg);
-		    else
-		        echo "<div class='alert alert-danger'>".$msg."</div>";
-		}
-
+            
+            
+            $personal=  Personal::model()->findByPk($id);
+            $personal->DEBAJA=1;
+            $personal->save();
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -451,6 +456,7 @@ class PersonalController extends Controller
                 $criteria->with=array('iDUSUARIO');
                 $criteria->together=true;
                 $criteria->condition="t.ID_EMPRESA=".$id_emp.' OR (iDUSUARIO.TODAS_LAS_EMPRESAS=1 AND iDUSUARIO.COD_TIPO_USUARIO="ADM")';
+                $criteria->addCondition('DEBAJA<>1');
                 $criteria->order='NOMBRE_PERSONA ASC, APELLIDO_PERSONA ASC';
 		$persona = Personal::model()->findAll($criteria);
 		$persona=  CHtml::listData($persona, 'ID_PERSONA', 'concatened');

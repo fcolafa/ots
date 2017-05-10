@@ -30,8 +30,6 @@
  */
 class Equipo extends CActiveRecord
 {
-	public $archivo;
-
 	/**
 	 * @return string the associated database table name
 	 */
@@ -48,14 +46,13 @@ class Equipo extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('DESCRIPCION_EQUIPO', 'required'),
 			array('ID_TIPO_EQUIPO, ID_MODELO_EQUIPO, TIEMPO_MANTENCION, YEAR_EQUIPO', 'numerical', 'integerOnly'=>true),
-			array('archivo', 'file', 'maxSize'=>'2097150', 'tooLarge'=>'Archivo no debe superar los 2 MB', 'allowEmpty'=>true),
-			array('archivo', 'validarExtension'),
 			array('TAG_EQUIPO', 'length', 'max'=>150),
 			array('NOMBRE_EQUIPO, UBICACION_EQUIPO', 'length', 'max'=>100),
 			array('NUMERO_EQUIPO, CAPACIDAD, IMAGEN_EQUIPO', 'length', 'max'=>50),
 			array('ESTADO_EQUIPO', 'length', 'max'=>10),
-			array('FECHA_ADQUISICION, FECHA_EMPRESA, DESCRIPCION_EQUIPO, IMAGEN_EQUIPO', 'safe'),
+			array('FECHA_ADQUISICION, FECHA_EMPRESA', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('ID_EQUIPO, TAG_EQUIPO, ID_TIPO_EQUIPO, NOMBRE_EQUIPO, ID_MODELO_EQUIPO, TIEMPO_MANTENCION, YEAR_EQUIPO, NUMERO_EQUIPO, UBICACION_EQUIPO, CAPACIDAD, FECHA_ADQUISICION, FECHA_EMPRESA, IMAGEN_EQUIPO, DESCRIPCION_EQUIPO, ESTADO_EQUIPO', 'safe', 'on'=>'search'),
@@ -70,12 +67,12 @@ class Equipo extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'modelEquipos' => array(self::BELONGS_TO, 'ModelEquipo', 'ID_MODELO_EQUIPO'),
-			'tipoEquipos' => array(self::BELONGS_TO, 'TipoEquipo', 'ID_TIPO_EQUIPO'),
-			'especifTecnicas' => array(self::HAS_MANY, 'EspecifTecnicas', 'ID_EQUIPO'),
-			'piezasEquipos' => array(self::HAS_MANY, 'PiezasEquipos', 'ID_EQUIPO'),
+			'iDMODELOEQUIPO' => array(self::BELONGS_TO, 'ModelEquipo', 'ID_MODELO_EQUIPO'),
+			'iDTIPOEQUIPO' => array(self::BELONGS_TO, 'TipoEquipo', 'ID_TIPO_EQUIPO'),
+			'especifTecnicases' => array(self::HAS_MANY, 'EspecifTecnicas', 'ID_EQUIPO'),
+			'piezasEquiposes' => array(self::HAS_MANY, 'PiezasEquipos', 'ID_EQUIPO'),
 			'registroHorometros' => array(self::HAS_MANY, 'RegistroHorometro', 'ID_EQUIPO'),
-			'registroMantenciones' => array(self::HAS_MANY, 'RegistroMantencion', 'ID_EQUIPO'),
+			'registroMantencions' => array(self::HAS_MANY, 'RegistroMantencion', 'ID_EQUIPO'),
 		);
 	}
 
@@ -87,18 +84,18 @@ class Equipo extends CActiveRecord
 		return array(
 			'ID_EQUIPO' => 'Id Equipo',
 			'TAG_EQUIPO' => 'Tag Equipo',
-			'ID_TIPO_EQUIPO' => 'Tipo Equipo',
+			'ID_TIPO_EQUIPO' => 'Id Tipo Equipo',
 			'NOMBRE_EQUIPO' => 'Nombre Equipo',
-			'ID_MODELO_EQUIPO' => 'Modelo Equipo',
-			'TIEMPO_MANTENCION' => 'Frecuencia Mantención',
-			'YEAR_EQUIPO' => 'Año Equipo',
-			'NUMERO_EQUIPO' => 'Número Equipo',
-			'UBICACION_EQUIPO' => 'Ubicación Equipo',
+			'ID_MODELO_EQUIPO' => 'Id Modelo Equipo',
+			'TIEMPO_MANTENCION' => 'Tiempo Mantencion',
+			'YEAR_EQUIPO' => 'Year Equipo',
+			'NUMERO_EQUIPO' => 'Numero Equipo',
+			'UBICACION_EQUIPO' => 'Ubicacion Equipo',
 			'CAPACIDAD' => 'Capacidad',
-			'FECHA_ADQUISICION' => 'Fecha Adquisición',
-			'FECHA_EMPRESA' => 'Fecha Puesta en Serv.',
+			'FECHA_ADQUISICION' => 'Fecha Adquisicion',
+			'FECHA_EMPRESA' => 'Fecha Empresa',
 			'IMAGEN_EQUIPO' => 'Imagen Equipo',
-			'DESCRIPCION_EQUIPO' => 'Descripción Equipo',
+			'DESCRIPCION_EQUIPO' => 'Descripcion Equipo',
 			'ESTADO_EQUIPO' => 'Estado Equipo',
 		);
 	}
@@ -121,12 +118,10 @@ class Equipo extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		
 		$criteria->compare('ID_EQUIPO',$this->ID_EQUIPO);
 		$criteria->compare('TAG_EQUIPO',$this->TAG_EQUIPO,true);
 		$criteria->compare('ID_TIPO_EQUIPO',$this->ID_TIPO_EQUIPO);
 		$criteria->compare('NOMBRE_EQUIPO',$this->NOMBRE_EQUIPO,true);
-		$criteria->compare('ID_MODELO_EQUIPO',$this->ID_MODELO_EQUIPO);
 		$criteria->compare('ID_MODELO_EQUIPO',$this->ID_MODELO_EQUIPO);
 		$criteria->compare('TIEMPO_MANTENCION',$this->TIEMPO_MANTENCION);
 		$criteria->compare('YEAR_EQUIPO',$this->YEAR_EQUIPO);
@@ -143,20 +138,6 @@ class Equipo extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-
-	public function validarExtension($attribute, $params) {
-		$datetime1 = CDateTimeParser::parse(date("Y-m-d H:i:s"),'yyyy-MM-dd hh:mm:ss');
-
-		if(!empty($this->archivo)):
-			$extensionFile = $this->archivo->getExtensionName();
-			if ($extensionFile == "jpeg" || $extensionFile == "jpg" || $extensionFile == "png"):
-				$this->IMAGEN_EQUIPO = 'E'.$datetime1.'.'.$extensionFile;
-				//$this->archivo->saveAs(Yii::app()->basePath.'/../archivos/pdf/'.$model->ARCHIVO_PPTO);
-			else:
-				$model->addError('archivo', 'El archivo debe ser  .jpeg,  .jpg  o  .png');
-			endif;
-		endif;
-  	}
 
 	/**
 	 * Returns the static model of the specified AR class.

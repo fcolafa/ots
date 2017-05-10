@@ -30,7 +30,7 @@ class EspecifTecnicasController extends Controller
 
 			//CRUD todos los permisos otorgados a las cuentas indicadas
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view'),
+				'actions'=>array('create','update','updatePartial','admin','delete','index','view'),
 				'expression'=>'$user->A1() || $user->MNT()',
 			),
 
@@ -97,6 +97,27 @@ class EspecifTecnicasController extends Controller
 			'model'=>$model,
 		));
 	}
+
+
+	/*** Update desde el form de equipos. */
+
+	public function actionUpdatePartial($id) {
+        $model = $this->loadModel($id);
+
+        // Uncomment the following line if AJAX validation is needed
+        // $this->performAjaxValidation($model);
+
+        if (isset($_POST['EspecifTecnicas'])) {
+            $model->attributes = $_POST['EspecifTecnicas'];
+            if ($model->save()) {
+                echo CHtml::script("window.parent.$('#cru-dialog').dialog('close'); window.parent.location.reload();");
+            }
+        }
+
+        $this->renderPartial('_form', array(
+            'model' => $model,
+        ));
+    }
 
 	/**
 	 * Deletes a particular model.

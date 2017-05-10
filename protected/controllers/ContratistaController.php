@@ -33,7 +33,7 @@ class ContratistaController extends Controller {
             ),
             //RU
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('index','create' ,'view', 'update', 'admin'),
+                'actions' => array('index', 'create', 'view', 'update', 'admin'),
                 'expression' => '$user->A1() || $user->JDP() || $user->LOG()|| $user->ADM()||$user->OP()',
             ),
             //CRUD todos los permisos otorgados a las cuentas indicadas
@@ -180,7 +180,8 @@ class ContratistaController extends Controller {
     public function actionGetContratistas() {
         //$id_emp = $_POST['OrdenTrabajo']['ID_EMPRESA'];
         $id_emp = $_POST['id_emp'];
-        $all= $_POST['all'];
+        if (isset($_POST['all']))
+            $all = $_POST['all'];
         $criteria = new CDbCriteria();
         $criteria->condition = "ID_EMPRESA=" . $id_emp;
         $criteria->order = 'NOMBRE_CONTRATISTA ASC';
@@ -188,8 +189,8 @@ class ContratistaController extends Controller {
         $contratistas = Contratista::model()->findAll($criteria);
         $contratistas = CHtml::listData($contratistas, 'ID_CONTRATISTA', 'concatened');
         $t = '';
-        if($all==1)
-             $t.='<option value="0">Seleccionar todos</option>';
+        if (isset($_POST['all'])&& $all == 1)
+            $t.='<option value="0">Seleccionar todos</option>';
         foreach ($contratistas as $valor => $descripcion) {
             $t.='<option value="' . $valor . '">' . $descripcion . '</option>';
             //echo CHtml::tag('option', array('value'=>$valor), CHtml::encode($descripcion), true);

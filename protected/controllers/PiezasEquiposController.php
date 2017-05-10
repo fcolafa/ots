@@ -34,7 +34,7 @@ class PiezasEquiposController extends Controller
 			),
 			//CRUD todos los permisos otorgados por default a las cuentas tipo super administrador
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','delete','index','view', 'updateFT'),
+				'actions'=>array('create', 'createPartial', 'update', 'admin', 'delete', 'index', 'view', 'updateFT'),
 				'expression'=>'$user->A1() || $user->MNT()',
 			),
 
@@ -78,6 +78,35 @@ class PiezasEquiposController extends Controller
 		));
 	}
 
+
+
+	/*** Create desde el form de equipos. */
+
+	public function actionCreatePartial($id) {
+        $model = new PiezasEquipos;
+
+        // Uncomment the following line if AJAX validation is needed
+        // $this->performAjaxValidation($model);
+
+        if (isset($_POST['PiezasEquipos']) && isset($_POST['submit_piezas'])) {
+            $model->attributes = $_POST['PiezasEquipos'];
+
+            $model->ID_EQUIPO = $id;
+            $model->archivo = CUploadedFile::getInstance($model, 'IMAGEN_PIEZA');
+            if ($model->save()):
+            	if (!empty($model->archivo))
+					$model->archivo->saveAs(Yii::app()->basePath.'/../archivos/equipos/'.$model->IMAGEN_PIEZA);
+                echo CHtml::script("window.parent.$('#cru-dialog2').dialog('close'); window.parent.location.reload();");
+            endif;
+
+        }
+
+        $this->renderPartial('_partialPiezas', array(
+            'model' => $model,
+        ));
+    }
+
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -106,6 +135,7 @@ class PiezasEquiposController extends Controller
 			'model'=>$model,
 		));
 	}
+
 
 
 	/**

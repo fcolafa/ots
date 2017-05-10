@@ -6,10 +6,10 @@
 // CWebApplication properties can be configured here.
 return array(
          
-         'catchAllRequest'=>array(
-         'offline/index',
-         'otherParams'=>'value',
-    ),
+    //      'catchAllRequest'=>array(
+    //      'offline/index',
+    //      'otherParams'=>'value',
+    // ),
     'theme' => 'default',
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Aprobacion de documentos',
@@ -27,7 +27,7 @@ return array(
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
-
+        'backup',
         'gii' => array(
             'class' => 'system.gii.GiiModule',
             'password' => 'root',

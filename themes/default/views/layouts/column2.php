@@ -14,7 +14,7 @@
 				//array('label'=>'<i class="icon icon-envelope"></i> Messages <span class="badge badge-success pull-right">12</span>', 'url'=>'#'),
 				// Include the operations menu
 				array('label'=>'Operaciones','items'=>$this->menu),
-                                array('label' => CHtml::image(Yii::app()->baseUrl."/archivos/empresas/".@Empresa::model()->findByPk(Yii::app()->user->getc()->get('id_empresa'))->URL_LOGO),'visible'=>!Yii::app()->user->isGuest),
+                                array('label' => CHtml::image(Yii::app()->baseUrl."/archivos/empresas/".@Empresa::model()->findByPk(Usuarios::model()->getCompany(Yii::app()->user->id))->URL_LOGO),'visible'=>!Yii::app()->user->isGuest),
                                 //array('label' => CHtml::image(Yii::app()->baseUrl."/archivos/empresas/".@Empresa::model()->findByPk(Yii::app()->getSession()->get('id_empresa'))->URL_LOGO),'visible'=>!Yii::app()->user->isGuest),
 			),
 			));?>

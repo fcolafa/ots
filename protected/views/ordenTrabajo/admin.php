@@ -201,7 +201,7 @@ foreach ($empresa as $e) {
                 'visible' => !Yii::app()->user->LOG() && !Yii::app()->user->OP(),
             ),
             array('class' => 'CButtonColumn',
-                'template' => '{view2}{view}{update}{pdfexport}',
+                'template' => '{view2}{view}{update}{pdfexport}{delete}',
                 'header' => 'Opciones',
                 'buttons' => array(
                     /* 	'more' => array(
@@ -228,6 +228,11 @@ foreach ($empresa as $e) {
                         'options' => array('class' => 'icon-edit', 'title' => "Documento PDF"),
                         'imageUrl' => Yii::app()->theme->baseUrl . '/img/icons/pdf-icon.png',
                         'url' => '$this->grid->controller->createUrl("viewPDF", array("id"=>$data->primaryKey))',
+                    ),
+                    'delete' => array(
+                        'options' => array('class' => 'icon-delete', 'title' => "Eliminar"),
+                        //'imageUrl' => Yii::app()->theme->baseUrl . '/img/icons/pdf-icon.png',
+                        'visible' => 'Yii::app()->user->A1()',
                     )
                 ),
                 'htmlOptions' => array('width' => '10%', 'class' => 'text-center'),

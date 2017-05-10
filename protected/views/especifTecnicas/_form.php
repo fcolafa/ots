@@ -1,13 +1,13 @@
-<?php
-/* @var $this EspecifTecnicasController */
-/* @var $model EspecifTecnicas */
-/* @var $form CActiveForm */
-?>
+
+<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/bootstrap-responsive.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/tables.css" />
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'especif-tecnicas-form',
+<?php $form2=$this->beginWidget('CActiveForm', array(
+	'id'=>'especif-tecnica-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -15,44 +15,44 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
-	<?php echo $form->errorSummary($model); ?>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ID_ESPEC_TECNICA'); ?>
-		<?php echo $form->textField($model,'ID_ESPEC_TECNICA'); ?>
-		<?php echo $form->error($model,'ID_ESPEC_TECNICA'); ?>
-	</div>
+	<?php echo $form2->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'ID_EQUIPO'); ?>
-		<?php echo $form->textField($model,'ID_EQUIPO'); ?>
-		<?php echo $form->error($model,'ID_EQUIPO'); ?>
-	</div>
+        <div class="guide update">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pieza</th> 
+                        <th>Característica</th> 
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>           
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'ID_PIEZA'); ?>
-		<?php echo $form->textField($model,'ID_PIEZA'); ?>
-		<?php echo $form->error($model,'ID_PIEZA'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'CARACTERISTICA'); ?>
-		<?php echo $form->textField($model,'CARACTERISTICA',array('size'=>60,'maxlength'=>250)); ?>
-		<?php echo $form->error($model,'CARACTERISTICA'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'DESCRIPCION'); ?>
-		<?php echo $form->textField($model,'DESCRIPCION',array('size'=>60,'maxlength'=>250)); ?>
-		<?php echo $form->error($model,'DESCRIPCION'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Crear' : 'Guardar'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
+		            <tr>
+		                <td>
+		                    <?= $form2->dropDownList($model, 'ID_PIEZA', CHtml::listData(PiezasEquipos::model()->findAll(array('condition' => 'ID_EQUIPO=' . $model->ID_EQUIPO, 'order'=>'NOMBRE_PIEZA')), 'ID_PIEZA', 'NOMBRE_PIEZA')); ?>
+		                    <?= $form2->error($model, 'ID_PIEZA'); ?> 
+		                </td>
+		                <td>
+		                    <?= $form2->textField($model, 'CARACTERISTICA'); ?>
+		                    <?= $form2->error($model, 'CARACTERISTICA'); ?>    
+		                </td>
+		                <td>
+		                    <?= $form2->textField($model, 'DESCRIPCION'); ?>
+		                    <?= $form2->error($model, 'DESCRIPCION'); ?>  
+		                </td>
+		                <td> 
+		                    <?php echo CHtml::submitButton($model->isNewRecord ? Yii::t('actions', 'Create') : Yii::t('actions', 'Grabar'), array('onclick' => "js:function(){ }")); ?>
+		                </td>
+		            </tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+    <?php $this->endWidget(); ?>
+    
 
 </div><!-- form -->

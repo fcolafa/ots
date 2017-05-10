@@ -66,6 +66,12 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'NOMBRE_PERSONA',
 		'APELLIDO_PERSONA',
 		'TELEFONO',
+                    array(
+                        'name'=>'DEBAJA',
+                        'value'=>'$data->DEBAJA==1?"eliminado":"activo"',
+                        'filter'=>''
+                        'visible'=>'Yii::app()->user->A1()',
+                    ),
 		/*
 		'EMAIL',
 		'ID_CARGO',

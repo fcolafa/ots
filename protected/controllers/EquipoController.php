@@ -99,7 +99,10 @@ class EquipoController extends Controller
 		// $this->performAjaxValidation($model);
 
 		$new_piezas = new PiezasEquipos;
-		$piezas = PiezasEquipos::model()->findAll(array('condition' => 'ID_EQUIPO=' . $id));
+		$especificaciones = new EspecifTecnicas;
+
+		$piezas = PiezasEquipos::model()->findAll(array('condition' => 'ID_EQUIPO='.$id));
+		$especif_tec = EspecifTecnicas::model()->findAll(array('condition' => 'ID_EQUIPO='.$id, 'order'=>'ID_PIEZA'));
 
 		if (isset($_POST['PiezasEquipos']) && isset($_POST['submit_piezas'])) {
             $new_piezas->attributes = $_POST['PiezasEquipos'];
@@ -111,6 +114,16 @@ class EquipoController extends Controller
                 $this->redirect(array('update', 'id' => $model->ID_EQUIPO));
             endif;
         }
+
+
+		if (isset($_POST['EspecifTecnicas']) && isset($_POST['submit_et'])) {
+            $especificaciones->attributes = $_POST['EspecifTecnicas'];
+            $especificaciones->ID_EQUIPO = $id;
+            if ($especificaciones->save()):
+                $this->redirect(array('update', 'id' => $id));
+            endif;
+        }
+
 
 		if(isset($_POST['Equipo']))
 		{
@@ -127,6 +140,8 @@ class EquipoController extends Controller
 			'model'=>$model,
             'piezas' => $piezas,
             'new_piezas' => $new_piezas,
+            'especif_tec' => $especif_tec,
+            'especificaciones' => $especificaciones,
 		));
 	}
 

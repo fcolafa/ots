@@ -1,0 +1,28 @@
+.guide , .manifest-container{
+  width: 100%;
+  margin: 2px;
+}
+
+.update{
+    width: 100%;
+}
+
+.guide thead th{
+    background: rgba(9,162,179,1);
+    background: -moz-linear-gradient(top, rgba(9,162,179,1) 0%, rgba(28,171,188,1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(9,162,179,1)), color-stop(100%, rgba(28,171,188,1)));
+    background: -webkit-linear-gradient(top, rgba(9,162,179,1) 0%, rgba(28,171,188,1) 100%);
+    background: -o-linear-gradient(top, rgba(9,162,179,1) 0%, rgba(28,171,188,1) 100%);
+    background: -ms-linear-gradient(top, rgba(9,162,179,1) 0%, rgba(28,171,188,1) 100%);
+    background: linear-gradient(to bottom, rgba(9,162,179,1) 0%, rgba(28,171,188,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#09a2b3', endColorstr='#1cabbc', GradientType=0 );
+    border: 1px solid;
+}
+.guide tr,th{
+    border: 1px solid;
+}
+
+.guide td input{
+    width: 100%;
+    height:auto;
+}

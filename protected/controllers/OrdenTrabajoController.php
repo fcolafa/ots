@@ -65,6 +65,8 @@ class OrdenTrabajoController extends Controller {
 
         $ots = OrdenTrabajo::model()->findAll();
         foreach ($ots as $ot) {
+            if($ot->ELIMINADO!=1)
+            $ot->ELIMINADO=0;
             if ($ot->VOBO_GERENTE_GRAL == 1 && $ot->RECHAZAR_OT != 1)
                 $ot->ESTADO_OT = 1;
             elseif ($ot->RECHAZAR_OT == 1)
@@ -241,9 +243,10 @@ class OrdenTrabajoController extends Controller {
             $criteria->condition = 'ID_EMPRESA=' . $model->ID_EMPRESA;
             $correlativo = Correlativo::model()->find($criteria);
             $model->NUMERO_OT = $correlativo->NUMERO_CORRELATIVO;
+            $model->ELIMINADO=0;
             $correlativo->NUMERO_CORRELATIVO++;
             $model->FECHA_OT = date('y-m-d');
-            $model->USUARIO_CREADOR = Yii::app()->user->getState('identificador');
+            $model->USUARIO_CREADOR = Yii::app()->user->id;
             if ($model->USUARIO_CREADOR == 61)
                 $model->VOBO_JEFE_DPTO = 61;
             $model->APROBADO_I25 = 0;
@@ -391,13 +394,16 @@ class OrdenTrabajoController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        
         $model = $this->loadModel($id);
         Auditoria::model()->registrarAccion('OT', $model->ID_OT, "NUMERO_OT:" . $model->NUMERO_OT . " contratista: " . $model->ID_CONTRATISTA . ", solicita: " . $model->SOLICITANTE . ", fecha: " . $model->FECHA_OT);
-
+        
+        $model->ELIMINADO=1;
+        $model->save();
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
         if (!isset($_GET['ajax']))
             $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-        $model->delete();
+        //$model->delete();
     }
 
     /**
@@ -834,7 +840,7 @@ class OrdenTrabajoController extends Controller {
 
     public function getSupervisor() {
         $criteria = new CDbCriteria();
-        $criteria->condition = "ES_SUPERVISOR=1 AND ID_EMPRESA =" . Yii::app()->getSession()->get('id_empresa');
+        $criteria->condition = "ES_SUPERVISOR=1 AND ID_EMPRESA =" . Yii::app()->getSession()->get('id_empresa').' AND DEBAJA<>1';
         $criteria->order = 'NOMBRE_PERSONA ASC, APELLIDO_PERSONA  ASC';
         $personal = Personal::model()->findAll($criteria);
 
